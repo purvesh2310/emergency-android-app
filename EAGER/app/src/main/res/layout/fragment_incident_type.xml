@@ -1,0 +1,88 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pk.eager.IncidentType">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select the type of the incident you want to report:"
+            style="@style/question"/>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton android:id="@+id/radio_incidentType_trapped"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I am trapped"
+                style="@style/radioButton"
+               />
+
+            <RadioButton android:id="@+id/radio_incidentType_medical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medical"
+                style="@style/radioButton"
+                />
+
+            <RadioButton android:id="@+id/radio_incidentType_fire"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fire"
+                style="@style/radioButton"
+                />
+
+            <RadioButton android:id="@+id/radio_incidentType_police"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Police"
+                style="@style/radioButton"
+                />
+
+            <RadioButton android:id="@+id/radio_incidentType_traffic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traffic"
+                style="@style/radioButton"
+                />
+
+            <RadioButton android:id="@+id/radio_incidentType_utility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Utility"
+                style="@style/radioButton"
+                />
+
+            <RadioButton android:id="@+id/radio_incidentType_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Other (Please Specify)"
+                style="@style/radioButton"
+                />
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/info_other_incidentType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Write Description Here"
+            />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/button_next_incidentType"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="NEXT"/>
+
+    </LinearLayout>
+
+</FrameLayout>

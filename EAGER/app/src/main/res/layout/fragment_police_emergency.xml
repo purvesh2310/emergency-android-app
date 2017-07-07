@@ -1,0 +1,81 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pk.eager.PoliceEmergency">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1. Select Appropriate Option"
+                    style="@style/question"/>
+
+                <CheckBox android:id="@+id/checkbox_policeq1_a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Looting"
+                    style="@style/checkbox"
+                    />
+
+                <CheckBox android:id="@+id/checkbox_policeq1_b"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shots Fired"
+                    style="@style/checkbox"
+                    />
+
+                <CheckBox android:id="@+id/checkbox_policeq1_c"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vandalism"
+                    style="@style/checkbox"
+                    />
+
+                <CheckBox android:id="@+id/checkbox_policeq1_d"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Assault"
+                    style="@style/checkbox"
+                    />
+
+                <CheckBox android:id="@+id/checkbox_policeq1_e"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gang Violence"
+                    style="@style/checkbox"
+                    />
+
+            </LinearLayout> <!-- End of Question 1 Linear Layout -->
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/button_next_policeEmergency"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="NEXT"/>
+
+        </LinearLayout> <!-- End of the Parent Linear Layout -->
+    </ScrollView>
+
+</FrameLayout>
