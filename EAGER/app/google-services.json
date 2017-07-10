@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "874637689210",
+    "firebase_url": "https://eager-621db.firebaseio.com",
+    "project_id": "eager-621db",
+    "storage_bucket": "eager-621db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874637689210:android:8c66512463e97614",
+        "android_client_info": {
+          "package_name": "com.pk.eager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874637689210-4cb38kaiqmp2o11fkbni1bqh1hpq6mgc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pk.eager",
+            "certificate_hash": "bc48b9eff85788adaff3010c12bec94a8abf8278"
+          }
+        },
+        {
+          "client_id": "874637689210-6lit4d63t958lfpcqf2begi7s8vvqqln.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnyFcdqgIE2d5AJmsGeXI1PxcRrEi02VA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874637689210-6lit4d63t958lfpcqf2begi7s8vvqqln.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

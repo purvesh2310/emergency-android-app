@@ -86,7 +86,7 @@
                     style="@style/checkbox"
                     />
 
-                <CheckBox android:id="@+id/checkbox_medicalq2_c"
+                <CheckBox android:id="@+id/checkbox_fireq2_c"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hazardous Material Released/ Spilled Chemical, if known"

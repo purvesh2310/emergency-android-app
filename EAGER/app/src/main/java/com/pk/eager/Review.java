@@ -8,6 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.pk.eager.ReportObject.IncidentReport;
 
 
 /**
@@ -19,14 +26,10 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class Review extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String REPORT = "report";
+    private IncidentReport incidentReport;
+    private static final String TAG = "Review";
+    private DatabaseReference db;
 
     private OnFragmentInteractionListener mListener;
 
@@ -37,17 +40,13 @@ public class Review extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment Review.
      */
     // TODO: Rename and change types and number of parameters
-    public static Review newInstance(String param1, String param2) {
+    public static Review newInstance(IncidentReport report) {
         Review fragment = new Review();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(REPORT, report);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,9 +55,10 @@ public class Review extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+            incidentReport = getArguments().getParcelable(REPORT);
+        }else incidentReport = new IncidentReport();
+        incidentReport = Dashboard.incidentReport;
+        db = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -73,6 +73,32 @@ public class Review extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Review");
+        TextView trap = new TextView(getContext());
+        TextView medical = new TextView(getContext());
+        TextView fire = new TextView(getContext());
+        TextView police = new TextView(getContext());
+        TextView utility = new TextView(getContext());
+
+        trap.setText(incidentReport.getReport(Constant.TRAP).toString());
+        medical.setText(incidentReport.getReport(Constant.MEDICAL).toString());
+        fire.setText(incidentReport.getReport(Constant.FIRE).toString());
+        police.setText(incidentReport.getReport(Constant.POLICE).toString());
+        utility.setText(incidentReport.getReport(Constant.UTILITY).toString());
+
+        LinearLayout layout = (LinearLayout) this.getView().findViewById(R.id.view_review);
+
+        if(!trap.getText().toString().isEmpty())
+            layout.addView(trap);
+        if(!medical.getText().toString().isEmpty())
+            layout.addView(medical);
+        if(!fire.getText().toString().isEmpty())
+            layout.addView(fire);
+        if(!police.getText().toString().isEmpty())
+            layout.addView(police);
+        if(!utility.getText().toString().isEmpty())
+            layout.addView(utility);
+
+        setButtonListener();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -112,5 +138,24 @@ public class Review extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setButtonListener(){
+        Button submit = (Button) this.getView().findViewById(R.id.button_review_submit);
+        submit.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                DatabaseReference newChild = db.push();
+                newChild.child("detail").setValue(incidentReport);
+                newChild.child("coordinate").child("longtitude").setValue("2342342424");
+                newChild.child("coordinate").child("latitude").setValue("2342342424");
+                newChild.child("phone").child("latitude").setValue("2342342424");
+
+
+                Dashboard.incidentReport = new IncidentReport();
+            }
+        });
+
     }
 }

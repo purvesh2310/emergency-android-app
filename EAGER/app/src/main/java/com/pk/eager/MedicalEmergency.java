@@ -6,10 +6,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+
+import com.pk.eager.ReportObject.Choice;
+import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Report;
+
+import java.util.ArrayList;
 
 
 /**
@@ -23,16 +32,20 @@ import android.widget.Button;
 public class MedicalEmergency extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String REPORT = "report";
+    private IncidentReport incidentReport;
+    private static final String TAG = "MedicalEmergency";
+    private Report medical;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    int[] radioId = new int[]{R.id.radio_medicalq1_a, R.id.radio_medicalq1_b, R.id.radio_medicalq1_c};
+    int[] checkId = new int[]{R.id.checkbox_medicalq2_a, R.id.checkbox_medicalq2_b, R.id.checkbox_medicalq2_c,
+            R.id.checkbox_medicalq2_d, R.id.checkbox_medicalq2_d1, R.id.checkbox_medicalq2_d2, R.id.checkbox_medicalq2_d3, R.id.checkbox_medicalq2_d4};
 
     private OnFragmentInteractionListener mListener;
 
     public Button nextButton;
+
+
 
     public MedicalEmergency() {
         // Required empty public constructor
@@ -43,15 +56,13 @@ public class MedicalEmergency extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MedicalEmergency.
      */
     // TODO: Rename and change types and number of parameters
-    public static MedicalEmergency newInstance(String param1, String param2) {
+    public static MedicalEmergency newInstance(IncidentReport param1) {
         MedicalEmergency fragment = new MedicalEmergency();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(REPORT, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,9 +71,12 @@ public class MedicalEmergency extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            incidentReport = getArguments().getParcelable(REPORT);
+            Log.d(TAG, incidentReport.toString());
         }
+        else incidentReport = new IncidentReport();
+        incidentReport = Dashboard.incidentReport;
+        medical = incidentReport.getReport(Constant.MEDICAL);
     }
 
     @Override
@@ -75,6 +89,7 @@ public class MedicalEmergency extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, incidentReport.toString());
 
         getActivity().setTitle("Medical Emergency");
         setButtonListener();
@@ -120,6 +135,33 @@ public class MedicalEmergency extends Fragment {
     }
 
     public void setButtonListener(){
+        RadioButton[] r = new RadioButton[radioId.length];
+        CheckBox[] c = new CheckBox[checkId.length];
+
+        for(int i = 0; i < radioId.length; i++){
+            r[i] = getRadioButton(radioId[i]);
+            final int index = r[i].getId();
+            r[i].setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+
+                    onButtonClick(index);
+                }
+            });
+        }
+
+        for(int i = 0; i < checkId.length; i++){
+            c[i] = getCheckBox(checkId[i]);
+            final int index = c[i].getId();
+            c[i].setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    onButtonClick(index);
+                }
+            });
+        }
 
         nextButton = (Button) this.getView().findViewById(R.id.button_next_medicalEmergency);
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -127,14 +169,70 @@ public class MedicalEmergency extends Fragment {
             @Override
             public void onClick(View arg0) {
 
-                Fragment fragment = new FireEmergency();
+               onButtonClick(nextButton.getId());
+            }
+        });
+    }
+
+    public RadioButton getRadioButton(int id){
+        return (RadioButton) this.getView().findViewById(id);
+    }
+
+    public CheckBox getCheckBox(int id){
+        return (CheckBox) this.getView().findViewById(id);
+    }
+
+    public void onButtonClick(int buttonid){
+        RadioButton radio;
+        CheckBox checkBox = null;
+        switch (buttonid){
+            case R.id.radio_medicalq1_a:
+            case R.id.radio_medicalq1_b:
+            case R.id.radio_medicalq1_c:
+                radio = (RadioButton) this.getView().findViewById(buttonid);
+                if(radio.isChecked())
+                    medical.setSingleChoice(0, new Choice(radio.getText().toString(), null));
+                else
+                    medical.removeOneChoiceQuestion(0);
+                break;
+            case R.id.checkbox_medicalq2_a:
+            case R.id.checkbox_medicalq2_b:
+            case R.id.checkbox_medicalq2_c:
+                checkBox = (CheckBox) this.getView().findViewById(buttonid);
+                if (checkBox.isChecked())
+                    medical.setMultiChoice(1, new Choice(checkBox.getText().toString(), null));
+                else
+                    medical.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
+                break;
+            case R.id.checkbox_medicalq2_d:
+                checkBox = (CheckBox) this.getView().findViewById(buttonid);
+                if (checkBox.isChecked())
+                    medical.setMultiChoice(1, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
+                else
+                    medical.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
+                break;
+            case R.id.checkbox_medicalq2_d1:
+            case R.id.checkbox_medicalq2_d2:
+            case R.id.checkbox_medicalq2_d3:
+            case R.id.checkbox_medicalq2_d4:
+                CheckBox subBox = (CheckBox) this.getView().findViewById(buttonid);
+                if(checkBox!=null) {
+                    if (subBox.isChecked() && checkBox.getId() == R.id.checkbox_medicalq2_b)
+                        medical.addSubChoice(1, checkBox.getText().toString(), subBox.getText().toString());
+                    else
+                        medical.removeSubChoice(1, checkBox.getText().toString(), subBox.getText().toString());
+                }
+                break;
+            case R.id.button_next_medicalEmergency:
+                Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
                         .addToBackStack("medicalEmergency");
                 ft.commit();
-            }
-        });
+                break;
+
+        }
     }
 }

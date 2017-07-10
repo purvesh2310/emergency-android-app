@@ -1,68 +1,25 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pk.eager.Review">
+    android:padding="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Trapped: No"
-            android:textSize="16dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Injured: No"
-            android:textSize="16dp"
-           />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#c0c0c0"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Emergency Type: Utility"
-            android:textSize="16dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Power Out: Yes"
-            android:textSize="16dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Number of blocks: 5-10"
-            android:textSize="16dp"
-            />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#c0c0c0"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
+            android:orientation="vertical"
+            android:id="@+id/view_review">
+        </LinearLayout>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/button_next_trafficEmergency"
+            android:id="@+id/button_review_submit"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="SUBMIT"/>
 
     </LinearLayout>
-</FrameLayout>
+</ScrollView>
