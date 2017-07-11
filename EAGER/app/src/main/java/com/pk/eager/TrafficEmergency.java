@@ -6,10 +6,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.pk.eager.ReportObject.Choice;
+import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Report;
+
+import java.util.ArrayList;
 
 
 /**
@@ -23,14 +33,14 @@ import android.widget.Button;
 public class TrafficEmergency extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String REPORT = "report";
+    private IncidentReport incidentReport;
+    private static final String TAG = "TrafficEmergency";
+    private Report traffic;
 
     private OnFragmentInteractionListener mListener;
+    private int[] radioId = new int[]{R.id.radio_trafficq1_a1, R.id.radio_trafficq1_a2, R.id.radio_trafficq1_a3};
+    private int[] checkId = new int[]{R.id.checkbox_trafficq1_a, R.id.checkbox_trafficq1_b, R.id.checkbox_trafficq1_c};
 
     public Button nextButton;
 
@@ -41,17 +51,13 @@ public class TrafficEmergency extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment TrafficEmergency.
      */
     // TODO: Rename and change types and number of parameters
-    public static TrafficEmergency newInstance(String param1, String param2) {
+    public static TrafficEmergency newInstance(IncidentReport report) {
         TrafficEmergency fragment = new TrafficEmergency();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(REPORT, report);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,9 +66,10 @@ public class TrafficEmergency extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            incidentReport = getArguments().getParcelable(REPORT);
         }
+        incidentReport = Dashboard.incidentReport;
+        traffic = incidentReport.getReport(Constant.TRAFFIC);
     }
 
     @Override
@@ -120,21 +127,98 @@ public class TrafficEmergency extends Fragment {
     }
 
     public void setButtonListener(){
+        RadioButton[] r = new RadioButton[radioId.length];
+        CheckBox[] c = new CheckBox[checkId.length];
+
+        for(int i = 0; i < r.length; i++){
+            r[i] = getRadioButton(radioId[i]);
+            final int index = r[i].getId();
+            r[i].setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    onButtonClick(index);
+                }
+            });
+        }
+
+        for(int i = 0; i < c.length; i++){
+            c[i] = getCheckBoxButton(checkId[i]);
+            final int index = c[i].getId();
+            c[i].setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    onButtonClick(index);
+                }
+            });
+        }
 
         nextButton = (Button) this.getView().findViewById(R.id.button_next_trafficEmergency);
         nextButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
+                onButtonClick(nextButton.getId());
+            }
+        });
+    }
 
-                Fragment fragment = new UtilityEmergency();
+    public void onButtonClick(int buttonid){
+        RadioButton radio;
+        CheckBox checkBox;
+        switch (buttonid){
+            case R.id.checkbox_trafficq1_a:
+                checkBox = getCheckBoxButton(buttonid);
+                if(checkBox.isChecked()) {
+                    traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
+                    RadioGroup g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic);
+                    g.setClickable(true);
+                }else{
+                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic)).setClickable(false);
+                    traffic.removeMultiChoiceQuestion(0,new Choice(checkBox.getText().toString(), null));
+                }
+                Log.d(TAG, "Next 1" + traffic.toString());
+                break;
+            case R.id.radio_trafficq1_a1:
+            case R.id.radio_trafficq1_a2:
+            case R.id.radio_trafficq1_a3:
+                radio = getRadioButton(buttonid);
+                CheckBox box = (CheckBox)this.getView().findViewById(R.id.checkbox_trafficq1_a);
+                if(box.isChecked() && radio.isChecked()){
+                    traffic.replaceSubChoice(0,box.getText().toString(),radio.getText().toString());
+                }
+                Log.d(TAG, "Next 2" + traffic.toString());
+                break;
+            case R.id.checkbox_trafficq1_b:
+            case R.id.checkbox_trafficq1_c:
+                checkBox = getCheckBoxButton(buttonid);
+                if(checkBox.isChecked())
+                    traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
+                else traffic.removeMultiChoiceQuestion(0, new Choice(checkBox.getText().toString(), null));
+                Log.d(TAG, "Next 3" + traffic.toString());
+                break;
+            case R.id.button_next_trafficEmergency:
+                Log.d(TAG, "Next" + traffic.toString());
+                Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
                         .addToBackStack("trafficEmergency");
                 ft.commit();
-            }
-        });
+                break;
+
+        }
+
     }
+
+
+    public RadioButton getRadioButton(int id){
+        return (RadioButton) this.getView().findViewById(id);
+    }
+    public CheckBox getCheckBoxButton(int id){
+        return (CheckBox) this.getView().findViewById(id);
+    }
+
 }
