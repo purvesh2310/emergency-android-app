@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,12 +79,14 @@ public class Review extends Fragment {
         TextView fire = new TextView(getContext());
         TextView police = new TextView(getContext());
         TextView utility = new TextView(getContext());
+        TextView traffic = new TextView(getContext());
 
         trap.setText(incidentReport.getReport(Constant.TRAP).toString());
         medical.setText(incidentReport.getReport(Constant.MEDICAL).toString());
         fire.setText(incidentReport.getReport(Constant.FIRE).toString());
         police.setText(incidentReport.getReport(Constant.POLICE).toString());
         utility.setText(incidentReport.getReport(Constant.UTILITY).toString());
+        traffic.setText(incidentReport.getReport(Constant.TRAFFIC).toString());
 
         LinearLayout layout = (LinearLayout) this.getView().findViewById(R.id.view_review);
 
@@ -97,6 +100,8 @@ public class Review extends Fragment {
             layout.addView(police);
         if(!utility.getText().toString().isEmpty())
             layout.addView(utility);
+        if(!traffic.getText().toString().isEmpty())
+            layout.addView(traffic);
 
         setButtonListener();
     }
@@ -156,6 +161,22 @@ public class Review extends Fragment {
                 Dashboard.incidentReport = new IncidentReport();
             }
         });
+
+        Button additional = (Button) this.getView().findViewById(R.id.button_review_additional);
+        additional.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new IncidentType();
+                FragmentTransaction ft = getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.mainFrame, fragment)
+                        .addToBackStack("trafficEmergency");
+                ft.commit();
+            }
+        });
+
 
     }
 }

@@ -34,10 +34,13 @@ public class Question implements Parcelable {
             return "";
         String s = "";
         for(Choice c: choice){
-            s+=c.toString()+"\n";
+            s+="\t"+c.toString()+"\n";
         }
-        return question+": Yes" + "\n" + s;
+        return question + "\n" + s;
     }
+
+    public boolean empty(){return choice.size() == 0;}
+
 
     public String getQuestion(){
         return question;

@@ -11,11 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
+
+import java.util.ArrayList;
 
 
 /**
@@ -176,14 +179,29 @@ public class FireEmergency extends Fragment {
                 break;
             case R.id.checkbox_fireq2_a:
             case R.id.checkbox_fireq2_b:
-            case R.id.checkbox_fireq2_c:
                 checkBox = getCheckBox(buttonid);
                 if(checkBox.isChecked())
                     fire.setMultiChoice(1, new Choice(checkBox.getText().toString(), null));
                 else
                     fire.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString()));
                 break;
+            case R.id.checkbox_fireq2_c:
+                checkBox = getCheckBox(buttonid);
+                if(checkBox.isChecked()) {
+                    EditText edittext = (EditText) this.getView().findViewById(R.id.info_fire_emergency);
+                    edittext.setEnabled(true);
+                    fire.setMultiChoice(1, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
+                }
+                else {
+                    fire.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString()));
+                    ((EditText) this.getView().findViewById(R.id.info_fire_emergency)).setEnabled(false);
+                }
+                break;
             case R.id.button_next_fireEmergency:
+                checkBox = getCheckBox(R.id.checkbox_fireq2_c);
+                EditText edittext = (EditText) this.getView().findViewById(R.id.info_fire_emergency);
+                if(checkBox.isChecked() && !edittext.getText().toString().isEmpty())
+                    fire.addSubChoice(1, checkBox.getText().toString(), edittext.getText().toString());
                 Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()

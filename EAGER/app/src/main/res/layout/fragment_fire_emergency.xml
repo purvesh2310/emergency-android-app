@@ -99,6 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:hint="Type Name of Chemical Here"
+                    android:enabled="false"
                     />
 
             </LinearLayout> <!-- End of Question 2 Linear Layout -->

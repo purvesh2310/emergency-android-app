@@ -18,6 +18,7 @@ import android.widget.RadioButton;
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
+import com.pk.eager.ReportObject.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -91,6 +92,17 @@ public class IncidentType extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Choose Incident Type");
+        RadioButton radio;
+
+        for(int i = 0; i < 6; i++) {
+            if (Utils.hasReport(incidentReport, i)) {
+                radio = getRadioButton(id[i]);
+                radio.setVisibility(View.GONE);
+            }
+        }
+
+
+
         setButtonListener();
     }
 

@@ -216,12 +216,11 @@ public class MedicalEmergency extends Fragment {
             case R.id.checkbox_medicalq2_d3:
             case R.id.checkbox_medicalq2_d4:
                 CheckBox subBox = (CheckBox) this.getView().findViewById(buttonid);
-                if(checkBox!=null) {
-                    if (subBox.isChecked() && checkBox.getId() == R.id.checkbox_medicalq2_b)
-                        medical.addSubChoice(1, checkBox.getText().toString(), subBox.getText().toString());
-                    else
-                        medical.removeSubChoice(1, checkBox.getText().toString(), subBox.getText().toString());
-                }
+                CheckBox box = (CheckBox) this.getView().findViewById(R.id.checkbox_medicalq2_d);
+                if (box.isChecked() && subBox.isChecked())
+                    medical.addSubChoice(1, box.getText().toString(), subBox.getText().toString());
+                else if(box.isChecked() && !subBox.isChecked())
+                    medical.removeSubChoice(1, box.getText().toString(), subBox.getText().toString());
                 break;
             case R.id.button_next_medicalEmergency:
                 Fragment fragment = Review.newInstance(incidentReport);

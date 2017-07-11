@@ -19,6 +19,15 @@ public class Report implements Parcelable {
         this.questions = question;
     }
 
+    public boolean isEmpty(){
+        for(Question q : questions){
+            if(q.empty())
+                return true;
+        }
+        return false;
+    }
+
+
     //class methods
     public String getType(){
         return type;
@@ -60,9 +69,12 @@ public class Report implements Parcelable {
             questions.get(question).choice.get(c).subItems.add(subchoice);
     }
 
-    public void replaceSubChoice(int question, int choiceNum, String subchoice) {
-        questions.get(question).choice.get(choiceNum).subItems.remove(0);
-        questions.get(question).choice.get(choiceNum).subItems.add(subchoice);
+    public void replaceSubChoice(int question, String choice, String subchoice) {
+        ArrayList<String > sub = new ArrayList<>();
+        sub.add(subchoice);
+        int c = questions.get(question).choice.indexOf(new Choice(choice));
+        if(c!=-1)
+            questions.get(question).choice.get(c).subItems = sub;
     }
 
     public void removeSubChoice(int question, String choice, String subchoice){
@@ -80,7 +92,7 @@ public class Report implements Parcelable {
         }
         if(s.isEmpty())
             return "";
-        return type.toUpperCase()+"\n" + s + "\n";
+        return s;
     }
 
     //Parceble implementation

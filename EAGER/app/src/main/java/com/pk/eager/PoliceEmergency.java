@@ -148,7 +148,7 @@ public class PoliceEmergency extends Fragment {
     }
 
     public void onButtonClick(int buttonid){
-        CheckBox checkBox = getCheckBox(buttonid);
+        CheckBox checkBox;
         switch (buttonid) {
             case R.id.button_next_policeEmergency:
                 Fragment fragment = Review.newInstance(incidentReport);
@@ -158,7 +158,9 @@ public class PoliceEmergency extends Fragment {
                         .replace(R.id.mainFrame, fragment)
                         .addToBackStack("policeEmergency");
                 ft.commit();
+                break;
             default:
+                checkBox = getCheckBox(buttonid);
                 if(checkBox!=null && checkBox.isChecked())
                     police.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
                 else

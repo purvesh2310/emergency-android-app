@@ -86,4 +86,10 @@ public class Utils {
         return utility;
     }
 
+    public static boolean hasReport(IncidentReport incidentReport, int type){
+        Report report = incidentReport.getReport(type);
+        return !report.isEmpty();
+    }
+
+
 }

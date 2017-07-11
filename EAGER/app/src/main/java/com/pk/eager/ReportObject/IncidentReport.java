@@ -41,6 +41,7 @@ public class IncidentReport implements Parcelable {
 
 
 
+
     //Parceble implementation
     @Override
     public int describeContents() {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,6 @@ import android.widget.RadioGroup;
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
-
-import java.util.ArrayList;
 
 
 /**
@@ -32,16 +31,17 @@ import java.util.ArrayList;
 public class UtilityEmergency extends Fragment {
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
-    private static final String TAG = "MedicalEmergency";
+    private static final String TAG = "UtilityEmergency";
     private Report utility;
 
     private OnFragmentInteractionListener mListener;
-    private int[] checkId = new int[]{R.id.checkbox_utilityq1, R.id.checkbox_utilityq1_b, R.id.checkbox_utilityq2_a,
-                                    R.id.checkbox_utilityq3_a, R.id.checkbox_utilityq3_a, R.id.checkbox_utilityq3_b,
-                                    R.id.checkbox_utilityq4_a, R.id.checkbox_utilityq4_b};
-    private int[] radioId = new int[]{R.id.radio_utilityq1_a,R.id.radio_utilityq1_b,R.id.radio_utilityq1_c,R.id.radio_utilityq2_a,
-                                      R.id.radio_utilityq2_b, R.id.radio_utilityq2_c, R.id.radio_utilityq3_a, R.id.radio_utilityq3_b,
-                                      R.id.radio_utilityq4_a, R.id.radio_utilityq4_b, R.id.radio_utilityq4_c};
+    private int[] checkId = new int[]{R.id.checkbox_utilityq1, R.id.checkbox_utilityq1_b, R.id.checkbox_utilityq2_a, R.id.checkbox_utilityq3_a,
+                                    R.id.checkbox_utilityq3_b, R.id.checkbox_utilityq4_a, R.id.checkbox_utilityq4_b};
+    private int[] radioId = new int[]{R.id.radio_utilityq1_a, R.id.radio_utilityq1_b, R.id.radio_utilityq1_c,
+                                    R.id.radio_utilityq2_a, R.id.radio_utilityq2_b, R.id.radio_utilityq2_c,
+                                    R.id.radio_utilityq3_a, R.id.radio_utilityq3_b, R.id.radio_utilityq3_c,
+                                    R.id.radio_utilityq4_a, R.id.radio_utilityq4_b, R.id.radio_utilityq4_c,
+                                    R.id.radio_utilityq4_d, R.id.radio_utilityq4_e, R.id.radio_utilityq4_f};
 
     public Button nextButton;
 
@@ -143,9 +143,9 @@ public class UtilityEmergency extends Fragment {
             });
         }
 
-        for(int i = 0; i < r.length; i++){
-            c[i] = getCheckBoxButton(radioId[i]);
-            final int index = r[i].getId();
+        for(int i = 0; i < c.length; i++){
+            c[i] = getCheckBoxButton(checkId[i]);
+            final int index = c[i].getId();
             c[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
@@ -165,95 +165,132 @@ public class UtilityEmergency extends Fragment {
     }
 
     public void onButtonClick(int buttonid){
-        RadioButton radio = getRadioButton(buttonid);
-        CheckBox checkBox = getCheckBoxButton(buttonid);
-
+        RadioButton radio;
+        CheckBox checkBox;
         switch (buttonid){
             case R.id.checkbox_utilityq1_b:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     utility.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
                 }else utility.removeMultiChoiceQuestion(0, new Choice(checkBox.getText().toString(), null));
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq3_b:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     utility.setMultiChoice(2, new Choice(checkBox.getText().toString(), null));
                 }else utility.removeMultiChoiceQuestion(2, new Choice(checkBox.getText().toString(), null));
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq1:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility1)).setClickable(true);
-                    utility.setMultiChoice(0, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
+                    utility.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
                 }else{
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility1)).setClickable(false);
+                    utility.removeMultiChoiceQuestion(0, new Choice(checkBox.getText().toString(), null));
                 }
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq2_a:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility2)).setClickable(true);
+                    utility.setMultiChoice(1, new Choice(checkBox.getText().toString(), null));
                 }else{
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility2)).setClickable(false);
+                    utility.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
                 }
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq3_a:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility3)).setClickable(true);
+                    utility.setMultiChoice(2, new Choice(checkBox.getText().toString(), null));
                 }else{
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility3)).setClickable(false);
+                    utility.removeMultiChoiceQuestion(2, new Choice(checkBox.getText().toString(), null));
                 }
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq4_a:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility4)).setClickable(true);
+                    utility.setMultiChoice(3, new Choice(checkBox.getText().toString(), null));
                 }else{
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility4)).setClickable(false);
+                    utility.removeMultiChoiceQuestion(3, new Choice(checkBox.getText().toString(), null));
                 }
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq4_b:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()){
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility5)).setClickable(true);
+                    utility.setMultiChoice(3, new Choice(checkBox.getText().toString(), null));
                 }else{
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility5)).setClickable(false);
+                    utility.removeMultiChoiceQuestion(3, new Choice(checkBox.getText().toString(), null));
                 }
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.radio_utilityq1_a:
             case R.id.radio_utilityq1_b:
             case R.id.radio_utilityq1_c:
-                if(radio.isChecked()){
-                    utility.replaceSubChoice(0, 0, radio.getText().toString());
+                radio = getRadioButton(buttonid);
+                CheckBox box = getCheckBoxButton(R.id.checkbox_utilityq1);
+                if(box.isChecked() && radio.isChecked()){
+                    utility.replaceSubChoice(0, box.getText().toString(), radio.getText().toString());
                 }
                 break;
             case R.id.radio_utilityq2_a:
             case R.id.radio_utilityq2_b:
             case R.id.radio_utilityq2_c:
-                if(radio.isChecked())
-                    utility.replaceSubChoice(1,0, radio.getText().toString());
+                radio = getRadioButton(buttonid);
+                box = getCheckBoxButton(R.id.checkbox_utilityq2_a);
+                if(box.isChecked() && radio.isChecked())
+                    utility.replaceSubChoice(1, box.getText().toString(), radio.getText().toString());
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.radio_utilityq3_a:
             case R.id.radio_utilityq3_b:
             case R.id.radio_utilityq3_c:
-                if(radio.isChecked())
-                    utility.replaceSubChoice(2,0,radio.getText().toString());
+                radio = getRadioButton(buttonid);
+                box = getCheckBoxButton(R.id.checkbox_utilityq3_a);
+                if(box.isChecked() && radio.isChecked())
+                    utility.replaceSubChoice(2, box.getText().toString(),radio.getText().toString());
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.radio_utilityq4_a:
             case R.id.radio_utilityq4_b:
             case R.id.radio_utilityq4_c:
-                if(radio.isChecked())
-                    utility.replaceSubChoice(3, 0, radio.getText().toString());
+                radio = getRadioButton(buttonid);
+                box = getCheckBoxButton(R.id.checkbox_utilityq4_a);
+                if(box.isChecked() && radio.isChecked())
+                    utility.replaceSubChoice(3, box.getText().toString(), radio.getText().toString());
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.radio_utilityq4_d:
             case R.id.radio_utilityq4_e:
             case R.id.radio_utilityq4_f:
-                if(radio.isChecked())
-                    utility.replaceSubChoice(3, 1, radio.getText().toString());
+                radio = getRadioButton(buttonid);
+                box = getCheckBoxButton(R.id.checkbox_utilityq4_b);
+                if(box.isChecked() && radio.isChecked())
+                    utility.replaceSubChoice(3, box.getText().toString(), radio.getText().toString());
+                Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.button_next_utilityEmergency:
-                Fragment fragment = new Review();
+                Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
                         .addToBackStack("utilityEmergency");
                 ft.commit();
+                Log.d(TAG, utility.toString());
                 break;
         }
     }

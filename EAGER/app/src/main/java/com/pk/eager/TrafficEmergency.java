@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,34 +165,42 @@ public class TrafficEmergency extends Fragment {
     }
 
     public void onButtonClick(int buttonid){
-        RadioButton radio = getRadioButton(buttonid);
-        CheckBox checkBox = getCheckBoxButton(buttonid);
+        RadioButton radio;
+        CheckBox checkBox;
         switch (buttonid){
             case R.id.checkbox_trafficq1_a:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked()) {
-                    traffic.setMultiChoice(0, new Choice(radio.getText().toString(), new ArrayList<String>()));
+                    traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
                     RadioGroup g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic);
                     g.setClickable(true);
                 }else{
                     ((RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic)).setClickable(false);
-                    traffic.removeMultiChoiceQuestion(0,new Choice(radio.getText().toString(), null));
+                    traffic.removeMultiChoiceQuestion(0,new Choice(checkBox.getText().toString(), null));
                 }
+                Log.d(TAG, "Next 1" + traffic.toString());
                 break;
             case R.id.radio_trafficq1_a1:
             case R.id.radio_trafficq1_a2:
             case R.id.radio_trafficq1_a3:
-                if(radio.isChecked()){
-                    traffic.replaceSubChoice(0,1,radio.getText().toString());
+                radio = getRadioButton(buttonid);
+                CheckBox box = (CheckBox)this.getView().findViewById(R.id.checkbox_trafficq1_a);
+                if(box.isChecked() && radio.isChecked()){
+                    traffic.replaceSubChoice(0,box.getText().toString(),radio.getText().toString());
                 }
+                Log.d(TAG, "Next 2" + traffic.toString());
                 break;
             case R.id.checkbox_trafficq1_b:
             case R.id.checkbox_trafficq1_c:
+                checkBox = getCheckBoxButton(buttonid);
                 if(checkBox.isChecked())
                     traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
                 else traffic.removeMultiChoiceQuestion(0, new Choice(checkBox.getText().toString(), null));
+                Log.d(TAG, "Next 3" + traffic.toString());
                 break;
             case R.id.button_next_trafficEmergency:
-                Fragment fragment = new Review();
+                Log.d(TAG, "Next" + traffic.toString());
+                Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
