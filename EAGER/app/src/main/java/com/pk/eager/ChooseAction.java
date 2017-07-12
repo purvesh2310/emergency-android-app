@@ -129,6 +129,15 @@ public class ChooseAction extends Fragment {
             @Override
             public void onClick(View arg0) {
 
+                Fragment fragment = new Information();
+                FragmentTransaction ft = getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.mainFrame, fragment)
+                        .addToBackStack("information");
+
+                ft.commit();
+
             }
         });
 

@@ -22,9 +22,11 @@ public class Dashboard extends AppCompatActivity
         PoliceEmergency.OnFragmentInteractionListener,
         TrafficEmergency.OnFragmentInteractionListener,
         UtilityEmergency.OnFragmentInteractionListener,
-        Review.OnFragmentInteractionListener{
+        Review.OnFragmentInteractionListener,
+        Information.OnFragmentInteractionListener{
 
     public Fragment fragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
