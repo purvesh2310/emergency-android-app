@@ -65,6 +65,7 @@ public class PoliceEmergency extends Fragment {
         if (getArguments() != null) {
             incidentReport = getArguments().getParcelable(REPORT);
         }else incidentReport = new IncidentReport();
+        incidentReport = Dashboard.incidentReport;
         police = incidentReport.getReport(Constant.POLICE);
     }
 

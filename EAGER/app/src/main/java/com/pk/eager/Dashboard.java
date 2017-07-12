@@ -28,6 +28,7 @@ public class Dashboard extends AppCompatActivity
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
+    public static Fragment incidentType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -135,7 +135,12 @@ public class ChooseAction extends Fragment {
             @Override
             public void onClick(View arg0) {
 
-                Fragment fragment = new IncidentType();
+                Fragment fragment = Dashboard.incidentType;
+                if(fragment == null) {
+                    Dashboard.incidentType = new IncidentType();
+                    fragment = Dashboard.incidentType;
+                }
+
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()

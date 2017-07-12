@@ -1,11 +1,13 @@
 package com.pk.eager;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -151,14 +153,29 @@ public class Review extends Fragment {
 
             @Override
             public void onClick(View v) {
-                DatabaseReference newChild = db.push();
-                newChild.child("detail").setValue(incidentReport);
-                newChild.child("coordinate").child("longtitude").setValue("2342342424");
-                newChild.child("coordinate").child("latitude").setValue("2342342424");
-                newChild.child("phone").child("latitude").setValue("2342342424");
+                AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+                dialog.setTitle("Submit Report");
+                dialog.setMessage("Submit the report?");
+                dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                DatabaseReference newChild = db.push();
+                                newChild.child("detail").setValue(incidentReport);
+                                newChild.child("coordinate").child("longtitude").setValue("2342342424");
+                                newChild.child("coordinate").child("latitude").setValue("2342342424");
+                                newChild.child("phone").child("latitude").setValue("2342342424");
+                                Dashboard.incidentReport = new IncidentReport();
+                            }
+                        });
+                dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show();
 
 
-                Dashboard.incidentReport = new IncidentReport();
             }
         });
 
@@ -167,12 +184,12 @@ public class Review extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Fragment fragment = new IncidentType();
+                Fragment fragment = Dashboard.incidentType;
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
-                        .addToBackStack("trafficEmergency");
+                        .addToBackStack("review");
                 ft.commit();
             }
         });
