@@ -25,7 +25,7 @@
                     android:text="1. Power"
                     style="@style/question"/>
 
-                <CheckBox android:id="@+id/checkbox_utilityq1_a"
+                <CheckBox android:id="@+id/checkbox_utilityq1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Power Out"
@@ -47,23 +47,24 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:id="@+id/radioGroup_utility1">
 
-                        <RadioButton android:id="@+id/radio_utilityq1_b"
+                        <RadioButton android:id="@+id/radio_utilityq1_a"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_utilityq1_c"
+                        <RadioButton android:id="@+id/radio_utilityq1_b"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="2-5"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_utilityq1_d"
+                        <RadioButton android:id="@+id/radio_utilityq1_c"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="More Than 5"
@@ -74,7 +75,7 @@
 
                 </LinearLayout>
 
-                <CheckBox android:id="@+id/checkbox_utilityq1_e"
+                <CheckBox android:id="@+id/checkbox_utilityq1_b"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Power Line Down"
@@ -123,23 +124,25 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:id="@+id/radioGroup_utility2"
+                        android:clickable="false">
 
-                        <RadioButton android:id="@+id/radio_utilityq2_b"
+                        <RadioButton android:id="@+id/radio_utilityq2_a"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_utilityq2_c"
+                        <RadioButton android:id="@+id/radio_utilityq2_b"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="2-5"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_utilityq2_d"
+                        <RadioButton android:id="@+id/radio_utilityq2_c"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="More Than 5"
@@ -193,23 +196,25 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:id="@+id/radioGroup_utility3"
+                        android:clickable="false">
 
-                        <RadioButton android:id="@+id/radio_utilityq3_b"
+                        <RadioButton android:id="@+id/radio_utilityq3_a"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_utilityq3_c"
+                        <RadioButton android:id="@+id/radio_utilityq3_b"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="2-5"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_utilityq3_d"
+                        <RadioButton android:id="@+id/radio_utilityq3_c"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="More Than 5"
@@ -220,7 +225,7 @@
 
                 </LinearLayout>
 
-                <CheckBox android:id="@+id/checkbox_utilityq3_e"
+                <CheckBox android:id="@+id/checkbox_utilityq3_b"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Gas Line on Fire"
@@ -269,7 +274,9 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:id="@+id/radioGroup_utility4"
+                        android:clickable="false">
 
                         <RadioButton android:id="@+id/radio_utilityq4_a"
                             android:layout_width="wrap_content"
@@ -318,7 +325,9 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:id="@+id/radioGroup_utility5"
+                        android:clickable="false">
 
                         <RadioButton android:id="@+id/radio_utilityq4_d"
                             android:layout_width="wrap_content"

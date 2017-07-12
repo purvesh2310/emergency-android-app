@@ -13,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.pk.eager.ReportObject.IncidentReport;
+
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ChooseAction.OnFragmentInteractionListener,
@@ -26,6 +28,7 @@ public class Dashboard extends AppCompatActivity
         Information.OnFragmentInteractionListener{
 
     public Fragment fragment;
+    public static IncidentReport incidentReport = new IncidentReport("bla");
 
 
     @Override
@@ -43,6 +46,8 @@ public class Dashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
 
         if(savedInstanceState == null) {
             fragment = new ChooseAction();

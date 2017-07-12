@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.pk.eager.IncidentType;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -77,8 +75,8 @@ public class ChooseAction extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         getActivity().setTitle("Choose Action");
+
         // To set onClick Listener on the Info and Report button
         setButtonListener();
     }

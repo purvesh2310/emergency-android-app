@@ -10,6 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+
+import com.pk.eager.ReportObject.Choice;
+import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Report;
+
+import java.util.ArrayList;
 
 
 /**
@@ -21,14 +30,14 @@ import android.widget.Button;
  * create an instance of this fragment.
  */
 public class FireEmergency extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String REPORT = "report";
+    private IncidentReport incidentReport;
+    private static final String TAG = "FireEmergency";
+    private Report fire;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int[] radioId = new int[]{R.id.radio_fireq1_a, R.id.radio_fireq1_b, R.id.radio_fireq1_c};
+    private int[] checkId = new int[]{R.id.checkbox_fireq2_a, R.id.checkbox_fireq2_b, R.id.checkbox_fireq2_c};
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -41,17 +50,13 @@ public class FireEmergency extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment FireEmergency.
      */
     // TODO: Rename and change types and number of parameters
-    public static FireEmergency newInstance(String param1, String param2) {
+    public static FireEmergency newInstance(IncidentReport report) {
         FireEmergency fragment = new FireEmergency();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(REPORT, report);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,9 +65,10 @@ public class FireEmergency extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            incidentReport = getArguments().getParcelable(REPORT);
         }
+        else incidentReport = new IncidentReport();
+        fire = incidentReport.getReport(Constant.FIRE);
     }
 
     @Override
@@ -120,21 +126,103 @@ public class FireEmergency extends Fragment {
     }
 
     public void setButtonListener(){
+        RadioButton[] r = new RadioButton[radioId.length];
+        CheckBox[] c = new CheckBox[checkId.length];
+
+        for(int i = 0; i < r.length; i++){
+            r[i] = getRadioButton(radioId[i]);
+            final int index = r[i].getId();
+            r[i].setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                onButtonClick(index);
+                }
+            });
+        }
+
+        for(int i = 0; i < c.length; i++){
+            c[i] = getCheckBox(checkId[i]);
+            final int index = c[i].getId();
+            c[i].setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    onButtonClick(index);
+                }
+            });
+        }
 
         nextButton = (Button) this.getView().findViewById(R.id.button_next_fireEmergency);
         nextButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
+               onButtonClick(nextButton.getId());
+            }
+        });
+    }
 
-                Fragment fragment = new PoliceEmergency();
+    public void onButtonClick(int buttonid){
+        RadioButton radio;
+        CheckBox checkBox;
+
+        switch (buttonid){
+            case R.id.radio_fireq1_a:
+            case R.id.radio_fireq1_b:
+            case R.id.radio_fireq1_c:
+                radio = getRadioButton(buttonid);
+                if(radio.isChecked())
+                    fire.setSingleChoice(0, new Choice(radio.getText().toString(), null));
+                else
+                    fire.removeOneChoiceQuestion(0);
+                break;
+            case R.id.checkbox_fireq2_a:
+            case R.id.checkbox_fireq2_b:
+                checkBox = getCheckBox(buttonid);
+                if(checkBox.isChecked())
+                    fire.setMultiChoice(1, new Choice(checkBox.getText().toString(), null));
+                else
+                    fire.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString()));
+                break;
+            case R.id.checkbox_fireq2_c:
+                checkBox = getCheckBox(buttonid);
+                if(checkBox.isChecked()) {
+                    EditText edittext = (EditText) this.getView().findViewById(R.id.info_fire_emergency);
+                    edittext.setEnabled(true);
+                    fire.setMultiChoice(1, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
+                }
+                else {
+                    fire.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString()));
+                    ((EditText) this.getView().findViewById(R.id.info_fire_emergency)).setEnabled(false);
+                }
+                break;
+            case R.id.button_next_fireEmergency:
+                checkBox = getCheckBox(R.id.checkbox_fireq2_c);
+                EditText edittext = (EditText) this.getView().findViewById(R.id.info_fire_emergency);
+                if(checkBox.isChecked() && !edittext.getText().toString().isEmpty())
+                    fire.addSubChoice(1, checkBox.getText().toString(), edittext.getText().toString());
+                Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
                         .addToBackStack("fireEmergency");
                 ft.commit();
-            }
-        });
+                break;
+        }
+
+
+
+    }
+
+
+
+    public RadioButton getRadioButton(int id){
+        return (RadioButton) this.getView().findViewById(id);
+    }
+
+    public CheckBox getCheckBox(int id){
+        return (CheckBox) this.getView().findViewById(id);
     }
 }

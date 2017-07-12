@@ -47,23 +47,25 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:clickable="false"
+                        android:id="@+id/radioGroup_traffic">
 
-                        <RadioButton android:id="@+id/radio_medicalq1_a"
+                        <RadioButton android:id="@+id/radio_trafficq1_a1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_medicalq1_b"
+                        <RadioButton android:id="@+id/radio_trafficq1_a2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="2-5"
                             style="@style/radioButton"
                             />
 
-                        <RadioButton android:id="@+id/radio_medicalq1_c"
+                        <RadioButton android:id="@+id/radio_trafficq1_a3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="More Than 5"
