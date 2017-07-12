@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 
 public class IncidentReport implements Parcelable {
-    ArrayList<Report> reports;
+
+    public ArrayList<Report> reports;
 
     public IncidentReport(){}
 
@@ -37,12 +38,7 @@ public class IncidentReport implements Parcelable {
         return s;
     }
 
-
-
-
-
-
-    //Parceble implementation
+    //Parceable implementation
     @Override
     public int describeContents() {
         return 0;
