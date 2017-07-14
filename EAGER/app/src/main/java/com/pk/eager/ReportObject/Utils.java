@@ -91,5 +91,34 @@ public class Utils {
         return !report.isEmpty();
     }
 
+    public static IncidentReport compacitize(IncidentReport incidentReport){
+        ArrayList<Report> r = incidentReport.reports;
+        IncidentReport report = new IncidentReport();
+        report.reports = new ArrayList<Report>();
+        for(int i = 0; i < r.size(); i++){
+            if(!r.get(i).isEmpty()){
+                //remove question without answer
+                stripQuestion(r.get(i));
+                report.reports.add(r.get(i));
+            }
+        }
+        return report;
+    }
+
+    public static void stripQuestion(Report report){
+        for(Question q : report.questions){
+            if(q.choice.size() == 0)
+                report.questions.remove(q);
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 }

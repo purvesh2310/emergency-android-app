@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -15,9 +16,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Utils;
 
 
 /**
@@ -160,11 +164,20 @@ public class Review extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference newChild = db.push();
-                                newChild.child("detail").setValue(incidentReport);
-                                newChild.child("coordinate").child("longtitude").setValue("2342342424");
-                                newChild.child("coordinate").child("latitude").setValue("2342342424");
-                                newChild.child("phone").child("latitude").setValue("2342342424");
-                                Dashboard.incidentReport = new IncidentReport();
+                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), 37.323988, -121.945524, "4089299999");
+                                newChild.setValue(compact, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        Dashboard.incidentReport = new IncidentReport("bla");
+                                        Dashboard.incidentType = null;
+                                        Fragment fragment = new ChooseAction();
+                                        FragmentTransaction ft = getActivity()
+                                                .getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.mainFrame, fragment);
+                                        ft.commit();
+                                    }
+                                });
                             }
                         });
                 dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
@@ -174,8 +187,6 @@ public class Review extends Fragment {
                             }
                         });
                 dialog.show();
-
-
             }
         });
 
@@ -194,6 +205,13 @@ public class Review extends Fragment {
             }
         });
 
+
+    }
+
+    public void onDestroy(){
+        super.onDestroy();
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
     }
 }
