@@ -168,14 +168,10 @@ public class Review extends Fragment {
                                 newChild.setValue(compact, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        Dashboard.incidentReport = new IncidentReport("bla");
                                         Dashboard.incidentType = null;
-                                        Fragment fragment = new ChooseAction();
-                                        FragmentTransaction ft = getActivity()
-                                                .getSupportFragmentManager()
-                                                .beginTransaction()
-                                                .replace(R.id.mainFrame, fragment);
-                                        ft.commit();
+                                        Dashboard.incidentReport = new IncidentReport("Bla");
+                                        getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                                     }
                                 });
                             }
@@ -205,13 +201,6 @@ public class Review extends Fragment {
             }
         });
 
-
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
     }
 }
