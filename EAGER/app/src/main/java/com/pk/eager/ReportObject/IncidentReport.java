@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class IncidentReport implements Parcelable {
 
-    public ArrayList<Report> reports;
+    ArrayList<Report> reports = new ArrayList<>();
 
     public IncidentReport(){}
 
@@ -38,7 +38,8 @@ public class IncidentReport implements Parcelable {
         return s;
     }
 
-    //Parceable implementation
+    //Parceble implementation
+
     @Override
     public int describeContents() {
         return 0;

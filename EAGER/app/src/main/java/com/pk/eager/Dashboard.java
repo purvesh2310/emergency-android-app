@@ -29,6 +29,7 @@ public class Dashboard extends AppCompatActivity
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
+    public static Fragment incidentType;
 
 
     @Override
@@ -120,5 +121,8 @@ public class Dashboard extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
         // Do Nothing
     }
+
+
+
 
 }

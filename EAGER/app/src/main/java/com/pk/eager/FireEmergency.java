@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,13 +69,13 @@ public class FireEmergency extends Fragment {
             incidentReport = getArguments().getParcelable(REPORT);
         }
         else incidentReport = new IncidentReport();
+        incidentReport = Dashboard.incidentReport;
         fire = incidentReport.getReport(Constant.FIRE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_fire_emergency, container, false);
     }
 
@@ -85,6 +86,20 @@ public class FireEmergency extends Fragment {
         getActivity().setTitle("Fire Emergency");
         setButtonListener();
     }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null) {
+            for (int i = 0; i < radioId.length; i++) {
+                RadioButton radio = getRadioButton(radioId[i]);
+                Log.d(TAG, " id is " + radioId[i] + "");
+                int id = savedInstanceState.getInt(radioId[i] + "");
+                if (id != 0)
+                    radio.setChecked(true);
+            }
+        }
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

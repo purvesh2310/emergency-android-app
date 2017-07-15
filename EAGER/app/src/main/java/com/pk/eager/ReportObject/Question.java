@@ -27,6 +27,15 @@ public class Question implements Parcelable {
         choice = new ArrayList<Choice>();
     }
 
+    public String getChoices(){
+        String s = "";
+        for(Choice c: choice){
+            s+= c.toString()+"/";
+        }
+        return s;
+    }
+
+
 
     //class methods
     public String toString(){
@@ -50,8 +59,13 @@ public class Question implements Parcelable {
         return choice;
     }
 
-    public int numAnswer(){
-        return choice.size();
+    public boolean equals(Object obj){
+        if(this == obj) return true;
+        if(obj == null) return false;
+        if(obj.getClass() != this.getClass()) return false;
+
+        Question q = (Question) obj;
+        return q.question == this.question;
     }
 
 

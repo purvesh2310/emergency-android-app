@@ -15,61 +15,61 @@
             android:text="Select the type of the incident you want to report:"
             style="@style/question"/>
 
-        <RadioGroup
+        <!--RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
+            !-->
 
-            <RadioButton android:id="@+id/radio_incidentType_trapped"
+            <CheckBox android:id="@+id/radio_incidentType_trapped"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="I am trapped"
                 style="@style/radioButton"
                />
 
-            <RadioButton android:id="@+id/radio_incidentType_medical"
+            <CheckBox android:id="@+id/radio_incidentType_medical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Medical"
                 style="@style/radioButton"
                 />
 
-            <RadioButton android:id="@+id/radio_incidentType_fire"
+            <CheckBox android:id="@+id/radio_incidentType_fire"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fire"
                 style="@style/radioButton"
                 />
 
-            <RadioButton android:id="@+id/radio_incidentType_police"
+            <CheckBox android:id="@+id/radio_incidentType_police"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Police"
                 style="@style/radioButton"
                 />
 
-            <RadioButton android:id="@+id/radio_incidentType_traffic"
+            <CheckBox android:id="@+id/radio_incidentType_traffic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Traffic"
                 style="@style/radioButton"
                 />
 
-            <RadioButton android:id="@+id/radio_incidentType_utility"
+            <CheckBox android:id="@+id/radio_incidentType_utility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Utility"
                 style="@style/radioButton"
                 />
 
-            <RadioButton android:id="@+id/radio_incidentType_other"
+            <CheckBox android:id="@+id/radio_incidentType_other"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Other (Please Specify)"
                 style="@style/radioButton"
                 />
-        </RadioGroup>
+        <!--/RadioGroup-->
 
         <EditText
             android:id="@+id/info_other_incidentType"

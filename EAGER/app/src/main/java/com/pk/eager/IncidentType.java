@@ -8,17 +8,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RadioButton;
+import android.widget.CheckBox;
 
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
-import com.pk.eager.ReportObject.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,8 +43,7 @@ public class IncidentType extends Fragment {
     private int[] id = new int[]{R.id.radio_incidentType_trapped, R.id.radio_incidentType_medical, R.id.radio_incidentType_fire,
                                 R.id.radio_incidentType_police, R.id.radio_incidentType_traffic, R.id.radio_incidentType_utility,
                                 R.id.radio_incidentType_other, R.id.button_next_incidentType};
-
-
+    private Fragment[] fragments = new Fragment[6];
 
     public IncidentType() {
         // Required empty public constructor
@@ -77,13 +74,33 @@ public class IncidentType extends Fragment {
         }
         if(incidentReport==null)
             incidentReport = Dashboard.incidentReport;
+
+        for(int i = 0; i < fragments.length; i++){
+            switch (i){
+                case Constant.MEDICAL:
+                    fragments[Constant.MEDICAL] = new MedicalEmergency();
+                    break;
+                case Constant.FIRE:
+                    fragments[Constant.FIRE] = new FireEmergency();
+                    break;
+                case Constant.POLICE:
+                    fragments[Constant.POLICE] = new PoliceEmergency();
+                    break;
+                case Constant.TRAFFIC:
+                    fragments[Constant.TRAFFIC] = new TrafficEmergency();
+                    break;
+                case Constant.UTILITY:
+                    fragments[Constant.UTILITY] = new UtilityEmergency();
+                    break;
+            }
+
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d(TAG, incidentReport.toString());
         return inflater.inflate(R.layout.fragment_incident_type, container, false);
     }
 
@@ -92,19 +109,37 @@ public class IncidentType extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Choose Incident Type");
-        RadioButton radio;
-
-        for(int i = 0; i < 6; i++) {
-            if (Utils.hasReport(incidentReport, i)) {
-                radio = getRadioButton(id[i]);
-                radio.setVisibility(View.GONE);
-            }
-        }
-
-
-
         setButtonListener();
     }
+/*
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        for(int i = 0; i < id.length; i++){
+            if(getRadioButton(id[i]).isChecked()) {
+                outState.putInt(id[i] + "", id[i]);
+                Log.d(TAG, "saved ");
+            }
+        }
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null) {
+            for(int i = 0; i < id.length; i++){
+                int radioid = savedInstanceState.getInt(id[i]+"");
+                if(radioid!=0) {
+                    getRadioButton(radioid).setChecked(true);
+                    Log.d(TAG, getRadioButton(radioid).getText().toString());
+                }
+            }
+        }
+    }
+
+*/
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -147,9 +182,9 @@ public class IncidentType extends Fragment {
 
 
     public void setButtonListener(){
-        RadioButton[] b = new RadioButton[7];
+        CheckBox[] b = new CheckBox[7];
         for(int i = 0; i < 6; i++){
-            b[i] = getRadioButton(id[i]);
+            b[i] = getCheckBoxButton(id[i]);
             final int index = b[i].getId();
             b[i].setOnClickListener(new View.OnClickListener() {
 
@@ -169,17 +204,35 @@ public class IncidentType extends Fragment {
         });
     }
 
-    public RadioButton getRadioButton(int id){
-        return (RadioButton) this.getView().findViewById(id);
+    public CheckBox getCheckBoxButton(int id){
+        return (CheckBox) this.getView().findViewById(id);
     }
 
-    public void startFragment(Fragment fragment){
+    public void startFragment(Fragment fragment, int i){
+        if(fragment == null)
+            fragment = makeFragment(i);
         FragmentTransaction ft = getActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.mainFrame, fragment)
                 .addToBackStack("incidentType");
         ft.commit();
+    }
+
+    public Fragment makeFragment(int i){
+        switch (i){
+            case Constant.MEDICAL:
+                return new MedicalEmergency();
+            case Constant.FIRE:
+                return new FireEmergency();
+            case Constant.POLICE:
+                return new PoliceEmergency();
+            case Constant.TRAFFIC:
+                return new TrafficEmergency();
+            case Constant.UTILITY:
+                return new UtilityEmergency();
+        }
+        return null;
     }
 
     public void showTrappedDialog(){
@@ -191,8 +244,7 @@ public class IncidentType extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         Report trap = incidentReport.getReport(Constant.TRAP);
                         trap.setSingleChoice(0, new Choice("Yes", null));
-                        Fragment fragment = MedicalEmergency.newInstance(incidentReport);
-                        startFragment(fragment);
+                        startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                         dialog.dismiss();
                     }
                 });
@@ -206,38 +258,31 @@ public class IncidentType extends Fragment {
     }
 
     public void onButtonClick(int buttonid){
-        Fragment fragment = null;
         switch (buttonid){
             case R.id.radio_incidentType_trapped:
                 showTrappedDialog();
                 break;
             case R.id.radio_incidentType_medical:
-                fragment = MedicalEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
             case R.id.radio_incidentType_fire:
-                fragment = FireEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                startFragment(fragments[Constant.FIRE], Constant.FIRE);
                 break;
             case R.id.radio_incidentType_police:
-                fragment = PoliceEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                startFragment(fragments[Constant.POLICE], Constant.POLICE);
                 break;
             case R.id.radio_incidentType_traffic:
-                fragment = TrafficEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                startFragment(fragments[Constant.TRAFFIC], Constant.TRAFFIC);
                 break;
             case R.id.radio_incidentType_utility:
-                fragment = UtilityEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                startFragment(fragments[Constant.UTILITY], Constant.UTILITY);
                 break;
             case R.id.radio_incidentType_other:
-                fragment = MedicalEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                Fragment fragment = MedicalEmergency.newInstance(incidentReport);
+                startFragment(fragments[Constant.FIRE], Constant.FIRE);
                 break;
             case R.id.button_next_incidentType:
-                fragment = MedicalEmergency.newInstance(incidentReport);
-                startFragment(fragment);
+                startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
 
         }

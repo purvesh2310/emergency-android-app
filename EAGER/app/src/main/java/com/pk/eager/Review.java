@@ -1,13 +1,19 @@
 package com.pk.eager;
 
 import android.content.Context;
+
+import android.content.DialogInterface;
+
 import android.graphics.Color;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +21,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Utils;
 
 
 /**
@@ -173,14 +182,32 @@ public class Review extends Fragment {
 
             @Override
             public void onClick(View v) {
-                DatabaseReference newChild = db.push();
-                newChild.child("detail").setValue(incidentReport);
-                newChild.child("coordinate").child("longtitude").setValue("2342342424");
-                newChild.child("coordinate").child("latitude").setValue("2342342424");
-                newChild.child("phone").child("latitude").setValue("2342342424");
+                AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+                dialog.setTitle("Submit Report");
+                dialog.setMessage("Submit the report?");
+                dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                DatabaseReference newChild = db.push();
+                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), 37.323988, -121.945524, "4089299999");
+                                newChild.setValue(compact, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        Dashboard.incidentType = null;
+                                        Dashboard.incidentReport = new IncidentReport("Bla");
+                                        getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-
-                Dashboard.incidentReport = new IncidentReport();
+                                    }
+                                });
+                            }
+                        });
+                dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show();
             }
         });
 
@@ -189,12 +216,12 @@ public class Review extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Fragment fragment = new IncidentType();
+                Fragment fragment = Dashboard.incidentType;
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
-                        .addToBackStack("trafficEmergency");
+                        .addToBackStack("review");
                 ft.commit();
             }
         });
