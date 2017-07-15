@@ -1,7 +1,9 @@
 package com.pk.eager;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -74,12 +76,21 @@ public class Review extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Review");
+
         TextView trap = new TextView(getContext());
         TextView medical = new TextView(getContext());
         TextView fire = new TextView(getContext());
         TextView police = new TextView(getContext());
         TextView utility = new TextView(getContext());
         TextView traffic = new TextView(getContext());
+
+        formatReviewInformationTextView(trap);
+        formatReviewInformationTextView(medical);
+        formatReviewInformationTextView(fire);
+        formatReviewInformationTextView(police);
+        formatReviewInformationTextView(utility);
+        formatReviewInformationTextView(traffic);
+
 
         trap.setText(incidentReport.getReport(Constant.TRAP).toString());
         medical.setText(incidentReport.getReport(Constant.MEDICAL).toString());
@@ -90,19 +101,30 @@ public class Review extends Fragment {
 
         LinearLayout layout = (LinearLayout) this.getView().findViewById(R.id.view_review);
 
-        if(!trap.getText().toString().isEmpty())
+        if(!trap.getText().toString().isEmpty()) {
             layout.addView(trap);
-        if(!medical.getText().toString().isEmpty())
+            layout.addView(getHorizontalSeparatorView());
+        }
+        if(!medical.getText().toString().isEmpty()) {
             layout.addView(medical);
-        if(!fire.getText().toString().isEmpty())
+            layout.addView(getHorizontalSeparatorView());
+        }
+        if(!fire.getText().toString().isEmpty()) {
             layout.addView(fire);
-        if(!police.getText().toString().isEmpty())
+            layout.addView(getHorizontalSeparatorView());
+        }
+        if(!police.getText().toString().isEmpty()) {
             layout.addView(police);
-        if(!utility.getText().toString().isEmpty())
+            layout.addView(getHorizontalSeparatorView());
+        }
+        if(!utility.getText().toString().isEmpty()) {
             layout.addView(utility);
-        if(!traffic.getText().toString().isEmpty())
+            layout.addView(getHorizontalSeparatorView());
+        }
+        if(!traffic.getText().toString().isEmpty()) {
             layout.addView(traffic);
-
+            layout.addView(getHorizontalSeparatorView());
+        }
         setButtonListener();
     }
 
@@ -178,5 +200,26 @@ public class Review extends Fragment {
         });
 
 
+    }
+
+    // Formats the TextView to show in Review Screen
+    public void formatReviewInformationTextView(TextView textView){
+
+        if (Build.VERSION.SDK_INT < 23) {
+            textView.setTextAppearance(getContext(), R.style.question);
+        } else {
+            textView.setTextAppearance(R.style.question);
+        }
+    }
+
+    public View getHorizontalSeparatorView(){
+
+        View view = new View(getContext());
+        view.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,3
+        ));
+        view.setBackgroundColor(Color.parseColor("#c0c0c0"));
+
+        return view;
     }
 }

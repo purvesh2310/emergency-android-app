@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="radioButton">#A9A9A9</color>
     <color name="checkBox">#A9A9A9</color>
+    <color name="reviewFonts">#2F4F4F</color>
 </resources>
