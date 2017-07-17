@@ -9,12 +9,19 @@ import java.util.Map;
  */
 
 public class CompactReport {
-    Map<String, ArrayList<String>> compactReports = new HashMap<>();
-    Double longitude;
-    Double latitude;
-    String phoneNumber;
+
+    public Map<String, ArrayList<String>> compactReports = new HashMap<>();
+
+    public Double longitude;
+    public Double latitude;
+    public String phoneNumber;
+
+    public CompactReport(){
+
+    }
 
     public CompactReport(IncidentReport incidentReport, Double longitude, Double latitude, String phone){
+
         for(Report r : incidentReport.reports){
             ArrayList<String> questions = new ArrayList<>();
             for(Question q : r.questions){
@@ -22,6 +29,8 @@ public class CompactReport {
             }
             compactReports.put(r.getType(), questions);
         }
+
+
         this.longitude = longitude;
         this.latitude = latitude;
         this.phoneNumber = phone;

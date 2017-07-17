@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Utils {
 
     public static Report buildTrapReport(){
-        Report trap = new Report("trap", new ArrayList<Question>());
+        Report trap = new Report("Trapped", new ArrayList<Question>());
         Question q = new Question();
         q.question = "Trapped";
         trap.addReportItem(q);
@@ -17,7 +17,7 @@ public class Utils {
     }
 
     public static Report buildMedicalReport(){
-        Report medical = new Report("medical", new ArrayList<Question>());
+        Report medical = new Report("Medical", new ArrayList<Question>());
 
         Question q1 = new Question();
         q1.question  = "Number of Injured patients";
@@ -30,7 +30,7 @@ public class Utils {
     }
 
     public static Report buildFireReport(){
-        Report fire = new Report("fire", new ArrayList<Question>());
+        Report fire = new Report("Fire", new ArrayList<Question>());
 
         Question q1 = new Question();
         q1.question = "Number of building on fire";
@@ -44,7 +44,7 @@ public class Utils {
     }
 
     public static Report buildPoliceReport() {
-        Report police = new Report("police", new ArrayList<Question>());
+        Report police = new Report("Police", new ArrayList<Question>());
 
         Question q1 = new Question();
         q1.question = "Select appropriate option";

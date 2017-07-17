@@ -38,6 +38,7 @@ import com.pk.eager.ReportObject.Utils;
  * create an instance of this fragment.
  */
 public class Review extends Fragment {
+
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
     private static final String TAG = "Review";
