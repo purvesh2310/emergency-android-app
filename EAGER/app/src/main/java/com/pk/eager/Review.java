@@ -2,11 +2,14 @@ package com.pk.eager;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,12 +26,16 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pk.eager.LocationUtils.GeoConstant;
+import com.pk.eager.LocationUtils.GeocodeIntentService;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
 
 /**
@@ -45,9 +52,9 @@ public class Review extends Fragment {
     private IncidentReport incidentReport;
     private static final String TAG = "Review";
     private DatabaseReference db;
-
-
+    private AddressResultReceiver resultReceiver;
     private OnFragmentInteractionListener mListener;
+    private Location location;
 
     public Review() {
         // Required empty public constructor
@@ -75,7 +82,22 @@ public class Review extends Fragment {
         }else incidentReport = new IncidentReport();
         incidentReport = Dashboard.incidentReport;
         db = FirebaseDatabase.getInstance().getReference();
+        Location location = Dashboard.location;
+        resultReceiver = new AddressResultReceiver(null);
+
+
     }
+
+    public void getAddress(){
+        Log.d(TAG, "Starting service");
+        Intent intent = new Intent(this.getActivity(), GeocodeIntentService.class);
+        intent.putExtra(GeoConstant.RECEIVER, resultReceiver);
+        intent.putExtra(GeoConstant.FETCH_TYPE_EXTRA, GeoConstant.COORDINATE);
+        intent.putExtra(GeoConstant.LOCATION_DATA_EXTRA, location);
+        Log.d(TAG, location.getLongitude()+"");
+        getActivity().startService(intent);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -194,25 +216,14 @@ public class Review extends Fragment {
                 dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                DatabaseReference newChild = db.push();
-
                                 double longitude = 200, latitude = 200;
-                                Location location = Dashboard.location;
-                                if(location!=null){
-                                    latitude = location.getLatitude();
-                                    longitude = location.getLongitude();
+                                location = Dashboard.location;
+                                Log.d(TAG, "Button pressed");
+                                if(location!=null) {
+                                    Log.d(TAG, "Location not null");
+                                    getAddress();
                                 }
-                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), longitude, latitude, "4089299999");
 
-                                newChild.setValue(compact, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        Dashboard.incidentType = null;
-                                        Dashboard.incidentReport = new IncidentReport("Bla");
-                                        getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                                    }
-                                });
                             }
                         });
                 dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
@@ -273,5 +284,45 @@ public class Review extends Fragment {
         Log.d(TAG, "Push notification " + key);
         notificationRef.push().setValue(notification);
 
+    }
+
+
+    class AddressResultReceiver extends android.os.ResultReceiver {
+        public AddressResultReceiver(Handler handler){
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, final Bundle resultData) {
+            Log.d(TAG, "onReceiveResult");
+            if (resultCode == GeoConstant.SUCCESS_RESULT) { //when the thing is done, result is passed back here
+                final Address address = resultData.getParcelable(GeoConstant.RESULT_DATA); //this retrieve the address
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {  //this part is where you put whatever you want to do
+                        Log.d(TAG, "In thead");
+                        final String zipcode = address.getPostalCode();
+                        DatabaseReference newChild = db.push();
+                        final String key = newChild.getKey();
+                        CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), location.getLongitude(), location.getLatitude(), "4089299999");
+                        sendNotificationToZipCode(zipcode, key);
+
+                        newChild.setValue(compact, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                Dashboard.incidentType = null;
+                                Dashboard.incidentReport = new IncidentReport("Bla");
+
+                                getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                            }
+                        });
+
+                    }
+                });
+            }else{
+                Log.d(TAG, "Unable to find longitude latitude");
+            }
+        }
     }
 }
