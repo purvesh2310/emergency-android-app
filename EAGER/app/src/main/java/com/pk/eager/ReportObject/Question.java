@@ -28,10 +28,19 @@ public class Question implements Parcelable {
     }
 
     public String getChoices(){
+
         String s = "";
+        int index = 0;
         for(Choice c: choice){
-            s+= c.toString()+"/";
+
+            index++;
+            s = s + c.toString();
+
+            // To prevent "/" from adding at the end of the option
+            if(index != choice.size())
+                s = s + "/";
         }
+
         return s;
     }
 

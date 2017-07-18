@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,18 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.ReportObject.CompactReport;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -32,12 +45,15 @@ public class Information extends Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    private DatabaseReference db;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_information, container, false);
+
+        db = FirebaseDatabase.getInstance().getReference();
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -75,8 +91,35 @@ public class Information extends Fragment {
                                 if (location != null) {
                                    LatLng currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
-                                    googleMap.addMarker(new MarkerOptions().position(currentLocation)
-                                           .title("Accident").snippet("Marker Description").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));;
+                                    db.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
+
+                                                CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
+
+                                                Double lat = cmp.latitude;
+                                                Double longitude = cmp.longitude;
+
+                                                Map<String, ArrayList<String>> compactReports = cmp.compactReports;
+                                                Iterator iterator = compactReports.entrySet().iterator();
+
+                                                String reportTitle = "";
+                                                while (iterator.hasNext()){
+                                                    Map.Entry reportEntry = (Map.Entry) iterator.next();
+                                                    reportTitle = reportEntry.getKey().toString();
+                                                }
+
+                                                googleMap.addMarker(new MarkerOptions().position(new LatLng(lat,longitude))
+                                                        .title(reportTitle).snippet("Marker Description").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                        }
+                                    });
 
                                     // For zooming automatically to the location of the marker
                                     CameraPosition cameraPosition = new CameraPosition.Builder()

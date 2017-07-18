@@ -62,9 +62,7 @@ public class InformationListView extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        getActivity().setTitle("Nearby Incidents");
         db = FirebaseDatabase.getInstance().getReference();
-        reportList = new ArrayList<>();
     }
 
     @Override
@@ -85,8 +83,11 @@ public class InformationListView extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FloatingActionButton myFab = (FloatingActionButton) view.findViewById(R.id.reportIncidentFAB);
-        myFab.setOnClickListener(new View.OnClickListener() {
+        getActivity().setTitle("Nearby Incidents");
+        reportList = new ArrayList<>();
+
+        FloatingActionButton newReportFab = (FloatingActionButton) view.findViewById(R.id.reportIncidentFAB);
+        newReportFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 Fragment fragment = Dashboard.incidentType;
@@ -105,6 +106,24 @@ public class InformationListView extends Fragment {
 
             }
         });
+
+        FloatingActionButton viewMapFab = (FloatingActionButton) view.findViewById(R.id.viewMapFAB);
+        viewMapFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Fragment fragment = new Information();
+                FragmentTransaction ft = getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.mainFrame, fragment)
+                        .addToBackStack("information");
+
+                ft.commit();
+
+            }
+        });
+
+
 
         reportRecyclerView = (RecyclerView)view.findViewById(R.id.informationListView);
 

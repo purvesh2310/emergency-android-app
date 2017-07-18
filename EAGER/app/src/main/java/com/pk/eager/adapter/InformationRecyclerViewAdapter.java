@@ -71,28 +71,36 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
     @Override
     public void onBindViewHolder(InformationViewHolder informationViewHolder, final int i) {
 
+        String reportTitle = "";
+        ArrayList<String> reportInfoList = new ArrayList<String>();
+        String individualInformation = "";
+        String fullInfo = "";
+        String location = "";
+
         CompactReport report = reportList.get(i);
 
         Map<String, ArrayList<String>> compactReports = report.compactReports;
-        Iterator it = compactReports.entrySet().iterator();
+        Iterator iterator = compactReports.entrySet().iterator();
 
-        String title = "";
-        ArrayList<String> reportInfo = new ArrayList<String>();
-        String indi = "";
-
-        while (it.hasNext()){
-            Map.Entry me = (Map.Entry)it.next();
-            title = me.getKey().toString();
-            reportInfo = (ArrayList<String>) me.getValue();
+        while (iterator.hasNext()){
+            Map.Entry reportEntry = (Map.Entry) iterator.next();
+            reportTitle = reportEntry.getKey().toString();
+            reportInfoList = (ArrayList<String>) reportEntry.getValue();
         }
 
-        for(int j=0;j<reportInfo.size();j++){
-            indi = reportInfo.get(j);
+        for(int j=0; j<reportInfoList.size(); j++){
+
+            individualInformation = reportInfoList.get(j);
+            individualInformation = individualInformation.replace("/","\n");
+            fullInfo = fullInfo + individualInformation;
+            if(j!= reportInfoList.size()-1)
+                fullInfo = fullInfo + "\n" ;
         }
 
-        informationViewHolder.reportTitle.setText(title);
-        informationViewHolder.reportInformation.setText(indi);
-        informationViewHolder.reportLocation.setText("111.423434343434, 34.33534343");
+        location = String.valueOf(report.latitude) + "," + String.valueOf(report.longitude);
+
+        informationViewHolder.reportTitle.setText(reportTitle);
+        informationViewHolder.reportInformation.setText(fullInfo);
+        informationViewHolder.reportLocation.setText(location);
     }
-
 }

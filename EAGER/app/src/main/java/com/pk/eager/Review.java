@@ -190,7 +190,7 @@ public class Review extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference newChild = db.push();
-                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), 37.323988, -121.945524, "4089299999");
+                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), -121.888670, 37.334627, "4089299999");
                                 newChild.setValue(compact, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
