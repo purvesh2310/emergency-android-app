@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pk.eager.MedicalEmergency">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <EditText
+        android:id="@+id/subscriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter zip code to subscribe to"/>
+
+    <Button
+        android:id="@+id/subscriptionAddButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="subscriptionAddButtonClick"
+        android:text="Add"/>
+
+    <TextView
+        android:id="@+id/subscriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

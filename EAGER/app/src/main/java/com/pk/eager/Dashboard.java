@@ -1,8 +1,15 @@
 package com.pk.eager;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -10,9 +17,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.pk.eager.ReportObject.IncidentReport;
 
 public class Dashboard extends AppCompatActivity
@@ -25,12 +36,16 @@ public class Dashboard extends AppCompatActivity
         TrafficEmergency.OnFragmentInteractionListener,
         UtilityEmergency.OnFragmentInteractionListener,
         Review.OnFragmentInteractionListener,
-        Information.OnFragmentInteractionListener{
+        Information.OnFragmentInteractionListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
     public static Fragment incidentType;
-
+    protected GoogleApiClient googleApiClient;
+    public static Location location;
+    final static String TAG = "Dashboard";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +64,35 @@ public class Dashboard extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
         if(savedInstanceState == null) {
             fragment = new ChooseAction();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
         }
+
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(Dashboard.this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
+
     }
+
+    public void onStart(){
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    public void onStop(){
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -69,6 +105,7 @@ public class Dashboard extends AppCompatActivity
 
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,12 +122,36 @@ public class Dashboard extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        Intent intent = new Intent(this, Subcription.class);
+        startActivity(intent);
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    //Google api client implementation
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+            return;
+        }
+        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        Log.d(TAG, "longitude" + location.getLongitude());
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

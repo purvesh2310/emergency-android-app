@@ -1,11 +1,9 @@
 package com.pk.eager;
 
 import android.content.Context;
-
 import android.content.DialogInterface;
-
 import android.graphics.Color;
-
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -42,6 +44,7 @@ public class Review extends Fragment {
     private IncidentReport incidentReport;
     private static final String TAG = "Review";
     private DatabaseReference db;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -176,6 +179,8 @@ public class Review extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+
+
     public void setButtonListener(){
         Button submit = (Button) this.getView().findViewById(R.id.button_review_submit);
         submit.setOnClickListener(new View.OnClickListener(){
@@ -189,7 +194,13 @@ public class Review extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference newChild = db.push();
-                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), 37.323988, -121.945524, "4089299999");
+                                double longitude = 200, latitude = 200;
+                                Location location = Dashboard.location;
+                                if(location!=null){
+                                    latitude = location.getLatitude();
+                                    longitude = location.getLongitude();
+                                }
+                                CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), longitude, latitude, "4089299999");
                                 newChild.setValue(compact, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -248,5 +259,16 @@ public class Review extends Fragment {
         view.setBackgroundColor(Color.parseColor("#c0c0c0"));
 
         return view;
+    }
+
+    public void sendNotificationToZipCode(String zipcode, String key){
+        DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("notificationRequest");
+
+        Map notification = new HashMap<>();
+        notification.put("zipcode", zipcode);
+        notification.put("message", key);
+        Log.d(TAG, "Push notification " + key);
+        notificationRef.push().setValue(notification);
+
     }
 }
