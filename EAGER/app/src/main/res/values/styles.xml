@@ -35,4 +35,9 @@
         <item name="android:layout_marginBottom">15dp</item>
     </style>
 
+    <style name="reportList">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textColor">#2F4F4F</item>
+    </style>
+
 </resources>

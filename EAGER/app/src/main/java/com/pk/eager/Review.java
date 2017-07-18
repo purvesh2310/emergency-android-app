@@ -40,6 +40,7 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class Review extends Fragment {
+
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
     private static final String TAG = "Review";
@@ -194,6 +195,7 @@ public class Review extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference newChild = db.push();
+
                                 double longitude = 200, latitude = 200;
                                 Location location = Dashboard.location;
                                 if(location!=null){
@@ -201,6 +203,7 @@ public class Review extends Fragment {
                                     longitude = location.getLongitude();
                                 }
                                 CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), longitude, latitude, "4089299999");
+
                                 newChild.setValue(compact, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {

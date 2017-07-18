@@ -37,8 +37,10 @@ public class Dashboard extends AppCompatActivity
         UtilityEmergency.OnFragmentInteractionListener,
         Review.OnFragmentInteractionListener,
         Information.OnFragmentInteractionListener,
+
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        InformationListView.OnFragmentInteractionListener{
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
@@ -65,7 +67,8 @@ public class Dashboard extends AppCompatActivity
 
 
         if(savedInstanceState == null) {
-            fragment = new ChooseAction();
+           // fragment = new ChooseAction();
+            fragment = new InformationListView();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
