@@ -124,14 +124,3 @@ public class Utils {
             report.questions.remove(index.get(i));
         }
     }
-
-
-
-
-
-
-
-
-
-
-}
