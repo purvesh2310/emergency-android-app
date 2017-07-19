@@ -81,7 +81,7 @@ public class Review extends Fragment {
             incidentReport = getArguments().getParcelable(REPORT);
         }else incidentReport = new IncidentReport();
         incidentReport = Dashboard.incidentReport;
-        db = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance().getReference("Reports");
         Location location = Dashboard.location;
         resultReceiver = new AddressResultReceiver(null);
 
@@ -321,7 +321,7 @@ public class Review extends Fragment {
 
                             }
                         });
-                        sendNotificationToZipCode(zipcode, key);
+                        sendNotificationToZipCode(zipcode, compact.getCompactReports().toString());
 
                     }
                 });
