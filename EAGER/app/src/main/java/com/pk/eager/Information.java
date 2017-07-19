@@ -21,6 +21,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pk.eager.ReportObject.CompactReport;
+import com.pk.eager.util.CompactReportUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,6 +48,7 @@ public class Information extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
     private DatabaseReference db;
+    LatLng currentLocation;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -54,10 +57,10 @@ public class Information extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_information, container, false);
 
         db = FirebaseDatabase.getInstance().getReference();
+        final CompactReportUtil cmpUtil = new CompactReportUtil();
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-
         mMapView.onResume(); // needed to get the map to display immediately
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -72,6 +75,22 @@ public class Information extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
+
+                googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+
+                        String title = marker.getTitle();
+                        String info = marker.getSnippet();
+                        LatLng reportLocation = marker.getPosition();
+
+                        double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation, reportLocation);
+                        String roundDistance = String.format("%.2f", distanceInMile);
+                        roundDistance = roundDistance + " miles far";
+
+                        ((Dashboard)getActivity()).showEditDialog(title, info, roundDistance);
+                    }
+                });
 
 
                 if (ContextCompat.checkSelfPermission(getContext(),
@@ -89,7 +108,7 @@ public class Information extends Fragment {
 
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
-                                   LatLng currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                                    currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
                                     db.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -97,21 +116,14 @@ public class Information extends Fragment {
                                             for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
 
                                                 CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
+                                                Map<String, String> reportData = cmpUtil.parseReportData(cmp);
 
-                                                Double lat = cmp.latitude;
-                                                Double longitude = cmp.longitude;
+                                                String title = reportData.get("title");
+                                                String info = reportData.get("information");
 
-                                                Map<String, ArrayList<String>> compactReports = cmp.compactReports;
-                                                Iterator iterator = compactReports.entrySet().iterator();
-
-                                                String reportTitle = "";
-                                                while (iterator.hasNext()){
-                                                    Map.Entry reportEntry = (Map.Entry) iterator.next();
-                                                    reportTitle = reportEntry.getKey().toString();
-                                                }
-
-                                                googleMap.addMarker(new MarkerOptions().position(new LatLng(lat,longitude))
-                                                        .title(reportTitle).snippet("Marker Description").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                                                googleMap.addMarker(new MarkerOptions().position(new LatLng(cmp.latitude,cmp.longitude))
+                                                        .title(title).snippet(info)
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                                             }
                                         }
 

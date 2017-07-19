@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="center" android:orientation="vertical"
+    android:padding="30dp">
+
+    <TextView
+        android:id="@+id/mapReportTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        style="@style/reportList"/>
+
+    <TextView
+        android:id="@+id/mapReportInformation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/reportList"
+        />
+
+    <TextView
+        android:id="@+id/mapReportLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#2F4F4F"
+        />
+
+
+</LinearLayout>

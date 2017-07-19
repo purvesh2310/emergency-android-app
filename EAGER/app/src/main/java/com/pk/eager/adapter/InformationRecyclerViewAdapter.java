@@ -1,17 +1,19 @@
 package com.pk.eager.adapter;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
+import com.pk.eager.util.CompactReportUtil;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
     Context context;
     List<CompactReport> reportList;
+    LatLng currentLocation;
 
     public static class InformationViewHolder extends RecyclerView.ViewHolder {
 
@@ -49,9 +52,10 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         }
     }
 
-    public InformationRecyclerViewAdapter(Context context, List<CompactReport> reportList){
+    public InformationRecyclerViewAdapter(Context context, List<CompactReport> reportList, LatLng location){
         this.context = context;
         this.reportList = reportList;
+        this.currentLocation = location;
     }
 
 
@@ -71,36 +75,21 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
     @Override
     public void onBindViewHolder(InformationViewHolder informationViewHolder, final int i) {
 
-        String reportTitle = "";
-        ArrayList<String> reportInfoList = new ArrayList<String>();
-        String individualInformation = "";
-        String fullInfo = "";
-        String location = "";
-
         CompactReport report = reportList.get(i);
+        LatLng reportLocation = new LatLng(report.latitude,report.longitude);
 
-        Map<String, ArrayList<String>> compactReports = report.compactReports;
-        Iterator iterator = compactReports.entrySet().iterator();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+        Map<String, String> reportData = cmpUtil.parseReportData(report);
 
-        while (iterator.hasNext()){
-            Map.Entry reportEntry = (Map.Entry) iterator.next();
-            reportTitle = reportEntry.getKey().toString();
-            reportInfoList = (ArrayList<String>) reportEntry.getValue();
-        }
+        double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+        String roundDistance = String.format("%.2f", distanceInMile);
+        roundDistance = roundDistance + " miles far";
 
-        for(int j=0; j<reportInfoList.size(); j++){
-
-            individualInformation = reportInfoList.get(j);
-            individualInformation = individualInformation.replace("/","\n");
-            fullInfo = fullInfo + individualInformation;
-            if(j!= reportInfoList.size()-1)
-                fullInfo = fullInfo + "\n" ;
-        }
-
-        location = String.valueOf(report.latitude) + "," + String.valueOf(report.longitude);
+        String reportTitle = reportData.get("title");
+        String fullInfo = reportData.get("information");
 
         informationViewHolder.reportTitle.setText(reportTitle);
         informationViewHolder.reportInformation.setText(fullInfo);
-        informationViewHolder.reportLocation.setText(location);
+        informationViewHolder.reportLocation.setText(roundDistance);
     }
 }

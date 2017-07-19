@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -37,10 +38,10 @@ public class Dashboard extends AppCompatActivity
         UtilityEmergency.OnFragmentInteractionListener,
         Review.OnFragmentInteractionListener,
         Information.OnFragmentInteractionListener,
-
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        InformationListView.OnFragmentInteractionListener{
+        InformationListView.OnFragmentInteractionListener,
+        MapReportInfo.OnFragmentInteractionListener{
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
@@ -184,6 +185,12 @@ public class Dashboard extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         // Do Nothing
+    }
+
+    public void showEditDialog(String title, String info, String location) {
+        FragmentManager fm = getSupportFragmentManager();
+        MapReportInfo editNameDialogFragment = MapReportInfo.newInstance(title, info, location);
+        editNameDialogFragment.show(fm, "fragment_map_report_info");
     }
 
 

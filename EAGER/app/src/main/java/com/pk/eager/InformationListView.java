@@ -1,12 +1,15 @@
 package com.pk.eager;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +42,8 @@ public class InformationListView extends Fragment {
     private DatabaseReference db;
     List<CompactReport> reportList;
     RecyclerView reportRecyclerView;
+    private FusedLocationProviderClient mFusedLocationClient;
+    LatLng currentLocation;
 
     private String mParam1;
     private String mParam2;
@@ -69,6 +78,7 @@ public class InformationListView extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return inflater.inflate(R.layout.fragment_information_list_view, container, false);
     }
 
@@ -123,7 +133,20 @@ public class InformationListView extends Fragment {
             }
         });
 
+        if (ContextCompat.checkSelfPermission(getContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
 
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    }
+                }
+            });
+
+        }
 
         reportRecyclerView = (RecyclerView)view.findViewById(R.id.informationListView);
 
@@ -138,7 +161,7 @@ public class InformationListView extends Fragment {
                     reportList.add(cmp);
                 }
 
-                InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList);
+                InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
                 reportRecyclerView.setAdapter(adapter);
             }
 
