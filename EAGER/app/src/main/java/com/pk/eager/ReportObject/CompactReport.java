@@ -1,5 +1,7 @@
 package com.pk.eager.ReportObject;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,14 +55,15 @@ public class CompactReport {
     public CompactReport(IncidentReport incidentReport, Double longitude, Double latitude, String phone){
 
         for(Report r : incidentReport.reports){
+            Log.d("CompactReport", r.toString());
             ArrayList<String> questions = new ArrayList<>();
             for(Question q : r.questions){
+                Log.d("CompactReport" + r.type, q.getQuestion()+", "+q.getChoices());
                 questions.add(q.getQuestion()+":"+q.getChoices());
             }
             compactReports.put(r.getType(), questions);
         }
-
-
+        if(incidentReport.reports.size() == 0) Log.d("CompactReport", "Empty");
         this.longitude = longitude;
         this.latitude = latitude;
         this.phoneNumber = phone;

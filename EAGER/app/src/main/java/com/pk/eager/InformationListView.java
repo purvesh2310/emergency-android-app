@@ -123,8 +123,6 @@ public class InformationListView extends Fragment {
             }
         });
 
-
-
         reportRecyclerView = (RecyclerView)view.findViewById(R.id.informationListView);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());

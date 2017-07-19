@@ -20,11 +20,12 @@ public class Report implements Parcelable {
     }
 
     public boolean isEmpty(){
+        boolean empty = true;
         for(Question q : questions){
-            if(q.empty())
-                return true;
+            if(!q.empty())
+                empty = false;
         }
-        return false;
+        return empty;
     }
 
 

@@ -13,6 +13,7 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 		const payload = {
 			notification: {
 				title: message
+				click_action: "OPEN_VIEW_NOTIFICATION"
 			}
 		};
 

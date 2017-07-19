@@ -222,6 +222,8 @@ public class Review extends Fragment {
                                 if(location!=null) {
                                     Log.d(TAG, "Location not null");
                                     getAddress();
+                                }else{
+                                    //error message
                                 }
 
                             }
@@ -276,7 +278,7 @@ public class Review extends Fragment {
     }
 
     public void sendNotificationToZipCode(String zipcode, String key){
-        DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("notificationRequest");
+        DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("notificationRequests");
 
         Map notification = new HashMap<>();
         notification.put("zipcode", zipcode);
@@ -304,8 +306,10 @@ public class Review extends Fragment {
                         final String zipcode = address.getPostalCode();
                         DatabaseReference newChild = db.push();
                         final String key = newChild.getKey();
-                        CompactReport compact = new CompactReport(Utils.compacitize(incidentReport), location.getLongitude(), location.getLatitude(), "4089299999");
-                        sendNotificationToZipCode(zipcode, key);
+                        IncidentReport smallerSize = Utils.compacitize(incidentReport);
+                        Log.d(TAG, "Smaller report " + smallerSize.toString());
+                        CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999");
+
 
                         newChild.setValue(compact, new DatabaseReference.CompletionListener() {
                             @Override
@@ -317,6 +321,7 @@ public class Review extends Fragment {
 
                             }
                         });
+                        sendNotificationToZipCode(zipcode, key);
 
                     }
                 });
