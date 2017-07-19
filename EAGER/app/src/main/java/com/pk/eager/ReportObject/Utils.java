@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Utils {
 
-    public static Report buildTrapReport(){
+    public static Report buildTrapReport() {
         Report trap = new Report("Trapped", new ArrayList<Question>());
         Question q = new Question();
         q.question = "Trapped";
@@ -18,11 +18,11 @@ public class Utils {
         return trap;
     }
 
-    public static Report buildMedicalReport(){
+    public static Report buildMedicalReport() {
         Report medical = new Report("Medical", new ArrayList<Question>());
 
         Question q1 = new Question();
-        q1.question  = "Number of Injured patients";
+        q1.question = "Number of Injured patients";
         Question q2 = new Question();
         q2.question = "Most severe injury";
 
@@ -31,7 +31,7 @@ public class Utils {
         return medical;
     }
 
-    public static Report buildFireReport(){
+    public static Report buildFireReport() {
         Report fire = new Report("Fire", new ArrayList<Question>());
 
         Question q1 = new Question();
@@ -69,7 +69,7 @@ public class Utils {
         return traffic;
     }
 
-    public static Report buildUtilityReport(){
+    public static Report buildUtilityReport() {
         Report utility = new Report("Utility", new ArrayList<Question>());
         Question q1 = new Question();
         q1.question = "Power";
@@ -88,23 +88,23 @@ public class Utils {
         return utility;
     }
 
-    public static boolean hasReport(IncidentReport incidentReport, int type){
+    public static boolean hasReport(IncidentReport incidentReport, int type) {
         Report report = incidentReport.getReport(type);
         return !report.isEmpty();
     }
 
-    public static IncidentReport compacitize(IncidentReport incidentReport){
+    public static IncidentReport compacitize(IncidentReport incidentReport) {
         ArrayList<Report> r = incidentReport.reports;
         IncidentReport report = new IncidentReport();
         report.reports = new ArrayList<Report>();
-        for(int i = 0; i < r.size(); i++){
-            if(!r.get(i).isEmpty()){
+        for (int i = 0; i < r.size(); i++) {
+            if (!r.get(i).isEmpty()) {
                 Log.d("UTILS", "Before Strip " + r.toString());
                 //remove question without answer
                 stripQuestion(r.get(i));
                 Log.d("UTILS", "After Strip" + r.toString());
                 report.reports.add(r.get(i));
-            }else{
+            } else {
                 Log.d("UTILS", r.toString() + "is empty");
             }
         }
@@ -113,14 +113,16 @@ public class Utils {
         return report;
     }
 
-    public static void stripQuestion(Report report){
+    public static void stripQuestion(Report report) {
         ArrayList<Integer> index = new ArrayList<>();
-        for(int i = 0; i < report.questions.size(); i++){
-            if(report.questions.get(i).empty())
+        for (int i = 0; i < report.questions.size(); i++) {
+            if (report.questions.get(i).empty())
                 index.add(i);
         }
 
-        for(int i = 0; i < index.size(); i++){
+        for (int i = 0; i < index.size(); i++) {
             report.questions.remove(index.get(i));
         }
     }
+
+}

@@ -3,6 +3,7 @@ package com.pk.eager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -110,6 +111,8 @@ public class IncidentType extends Fragment {
 
         getActivity().setTitle("Choose Incident Type");
         setButtonListener();
+        showWarningDialog();
+
     }
 /*
     public void onSaveInstanceState(Bundle outState){
@@ -286,6 +289,21 @@ public class IncidentType extends Fragment {
                 break;
 
         }
+
+    }
+
+    public void showWarningDialog(){
+
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Warning")
+                .setMessage("False report will be prosecuted.")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do Nothing
+                    }
+                })
+                .show();
 
     }
 }

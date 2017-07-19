@@ -71,7 +71,7 @@ public class InformationListView extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        db = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance().getReference().child("Reports");
     }
 
     @Override

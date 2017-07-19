@@ -56,7 +56,7 @@ public class Information extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_information, container, false);
 
-        db = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance().getReference().child("Reports");
         final CompactReportUtil cmpUtil = new CompactReportUtil();
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
@@ -135,7 +135,7 @@ public class Information extends Fragment {
 
                                     // For zooming automatically to the location of the marker
                                     CameraPosition cameraPosition = new CameraPosition.Builder()
-                                            .target(currentLocation).zoom(15).build();
+                                            .target(currentLocation).zoom(10).build();
                                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                                 }
                             }
