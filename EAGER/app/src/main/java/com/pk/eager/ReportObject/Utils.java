@@ -1,5 +1,7 @@
 package com.pk.eager.ReportObject;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -97,28 +99,28 @@ public class Utils {
         report.reports = new ArrayList<Report>();
         for(int i = 0; i < r.size(); i++){
             if(!r.get(i).isEmpty()){
+                Log.d("UTILS", "Before Strip " + r.toString());
                 //remove question without answer
                 stripQuestion(r.get(i));
+                Log.d("UTILS", "After Strip" + r.toString());
                 report.reports.add(r.get(i));
+            }else{
+                Log.d("UTILS", r.toString() + "is empty");
             }
         }
+        Log.d("UTILS", "End with" + r.toString());
+        Log.d("UTILS", "Report is " + report.toString());
         return report;
     }
 
     public static void stripQuestion(Report report){
-        for(Question q : report.questions){
-            if(q.choice.size() == 0)
-                report.questions.remove(q);
+        ArrayList<Integer> index = new ArrayList<>();
+        for(int i = 0; i < report.questions.size(); i++){
+            if(report.questions.get(i).empty())
+                index.add(i);
+        }
+
+        for(int i = 0; i < index.size(); i++){
+            report.questions.remove(index.get(i));
         }
     }
-
-
-
-
-
-
-
-
-
-
-}

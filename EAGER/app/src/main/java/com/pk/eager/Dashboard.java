@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.pk.eager.ReportObject.IncidentReport;
 
 public class Dashboard extends AppCompatActivity
@@ -66,6 +67,14 @@ public class Dashboard extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        /*******
+         *Subcribing test
+         */
+        FirebaseMessaging.getInstance().subscribeToTopic("95138");
+        FirebaseMessaging.getInstance().subscribeToTopic("95192");
+        /****?
+         * End
+         */
 
         if(savedInstanceState == null) {
            // fragment = new ChooseAction();
