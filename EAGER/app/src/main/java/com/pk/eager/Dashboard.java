@@ -71,7 +71,7 @@ public class Dashboard extends AppCompatActivity
          *Subcribing test
          */
         FirebaseMessaging.getInstance().subscribeToTopic("95138");
-        FirebaseMessaging.getInstance().subscribeToTopic("95192");
+        //FirebaseMessaging.getInstance().subscribeToTopic("95112");
         /****?
          * End
          */

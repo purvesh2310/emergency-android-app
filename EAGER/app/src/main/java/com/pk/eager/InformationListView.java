@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -43,6 +44,8 @@ public class InformationListView extends Fragment {
     List<CompactReport> reportList;
     RecyclerView reportRecyclerView;
     private FusedLocationProviderClient mFusedLocationClient;
+    public static final int PERMISSIONS_REQUEST_LOCATION = 99;
+
     LatLng currentLocation;
 
     private String mParam1;
@@ -94,6 +97,8 @@ public class InformationListView extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Nearby Incidents");
+        reportRecyclerView = (RecyclerView)view.findViewById(R.id.informationListView);
+
         reportList = new ArrayList<>();
 
         FloatingActionButton newReportFab = (FloatingActionButton) view.findViewById(R.id.reportIncidentFAB);
@@ -133,43 +138,8 @@ public class InformationListView extends Fragment {
             }
         });
 
-        if (ContextCompat.checkSelfPermission(getContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        checkPermission();
 
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    }
-                }
-            });
-
-        }
-
-        reportRecyclerView = (RecyclerView)view.findViewById(R.id.informationListView);
-
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        reportRecyclerView.setLayoutManager(llm);
-
-        db.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
-                    CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
-                    reportList.add(cmp);
-                }
-
-                InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
-                reportRecyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
     }
 
     @Override
@@ -189,18 +159,73 @@ public class InformationListView extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void checkPermission(){
+
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        fetchDataFromFirebase();
+                    }
+                }
+            });
+
+        } else{
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_LOCATION );
+        }
+    }
+
+    public void fetchDataFromFirebase(){
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        reportRecyclerView.setLayoutManager(llm);
+
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
+                    CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
+                    reportList.add(cmp);
+                }
+
+                Log.d("MyTAG",String.valueOf(currentLocation.latitude));
+                InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
+                reportRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_LOCATION: {
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    try{
+                        checkPermission();
+                    }catch (SecurityException e){
+                        Log.e("EAGER",e.getMessage());
+                    }
+                }
+                return;
+            }
+        }
+
     }
 }

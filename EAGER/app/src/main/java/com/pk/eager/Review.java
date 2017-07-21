@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,12 +62,6 @@ public class Review extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment Review.
-     */
-    // TODO: Rename and change types and number of parameters
     public static Review newInstance(IncidentReport report) {
         Review fragment = new Review();
         Bundle args = new Bundle();
@@ -77,15 +73,17 @@ public class Review extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             incidentReport = getArguments().getParcelable(REPORT);
-        }else incidentReport = new IncidentReport();
+        }else {
+            incidentReport = new IncidentReport();
+        }
+
         incidentReport = Dashboard.incidentReport;
         db = FirebaseDatabase.getInstance().getReference("Reports");
-        Location location = Dashboard.location;
+
         resultReceiver = new AddressResultReceiver(null);
-
-
     }
 
     public void getAddress(){
@@ -163,7 +161,6 @@ public class Review extends Fragment {
         setButtonListener();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -187,54 +184,24 @@ public class Review extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
-
-
     public void setButtonListener(){
+
         Button submit = (Button) this.getView().findViewById(R.id.button_review_submit);
         submit.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
-                dialog.setTitle("Submit Report");
-                dialog.setMessage("Submit the report?");
-                dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                double longitude = 200, latitude = 200;
-                                location = Dashboard.location;
-                                Log.d(TAG, "Button pressed");
-                                if(location!=null) {
-                                    Log.d(TAG, "Location not null");
-                                    getAddress();
-                                }else{
-                                    //error message
-                                }
+                boolean isConnected = checkInternetConnection();
 
-                            }
-                        });
-                dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                dialog.show();
+                if(!isConnected){
+
+                }else {
+                    showSubmitConfirmationDialog();
+                }
             }
         });
 
@@ -329,5 +296,48 @@ public class Review extends Fragment {
                 Log.d(TAG, "Unable to find longitude latitude");
             }
         }
+    }
+
+    // To check whether device has an active Internet connection
+    public boolean checkInternetConnection(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
+    // Display Dialog box for the confirmation of the report submission
+    public void showSubmitConfirmationDialog(){
+
+        AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+
+        dialog.setTitle("Submit Report");
+        dialog.setMessage("Are you ready submit the report?");
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        location = Dashboard.location;
+                        if (location != null) {
+                            getAddress();
+                        } else {
+                            //error message
+                        }
+                    }
+                });
+
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        dialog.show();
     }
 }
