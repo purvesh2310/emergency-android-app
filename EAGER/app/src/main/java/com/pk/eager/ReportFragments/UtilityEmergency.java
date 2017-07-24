@@ -1,4 +1,4 @@
-package com.pk.eager;
+package com.pk.eager.ReportFragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,6 +15,8 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.pk.eager.Dashboard;
+import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;

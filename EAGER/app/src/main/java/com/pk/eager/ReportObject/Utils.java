@@ -125,4 +125,13 @@ public class Utils {
         }
     }
 
+    public static String notificationMessage(CompactReport report) {
+        String s = "Emergency: ";
+        for (String key : report.compactReports.keySet()) {
+            s += key + ",";
+        }
+        s = s.substring(0, s.length() - 1);
+        return s;
+    }
+
 }

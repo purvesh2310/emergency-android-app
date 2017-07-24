@@ -1,9 +1,7 @@
 package com.pk.eager.adapter;
 
 import android.content.Context;
-import android.location.Location;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import java.util.Map;
 /**
  * Created by Purvesh on 7/15/2017.
  */
-
 public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<InformationRecyclerViewAdapter.InformationViewHolder> {
 
     Context context;
@@ -40,6 +37,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
 
+            /*
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -48,7 +46,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
                 }
 
-            });
+            });*/
         }
     }
 

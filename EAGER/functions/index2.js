@@ -14,21 +14,22 @@ admin.initializeApp({
 });
 
 ref = admin.database().ref();
-	var requests = ref.child('notificationRequests');
-	requests.on('child_added', function(requestSnapshot) {
-		var request = requestSnapshot.val();
-		sendNotificationToTopic(
-			request.zipcode, 
-			request.message,
-			function() {
-				requestSnapshot.ref.remove();
-			}
-		);
-	}, function(error) {
-		console.error(error);
-	});
+var requests = ref.child('notificationRequests');
+requests.on('child_added', function(requestSnapshot) {
+	var request = requestSnapshot.val();
+	sendNotificationToTopic(
+		request.zipcode, 
+		request.key,
+		request.message,
+		function() {
+			//requestSnapshot.ref.remove();
+		}
+	);
+}, function(error) {
+	console.error(error);
+});
 
-function sendNotificationToTopic(zipcode, message, onSuccess) {
+function sendNotificationToTopic(zipcode, key, message, onSuccess) {
 	request({
 		url: 'https://fcm.googleapis.com/fcm/send',
 		method: 'POST',
@@ -38,8 +39,12 @@ function sendNotificationToTopic(zipcode, message, onSuccess) {
 	},
 	body: JSON.stringify({
 		notification: {
-			title: message
+			title: "EAGER"
+			body: message
 		},
+		data: {
+			"key": key
+		}
 		to : '/topics/'+zipcode
 	})
 	}, function(error, response, body) {
@@ -49,6 +54,7 @@ function sendNotificationToTopic(zipcode, message, onSuccess) {
 		}
 		else {
 		 	onSuccess();
+		 	console.log("Successfully sent message:", payload);
 		}
 	});
 }

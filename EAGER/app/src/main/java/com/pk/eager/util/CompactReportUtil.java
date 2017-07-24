@@ -1,7 +1,7 @@
+
 package com.pk.eager.util;
 
 import android.location.Location;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.pk.eager.ReportObject.CompactReport;

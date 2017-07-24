@@ -10,10 +10,15 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 	if(event.data.val()){
 		var zipcode = event.data.val().zipcode;
 		var message = event.data.val().message;
+		var mkey = event.data.val().key;
 		const payload = {
 			notification: {
-				title: message,
-				click_action: "OPEN_VIEW_NOTIFICATION"
+				title: "EAGER",
+				click_action: "OPEN_VIEW_NOTIFICATION",
+				body: message
+			},
+			data: {
+				key: mkey
 			}
 		};
 
@@ -21,7 +26,7 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 			.then(function(response) {
 				// See the MessagingDeviceGroupResponse reference documentation for
 				// the contents of response.
-				console.log("Successfully sent message:", response);
+				console.log("Successfully sent message:", payload);
 				event.data.ref.remove();
 			})
 			.catch(function(error) {

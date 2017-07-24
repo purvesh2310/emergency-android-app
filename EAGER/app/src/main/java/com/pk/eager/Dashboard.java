@@ -26,6 +26,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.pk.eager.ReportFragments.FireEmergency;
+import com.pk.eager.ReportFragments.IncidentType;
+import com.pk.eager.ReportFragments.MedicalEmergency;
+import com.pk.eager.ReportFragments.PoliceEmergency;
+import com.pk.eager.ReportFragments.Review;
+import com.pk.eager.ReportFragments.TrafficEmergency;
+import com.pk.eager.ReportFragments.UtilityEmergency;
 import com.pk.eager.ReportObject.IncidentReport;
 
 public class Dashboard extends AppCompatActivity

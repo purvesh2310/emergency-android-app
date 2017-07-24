@@ -51,7 +51,9 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name=".ViewNotification">
+        <activity
+            android:name=".ViewNotification"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="OPEN_VIEW_NOTIFICATION"/>
                 <category android:name="android.intent.category.DEFAULT"/>

@@ -1,4 +1,4 @@
-package com.pk.eager;
+package com.pk.eager.ReportFragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,8 +28,10 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pk.eager.Dashboard;
 import com.pk.eager.LocationUtils.GeoConstant;
 import com.pk.eager.LocationUtils.GeocodeIntentService;
+import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Utils;
@@ -244,12 +246,13 @@ public class Review extends Fragment {
         return view;
     }
 
-    public void sendNotificationToZipCode(String zipcode, String key){
+    public void sendNotificationToZipCode(String zipcode, String key, String message){
         DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("notificationRequests");
 
         Map notification = new HashMap<>();
         notification.put("zipcode", zipcode);
-        notification.put("message", key);
+        notification.put("key", key);
+        notification.put("message", message);
         Log.d(TAG, "Push notification " + key);
         notificationRef.push().setValue(notification);
 
@@ -288,7 +291,7 @@ public class Review extends Fragment {
 
                             }
                         });
-                        sendNotificationToZipCode(zipcode, compact.getCompactReports().toString());
+                        sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact));
 
                     }
                 });

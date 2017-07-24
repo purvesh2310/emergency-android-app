@@ -1,4 +1,4 @@
-package com.pk.eager;
+package com.pk.eager.ReportFragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -13,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
+import com.pk.eager.Dashboard;
+import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
@@ -24,45 +27,39 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MedicalEmergency.OnFragmentInteractionListener} interface
+ * {@link TrafficEmergency.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MedicalEmergency#newInstance} factory method to
+ * Use the {@link TrafficEmergency#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MedicalEmergency extends Fragment {
+public class TrafficEmergency extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
-    private static final String TAG = "MedicalEmergency";
-    private Report medical;
-
-    int[] radioId = new int[]{R.id.radio_medicalq1_a, R.id.radio_medicalq1_b, R.id.radio_medicalq1_c};
-    int[] checkId = new int[]{R.id.checkbox_medicalq2_a, R.id.checkbox_medicalq2_b, R.id.checkbox_medicalq2_c,
-            R.id.checkbox_medicalq2_d, R.id.checkbox_medicalq2_d1, R.id.checkbox_medicalq2_d2, R.id.checkbox_medicalq2_d3, R.id.checkbox_medicalq2_d4};
+    private static final String TAG = "TrafficEmergency";
+    private Report traffic;
 
     private OnFragmentInteractionListener mListener;
+    private int[] radioId = new int[]{R.id.radio_trafficq1_a1, R.id.radio_trafficq1_a2, R.id.radio_trafficq1_a3};
+    private int[] checkId = new int[]{R.id.checkbox_trafficq1_a, R.id.checkbox_trafficq1_b, R.id.checkbox_trafficq1_c};
 
     public Button nextButton;
 
-
-
-    public MedicalEmergency() {
+    public TrafficEmergency() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment MedicalEmergency.
+     * @return A new instance of fragment TrafficEmergency.
      */
     // TODO: Rename and change types and number of parameters
-    public static MedicalEmergency newInstance(IncidentReport param1) {
-        MedicalEmergency fragment = new MedicalEmergency();
+    public static TrafficEmergency newInstance(IncidentReport report) {
+        TrafficEmergency fragment = new TrafficEmergency();
         Bundle args = new Bundle();
-        args.putParcelable(REPORT, param1);
+        args.putParcelable(REPORT, report);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,26 +69,23 @@ public class MedicalEmergency extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             incidentReport = getArguments().getParcelable(REPORT);
-            Log.d(TAG, incidentReport.toString());
         }
-        else incidentReport = new IncidentReport();
         incidentReport = Dashboard.incidentReport;
-        medical = incidentReport.getReport(Constant.MEDICAL);
+        traffic = incidentReport.getReport(Constant.TRAFFIC);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_medical_emergency, container, false);
+        return inflater.inflate(R.layout.fragment_traffic_emergency, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, incidentReport.toString());
 
-        getActivity().setTitle("Medical Emergency");
+        getActivity().setTitle("Traffic Emergency");
         setButtonListener();
     }
 
@@ -138,21 +132,20 @@ public class MedicalEmergency extends Fragment {
         RadioButton[] r = new RadioButton[radioId.length];
         CheckBox[] c = new CheckBox[checkId.length];
 
-        for(int i = 0; i < radioId.length; i++){
+        for(int i = 0; i < r.length; i++){
             r[i] = getRadioButton(radioId[i]);
             final int index = r[i].getId();
             r[i].setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View arg0) {
-
                     onButtonClick(index);
                 }
             });
         }
 
-        for(int i = 0; i < checkId.length; i++){
-            c[i] = getCheckBox(checkId[i]);
+        for(int i = 0; i < c.length; i++){
+            c[i] = getCheckBoxButton(checkId[i]);
             final int index = c[i].getId();
             c[i].setOnClickListener(new View.OnClickListener() {
 
@@ -163,75 +156,71 @@ public class MedicalEmergency extends Fragment {
             });
         }
 
-        nextButton = (Button) this.getView().findViewById(R.id.button_next_medicalEmergency);
+        nextButton = (Button) this.getView().findViewById(R.id.button_next_trafficEmergency);
         nextButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-
-               onButtonClick(nextButton.getId());
+                onButtonClick(nextButton.getId());
             }
         });
     }
 
-    public RadioButton getRadioButton(int id){
-        return (RadioButton) this.getView().findViewById(id);
-    }
-
-    public CheckBox getCheckBox(int id){
-        return (CheckBox) this.getView().findViewById(id);
-    }
-
     public void onButtonClick(int buttonid){
         RadioButton radio;
-        CheckBox checkBox = null;
+        CheckBox checkBox;
         switch (buttonid){
-            case R.id.radio_medicalq1_a:
-            case R.id.radio_medicalq1_b:
-            case R.id.radio_medicalq1_c:
-                radio = (RadioButton) this.getView().findViewById(buttonid);
-                if(radio.isChecked())
-                    medical.setSingleChoice(0, new Choice(radio.getText().toString(), null));
-                else
-                    medical.removeOneChoiceQuestion(0);
+            case R.id.checkbox_trafficq1_a:
+                checkBox = getCheckBoxButton(buttonid);
+                if(checkBox.isChecked()) {
+                    traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
+                    RadioGroup g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic);
+                    g.setClickable(true);
+                }else{
+                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic)).setClickable(false);
+                    traffic.removeMultiChoiceQuestion(0,new Choice(checkBox.getText().toString(), null));
+                }
+                Log.d(TAG, "Next 1" + traffic.toString());
                 break;
-            case R.id.checkbox_medicalq2_a:
-            case R.id.checkbox_medicalq2_b:
-            case R.id.checkbox_medicalq2_c:
-                checkBox = (CheckBox) this.getView().findViewById(buttonid);
-                if (checkBox.isChecked())
-                    medical.setMultiChoice(1, new Choice(checkBox.getText().toString(), null));
-                else
-                    medical.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
+            case R.id.radio_trafficq1_a1:
+            case R.id.radio_trafficq1_a2:
+            case R.id.radio_trafficq1_a3:
+                radio = getRadioButton(buttonid);
+                CheckBox box = (CheckBox)this.getView().findViewById(R.id.checkbox_trafficq1_a);
+                if(box.isChecked() && radio.isChecked()){
+                    traffic.replaceSubChoice(0,box.getText().toString(),radio.getText().toString());
+                }
+                Log.d(TAG, "Next 2" + traffic.toString());
                 break;
-            case R.id.checkbox_medicalq2_d:
-                checkBox = (CheckBox) this.getView().findViewById(buttonid);
-                if (checkBox.isChecked())
-                    medical.setMultiChoice(1, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
-                else
-                    medical.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
+            case R.id.checkbox_trafficq1_b:
+            case R.id.checkbox_trafficq1_c:
+                checkBox = getCheckBoxButton(buttonid);
+                if(checkBox.isChecked())
+                    traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
+                else traffic.removeMultiChoiceQuestion(0, new Choice(checkBox.getText().toString(), null));
+                Log.d(TAG, "Next 3" + traffic.toString());
                 break;
-            case R.id.checkbox_medicalq2_d1:
-            case R.id.checkbox_medicalq2_d2:
-            case R.id.checkbox_medicalq2_d3:
-            case R.id.checkbox_medicalq2_d4:
-                CheckBox subBox = (CheckBox) this.getView().findViewById(buttonid);
-                CheckBox box = (CheckBox) this.getView().findViewById(R.id.checkbox_medicalq2_d);
-                if (box.isChecked() && subBox.isChecked())
-                    medical.addSubChoice(1, box.getText().toString(), subBox.getText().toString());
-                else if(box.isChecked() && !subBox.isChecked())
-                    medical.removeSubChoice(1, box.getText().toString(), subBox.getText().toString());
-                break;
-            case R.id.button_next_medicalEmergency:
+            case R.id.button_next_trafficEmergency:
+                Log.d(TAG, "Next" + traffic.toString());
                 Fragment fragment = Review.newInstance(incidentReport);
                 FragmentTransaction ft = getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.mainFrame, fragment)
-                        .addToBackStack("medicalEmergency");
+                        .addToBackStack("trafficEmergency");
                 ft.commit();
                 break;
 
         }
+
     }
+
+
+    public RadioButton getRadioButton(int id){
+        return (RadioButton) this.getView().findViewById(id);
+    }
+    public CheckBox getCheckBoxButton(int id){
+        return (CheckBox) this.getView().findViewById(id);
+    }
+
 }

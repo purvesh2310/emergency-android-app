@@ -1,6 +1,7 @@
 package com.pk.eager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -27,8 +28,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportObject.CompactReport;
+import com.pk.eager.adapter.ClickListener;
 import com.pk.eager.adapter.InformationRecyclerViewAdapter;
+import com.pk.eager.adapter.RecyclerTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,7 @@ public class InformationListView extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String REPORT = "report";
 
     private DatabaseReference db;
     List<CompactReport> reportList;
@@ -200,6 +205,23 @@ public class InformationListView extends Fragment {
                 Log.d("MyTAG",String.valueOf(currentLocation.latitude));
                 InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
                 reportRecyclerView.setAdapter(adapter);
+                reportRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), reportRecyclerView, new ClickListener() {
+                    @Override
+                    public void onClick(View view, int position) {
+                        CompactReport report = reportList.get(position);
+                        Intent intent = new Intent(getContext(), ViewNotification.class);
+                        intent.putExtra(REPORT, report);
+
+
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onLongClick(View view, int position) {
+
+                    }
+                }
+                ));
             }
 
             @Override

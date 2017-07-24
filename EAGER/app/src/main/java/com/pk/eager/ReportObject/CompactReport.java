@@ -1,5 +1,7 @@
 package com.pk.eager.ReportObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.Map;
  * Created by kimpham on 7/12/17.
  */
 
-public class CompactReport {
+public class CompactReport implements Parcelable{
 
     public Map<String, ArrayList<String>> compactReports = new HashMap<>();
 
@@ -67,5 +69,47 @@ public class CompactReport {
         this.longitude = longitude;
         this.latitude = latitude;
         this.phoneNumber = phone;
+    }
+
+    //parceble implementation
+    //Parceble implementation
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(phoneNumber);
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
+        dest.writeInt(compactReports.size());
+        for(Map.Entry<String, ArrayList<String>> entry : compactReports.entrySet()){
+            dest.writeString(entry.getKey());
+            dest.writeList(entry.getValue());
+        }
+    }
+
+    public static final Parcelable.Creator<CompactReport> CREATOR
+            = new Parcelable.Creator<CompactReport>() {
+        public CompactReport createFromParcel(Parcel in) {
+            return new CompactReport(in);
+        }
+
+        public CompactReport[] newArray(int size) {
+            return new CompactReport[size];
+        }
+    };
+
+    private CompactReport(Parcel in) {
+        phoneNumber = in.readString();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+        int size = in.readInt();
+        for(int i = 0; i < size; i++){
+            String key = in.readString();
+            ArrayList<String> val = in.readArrayList(String.class.getClassLoader());
+            compactReports.put(key, val);
+        }
     }
 }

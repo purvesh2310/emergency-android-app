@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.pk.eager.ReportFragments.IncidentType;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
