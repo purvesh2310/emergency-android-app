@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.pk.eager.Dashboard;
 import com.pk.eager.LocationUtils.GeoConstant;
 import com.pk.eager.LocationUtils.GeocodeIntentService;
@@ -198,9 +199,13 @@ public class Review extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean isConnected = checkInternetConnection();
-
                 if(!isConnected){
-
+                    location = Dashboard.location;
+                    IncidentReport smallerSize = Utils.compacitize(incidentReport);
+                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999");
+                    Gson gson = new Gson();
+                    String data = gson.toJson(compact);
+                    sendDataOverChannel(data);
                 }else {
                     showSubmitConfirmationDialog();
                 }
@@ -342,5 +347,37 @@ public class Review extends Fragment {
                 });
 
         dialog.show();
+    }
+
+    // To send the data using XBE/BLE mode of communication
+    public void sendDataOverChannel(String data){
+
+
+    }
+
+    // Receive data over XBE/BLE and upload to Firebase
+    public void receiveDataFromChannel(String data){
+
+        boolean isConnected = checkInternetConnection();
+
+        if(isConnected){
+            Gson gson = new Gson();
+            CompactReport cmpReport =  gson.fromJson(data,CompactReport.class);
+
+            DatabaseReference newChild = db.push();
+
+            newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    Dashboard.incidentType = null;
+                    getActivity().getSupportFragmentManager()
+                            .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+            });
+        }
+
+        else{
+            receiveDataFromChannel(data);
+        }
     }
 }
