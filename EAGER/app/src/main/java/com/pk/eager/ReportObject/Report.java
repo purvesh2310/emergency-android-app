@@ -2,6 +2,7 @@ package com.pk.eager.ReportObject;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class Report implements Parcelable {
     String type;
     ArrayList<Question> questions;
-
+    final String TAG = "Utils";
     //constructors
     public Report(String type, ArrayList<Question> question){
         this.type = type;
@@ -48,6 +49,12 @@ public class Report implements Parcelable {
         questions.get(questionNum).choice.add(choice);
     }
 
+    public void removeSingleChoice(int questionNum, Choice choice){
+        questions.get(questionNum).choice.remove(0);
+    }
+
+
+
     public void setMultiChoice(int questionNum, Choice choice){
         if(!questions.get(questionNum).choice.contains(choice))
             questions.get(questionNum).choice.add(choice);
@@ -59,8 +66,11 @@ public class Report implements Parcelable {
     }
 
     public void removeMultiChoiceQuestion(int questionNum, Choice toRemoveChoice){
+        Log.d(TAG, toRemoveChoice.toString());
         if(questions.get(questionNum).choice.contains(toRemoveChoice)){
+            Log.d(TAG, "Contains");
             questions.get(questionNum).choice.remove(toRemoveChoice);
+
         }
     }
 
@@ -93,7 +103,7 @@ public class Report implements Parcelable {
         }
         if(s.isEmpty())
             return "";
-        return s;
+        return type.toUpperCase()+"\n" + s;
     }
 
     //Parceble implementation

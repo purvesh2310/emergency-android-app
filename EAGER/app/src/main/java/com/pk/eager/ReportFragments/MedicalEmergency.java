@@ -93,6 +93,7 @@ public class MedicalEmergency extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, incidentReport.toString());
 
+        setEnableCheckBox(false);
         getActivity().setTitle("Medical Emergency");
         setButtonListener();
     }
@@ -184,6 +185,19 @@ public class MedicalEmergency extends Fragment {
         return (CheckBox) this.getView().findViewById(id);
     }
 
+    public void setEnableCheckBox(boolean enable){
+        int[] id = {R.id.checkbox_medicalq2_d1,R.id.checkbox_medicalq2_d2,R.id.checkbox_medicalq2_d3,R.id.checkbox_medicalq2_d4};
+        for(int i = 0; i < id.length; i++){
+            CheckBox box = (CheckBox)getView().findViewById(id[i]);
+            box.setEnabled(enable);
+            if(!enable)
+                box.setAlpha(0.4f);
+            else
+                box.setAlpha(1.0f);
+        }
+
+    }
+
     public void onButtonClick(int buttonid){
         RadioButton radio;
         CheckBox checkBox = null;
@@ -192,10 +206,15 @@ public class MedicalEmergency extends Fragment {
             case R.id.radio_medicalq1_b:
             case R.id.radio_medicalq1_c:
                 radio = (RadioButton) this.getView().findViewById(buttonid);
-                if(radio.isChecked())
+                if(radio.isChecked()) {
                     medical.setSingleChoice(0, new Choice(radio.getText().toString(), null));
-                else
+                    Log.d(TAG, "is checked " + radio.isChecked());
+                }
+                else {
+                    radio.setChecked(false);
+                    Log.d(TAG, "is not checked" + radio.isChecked());
                     medical.removeOneChoiceQuestion(0);
+                }
                 break;
             case R.id.checkbox_medicalq2_a:
             case R.id.checkbox_medicalq2_b:
@@ -208,10 +227,14 @@ public class MedicalEmergency extends Fragment {
                 break;
             case R.id.checkbox_medicalq2_d:
                 checkBox = (CheckBox) this.getView().findViewById(buttonid);
-                if (checkBox.isChecked())
+                if (checkBox.isChecked()) {
                     medical.setMultiChoice(1, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
-                else
+                    setEnableCheckBox(true);
+                }
+                else {
                     medical.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
+                    setEnableCheckBox(false);
+                }
                 break;
             case R.id.checkbox_medicalq2_d1:
             case R.id.checkbox_medicalq2_d2:

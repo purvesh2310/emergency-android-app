@@ -19,6 +19,9 @@ import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
+import com.pk.eager.ReportObject.Utils;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,16 +32,13 @@ import com.pk.eager.ReportObject.Report;
  * create an instance of this fragment.
  */
 public class IncidentType extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
 
-    // TODO: Rename and change types of parameters
+    private static final String ARG_PARAM1 = "param1";
     private String mParam1;
 
     private OnFragmentInteractionListener mListener;
     public Button nextButton;
-
+    private boolean falseReportWarning = false;
     private IncidentReport incidentReport;
     private static final String REPORT = "report";
     private static final String TAG = "IncidentType";
@@ -112,38 +112,9 @@ public class IncidentType extends Fragment {
 
         getActivity().setTitle("Choose Incident Type");
         setButtonListener();
-        showWarningDialog();
+        //showWarningDialog();
 
     }
-/*
-    public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        for(int i = 0; i < id.length; i++){
-            if(getRadioButton(id[i]).isChecked()) {
-                outState.putInt(id[i] + "", id[i]);
-                Log.d(TAG, "saved ");
-            }
-        }
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState!=null) {
-            for(int i = 0; i < id.length; i++){
-                int radioid = savedInstanceState.getInt(id[i]+"");
-                if(radioid!=0) {
-                    getRadioButton(radioid).setChecked(true);
-                    Log.d(TAG, getRadioButton(radioid).getText().toString());
-                }
-            }
-        }
-    }
-
-*/
-
-
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -197,8 +168,6 @@ public class IncidentType extends Fragment {
                 }
             });
         }
-
-
         nextButton = (Button) this.getView().findViewById(R.id.button_next_incidentType);
         nextButton.setOnClickListener(new View.OnClickListener() {
 
@@ -264,47 +233,144 @@ public class IncidentType extends Fragment {
     public void onButtonClick(int buttonid){
         switch (buttonid){
             case R.id.radio_incidentType_trapped:
-                showTrappedDialog();
+                if(getCheckBoxButton(buttonid).isChecked())
+                    showTrappedDialog();
+                else incidentReport.getReport(Constant.TRAP).removeSingleChoice(0, new Choice(getCheckBoxButton(buttonid).getText().toString() ));
                 break;
             case R.id.radio_incidentType_medical:
-                startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
+                if(!getCheckBoxButton(buttonid).isChecked()) {
+                    incidentReport.setReport(Utils.buildMedicalReport(), Constant.MEDICAL);
+                    fragments[Constant.MEDICAL] = null;
+                }
+                else
+                    startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
             case R.id.radio_incidentType_fire:
-                startFragment(fragments[Constant.FIRE], Constant.FIRE);
+                if(!getCheckBoxButton(buttonid).isChecked()){
+                    incidentReport.setReport(Utils.buildFireReport(), Constant.FIRE);
+                    fragments[Constant.FIRE] = null;
+                }
+                else
+                    startFragment(fragments[Constant.FIRE], Constant.FIRE);
                 break;
             case R.id.radio_incidentType_police:
-                startFragment(fragments[Constant.POLICE], Constant.POLICE);
+                if(!getCheckBoxButton(buttonid).isChecked()){
+                    incidentReport.setReport(Utils.buildPoliceReport(), Constant.POLICE);
+                    fragments[Constant.POLICE] = null;
+                }
+                else
+                    startFragment(fragments[Constant.POLICE], Constant.POLICE);
                 break;
             case R.id.radio_incidentType_traffic:
-                startFragment(fragments[Constant.TRAFFIC], Constant.TRAFFIC);
+                if(!getCheckBoxButton(buttonid).isChecked()){
+                    incidentReport.setReport(Utils.buildTrafficReport(), Constant.TRAFFIC);
+                    fragments[Constant.TRAFFIC] = null;
+                }
+                else
+                    startFragment(fragments[Constant.TRAFFIC], Constant.TRAFFIC);
                 break;
             case R.id.radio_incidentType_utility:
-                startFragment(fragments[Constant.UTILITY], Constant.UTILITY);
+                if(!getCheckBoxButton(buttonid).isChecked()){
+                    incidentReport.setReport(Utils.buildUtilityReport(), Constant.UTILITY);
+                    fragments[Constant.UTILITY] = null;
+                }
+                else
+                    startFragment(fragments[Constant.UTILITY], Constant.UTILITY);
                 break;
             case R.id.radio_incidentType_other:
-                Fragment fragment = MedicalEmergency.newInstance(incidentReport);
-                startFragment(fragments[Constant.FIRE], Constant.FIRE);
+                if(!getCheckBoxButton(buttonid).isChecked()){
+                    incidentReport.setReport(Utils.buildMedicalReport(), Constant.MEDICAL);
+                    fragments[Constant.MEDICAL] = null;
+                }
+                else
+                    startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
             case R.id.button_next_incidentType:
-                startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
+                CharSequence[] items = getCheckedChoice();
+                if(items.length > 0)
+                    showNavigationDialog(items);
+                else
+                    startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
-
         }
+    }
+
+    public CharSequence[] getCheckedChoice(){
+        final ArrayList<String> items = new ArrayList<>();
+        for(int i = 1; i < id.length-1; i++){
+            CheckBox box = (CheckBox)getView().findViewById(id[i]);
+            if(box.isChecked()){
+                items.add(box.getText().toString());
+            }
+        }
+        final CharSequence[] itemsList = new CharSequence[items.size()+1];
+        for(int i = 0; i < items.size(); i++){
+            itemsList[i] = items.get(i);
+        }
+        itemsList[itemsList.length-1] = "Review";
+        return itemsList;
+    }
+
+    public void showNavigationDialog(final CharSequence[] itemsList){
+        final AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Go To...")
+                .setSingleChoiceItems(itemsList, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = itemsList[which].toString();
+                        switch(text){
+                            case "Medical":
+                                startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
+                                break;
+                            case "Fire":
+                                startFragment(fragments[Constant.FIRE], Constant.FIRE);
+                                break;
+                            case "Police":
+                                startFragment(fragments[Constant.POLICE], Constant.POLICE);
+                                break;
+                            case "Traffic":
+                                startFragment(fragments[Constant.TRAFFIC], Constant.TRAFFIC);
+                                break;
+                            case "Utility":
+                                startFragment(fragments[Constant.UTILITY], Constant.UTILITY);
+                                break;
+                            case "Review":
+                                Fragment fragment = Review.newInstance(incidentReport);
+                                FragmentTransaction ft = getActivity()
+                                        .getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.mainFrame, fragment)
+                                        .addToBackStack("trafficEmergency");
+                                ft.commit();
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
 
     }
 
     public void showWarningDialog(){
-
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Warning")
-                .setMessage("False report will be prosecuted.")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do Nothing
-                    }
-                })
-                .show();
+        if(!falseReportWarning) {
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Warning")
+                    .setMessage("False report will be prosecuted.")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do Nothing
+                        }
+                    })
+                    .show();
+        }
+        falseReportWarning = true;
 
     }
 }

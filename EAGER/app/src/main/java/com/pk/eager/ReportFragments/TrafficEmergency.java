@@ -50,12 +50,6 @@ public class TrafficEmergency extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment TrafficEmergency.
-     */
-    // TODO: Rename and change types and number of parameters
     public static TrafficEmergency newInstance(IncidentReport report) {
         TrafficEmergency fragment = new TrafficEmergency();
         Bundle args = new Bundle();
@@ -175,9 +169,10 @@ public class TrafficEmergency extends Fragment {
                 if(checkBox.isChecked()) {
                     traffic.setMultiChoice(0, new Choice(checkBox.getText().toString(), new ArrayList<String>()));
                     RadioGroup g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic);
-                    g.setClickable(true);
+                    ViewUtils.setRadioGroupClickable(g, true);
                 }else{
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic)).setClickable(false);
+                    RadioGroup g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_traffic);
+                    ViewUtils.setRadioGroupClickable(g, false);
                     traffic.removeMultiChoiceQuestion(0,new Choice(checkBox.getText().toString(), null));
                 }
                 Log.d(TAG, "Next 1" + traffic.toString());

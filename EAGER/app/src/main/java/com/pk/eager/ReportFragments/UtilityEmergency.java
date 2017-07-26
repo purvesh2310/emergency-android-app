@@ -44,6 +44,8 @@ public class UtilityEmergency extends Fragment {
                                     R.id.radio_utilityq3_a, R.id.radio_utilityq3_b, R.id.radio_utilityq3_c,
                                     R.id.radio_utilityq4_a, R.id.radio_utilityq4_b, R.id.radio_utilityq4_c,
                                     R.id.radio_utilityq4_d, R.id.radio_utilityq4_e, R.id.radio_utilityq4_f};
+    private int[] radioGroupdID = new int[]{R.id.radioGroup_utility1,R.id.radioGroup_utility2,R.id.radioGroup_utility3,R.id.radioGroup_utility4
+                                            ,R.id.radioGroup_utility5};
 
     public Button nextButton;
 
@@ -86,7 +88,10 @@ public class UtilityEmergency extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        for(int i = 0; i < radioGroupdID.length; i++){
+            RadioGroup g = (RadioGroup)getView().findViewById(radioGroupdID[i]);
+            ViewUtils.setRadioGroupClickable(g, false);
+        }
         getActivity().setTitle("Utility Emergency");
         setButtonListener();
     }
@@ -169,6 +174,7 @@ public class UtilityEmergency extends Fragment {
     public void onButtonClick(int buttonid){
         RadioButton radio;
         CheckBox checkBox;
+        RadioGroup g;
         switch (buttonid){
             case R.id.checkbox_utilityq1_b:
                 checkBox = getCheckBoxButton(buttonid);
@@ -186,56 +192,61 @@ public class UtilityEmergency extends Fragment {
                 break;
             case R.id.checkbox_utilityq1:
                 checkBox = getCheckBoxButton(buttonid);
+                g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_utility1);
                 if(checkBox.isChecked()){
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility1)).setClickable(true);
                     utility.setMultiChoice(0, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, true);
                 }else{
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility1)).setClickable(false);
                     utility.removeMultiChoiceQuestion(0, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, false);
                 }
                 Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq2_a:
                 checkBox = getCheckBoxButton(buttonid);
+                g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_utility2);
                 if(checkBox.isChecked()){
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility2)).setClickable(true);
                     utility.setMultiChoice(1, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, true);
                 }else{
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility2)).setClickable(false);
                     utility.removeMultiChoiceQuestion(1, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, false);
                 }
                 Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq3_a:
                 checkBox = getCheckBoxButton(buttonid);
+                g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_utility3);
                 if(checkBox.isChecked()){
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility3)).setClickable(true);
                     utility.setMultiChoice(2, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, true);
                 }else{
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility3)).setClickable(false);
                     utility.removeMultiChoiceQuestion(2, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, false);
                 }
                 Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq4_a:
                 checkBox = getCheckBoxButton(buttonid);
+                g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_utility4);
                 if(checkBox.isChecked()){
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility4)).setClickable(true);
                     utility.setMultiChoice(3, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, true);
                 }else{
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility4)).setClickable(false);
                     utility.removeMultiChoiceQuestion(3, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, false);
                 }
                 Log.d(TAG, "utility" + utility.toString());
                 break;
             case R.id.checkbox_utilityq4_b:
                 checkBox = getCheckBoxButton(buttonid);
+                g = (RadioGroup) this.getView().findViewById(R.id.radioGroup_utility5);
                 if(checkBox.isChecked()){
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility5)).setClickable(true);
                     utility.setMultiChoice(3, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, true);
                 }else{
-                    ((RadioGroup) this.getView().findViewById(R.id.radioGroup_utility5)).setClickable(false);
                     utility.removeMultiChoiceQuestion(3, new Choice(checkBox.getText().toString(), null));
+                    ViewUtils.setRadioGroupClickable(g, false);
                 }
                 Log.d(TAG, "utility" + utility.toString());
                 break;

@@ -30,6 +30,10 @@ public class IncidentReport implements Parcelable {
         return reports.get(type);
     }
 
+    public void setReport(Report report, int type){
+        reports.set(type, report);
+    }
+
     public String toString(){
         String s = "";
         for(Report r : reports){

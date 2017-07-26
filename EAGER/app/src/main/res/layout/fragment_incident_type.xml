@@ -82,7 +82,7 @@
             android:id="@+id/button_next_incidentType"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="NEXT"/>
+            android:text="Go To..."/>
 
     </LinearLayout>
 

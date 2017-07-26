@@ -2,6 +2,7 @@ package com.pk.eager.ReportObject;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class Choice implements Parcelable {
     String content;
     ArrayList<String> subItems = new ArrayList<>();
-
+    final String TAG = "Choice";
     //Constructor
     public Choice(String content, ArrayList<String> subItems){
         this.content = content;
@@ -27,7 +28,8 @@ public class Choice implements Parcelable {
         for(String s : subItems){
             sub+=s+", ";
         }
-        return content+": " + sub;
+        Log.d(TAG, sub.substring(0, sub.length()-2));
+        return content+": " + sub.substring(0, sub.length()-2);
     }
 
     public Choice(String content){this.content = content;}
@@ -38,7 +40,7 @@ public class Choice implements Parcelable {
         if(obj.getClass() != this.getClass()) return false;
 
         Choice c = (Choice) obj;
-        return c.content == this.content;
+        return c.content.equals(this.content);
     }
 
     //class methods
