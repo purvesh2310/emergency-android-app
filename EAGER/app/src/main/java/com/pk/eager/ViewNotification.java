@@ -19,6 +19,8 @@ import com.google.firebase.database.Query;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
+import org.w3c.dom.Text;
+
 import java.util.Map;
 
 
@@ -29,7 +31,11 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
     private CompactReport report;
     private FirebaseDatabase db;
     private CompactReportUtil cmpUtils;
-    private TextView textView;
+
+    private TextView titleTextView;
+    private TextView informationTextView;
+    private TextView locationTextView;
+
     private double longitude;
     private double latitude;
     private SupportMapFragment mapFragment;
@@ -42,7 +48,10 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
 
         db = FirebaseDatabase.getInstance();
         cmpUtils = new CompactReportUtil();
-        textView = (TextView) findViewById(R.id.viewNotification_textview);
+
+        titleTextView = (TextView) findViewById(R.id.viewNotificationReportTitle);
+        informationTextView = (TextView) findViewById(R.id.viewNotificationReportInformation);
+        locationTextView = (TextView) findViewById(R.id.viewNotificationReportLocation);
 
         if (getIntent().hasExtra(REPORT)) {
             report = getIntent().getParcelableExtra(REPORT);
@@ -82,30 +91,36 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
         }
 
         if(report!=null) {
+
             Map<String, String> map = cmpUtils.parseReportData(report);
+
             String title = map.get("title");
             String information = map.get("information");
             String location = map.get("location");
+
             latitude = Double.parseDouble(location.split(",")[0]);
             longitude = Double.parseDouble(location.split(",")[1]);
+
             Log.d(TAG, "Title " + map.get("title"));
             Log.d(TAG, "Information " + map.get("information"));
             Log.d(TAG, "Location " + map.get("location"));
 
             if(title!=null){
-                textView.append(title+"\n");
+                titleTextView.setText(title);
             }
             if(information!=null){
-                textView.append(information+"\n");
+                informationTextView.append(information);
             }
             if(location!=null){
-                textView.append(location+"\n");
+                locationTextView.append(location);
             }
         }
 
         location = new LatLng(latitude, longitude);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.viewReportDetail_mapfragment);
         mapFragment.getMapAsync(this);
+
+        setTitle("Incident Information");
     }
 
 
