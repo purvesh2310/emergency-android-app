@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.pk.eager.ViewNotification">
-
+    tools:context="com.pk.eager.ViewNotification"
+    android:padding="10dp">
 
     <TextView
-        android:id="@+id/viewNotification_textview"
-        android:layout_width="match_parent"
+        android:id="@+id/viewNotificationReportTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
+        style="@style/reportList"
+        />
+
+    <TextView
+        android:id="@+id/viewNotificationReportInformation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/reportList"
+        />
+
+    <TextView
+        android:id="@+id/viewNotificationReportLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#2F4F4F"
         />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
