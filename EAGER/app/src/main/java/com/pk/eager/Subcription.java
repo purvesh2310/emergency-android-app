@@ -22,7 +22,7 @@ public class Subcription extends AppCompatActivity {
         String topic;
         EditText editText = (EditText) findViewById(R.id.subscriptionEditText);
         topic = editText.getText().toString();
-        FirebaseMessaging.getInstance().subscribeToTopic("95138");
+        FirebaseMessaging.getInstance().subscribeToTopic(topic);
         TextView textView = (TextView)findViewById(R.id.subscriptionTextView);
         textView.setText(textView.getText().toString()+"\n"+topic);
     }

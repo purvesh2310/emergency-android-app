@@ -112,7 +112,7 @@ public class IncidentType extends Fragment {
 
         getActivity().setTitle("Choose Incident Type");
         setButtonListener();
-        //showWarningDialog();
+        showWarningDialog();
 
     }
 

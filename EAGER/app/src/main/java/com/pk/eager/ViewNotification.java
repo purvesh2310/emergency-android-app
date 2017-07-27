@@ -19,8 +19,6 @@ import com.google.firebase.database.Query;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
-import org.w3c.dom.Text;
-
 import java.util.Map;
 
 
@@ -65,6 +63,34 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         report = dataSnapshot.getValue(CompactReport.class);
+                        Map<String, String> map = cmpUtils.parseReportData(report);
+
+                        String title = map.get("title");
+                        String information = map.get("information");
+                        String location = map.get("location");
+
+                        latitude = Double.parseDouble(location.split(",")[0]);
+                        longitude = Double.parseDouble(location.split(",")[1]);
+
+                        Log.d(TAG, "Title " + map.get("title"));
+                        Log.d(TAG, "Information " + map.get("information"));
+                        Log.d(TAG, "Location " + map.get("location"));
+
+                        if(title!=null){
+                            titleTextView.setText(title);
+                        }
+                        if(information!=null){
+                            informationTextView.append(information);
+                        }
+                        if(location!=null){
+                            locationTextView.append(location);
+                        }
+
+                        setLocation(latitude,longitude);
+                        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.viewReportDetail_mapfragment);
+                        mapFragment.getMapAsync(ViewNotification.this);
+
+                        setTitle("Incident Information");
                     }
 
                     @Override
@@ -122,6 +148,12 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
 
         setTitle("Incident Information");
     }
+
+
+    public void setLocation(Double lat, Double longitude){
+        location = new LatLng(lat, longitude);
+    }
+
 
 
     @Override
