@@ -3,21 +3,21 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="For Officers" />
+            android:id="@+id/nav_nearbyIncident"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:title="Nearby Incidents" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="For Dispatchers" />
+            android:id="@+id/nav_subscription"
+            android:icon="@drawable/ic_notifications_active_black_24dp"
+            android:title="Subscription" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Terms and Conditions" />
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_event_available_black_24dp"
+            android:title="History" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_account"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Disclaimer" />
+            android:title="Account" />
     </group>
 
 </menu>

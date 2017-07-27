@@ -36,6 +36,9 @@ import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Utils;
+import com.pk.eager.db.handler.DatabaseHandler;
+import com.pk.eager.db.model.Report;
+import com.pk.eager.util.CompactReportUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -283,7 +286,7 @@ public class Review extends Fragment {
                         final String key = newChild.getKey();
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
                         Log.d(TAG, "Smaller report " + smallerSize.toString());
-                        CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999");
+                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999");
 
 
                         newChild.setValue(compact, new DatabaseReference.CompletionListener() {
@@ -291,7 +294,7 @@ public class Review extends Fragment {
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 Dashboard.incidentType = null;
                                 Dashboard.incidentReport = new IncidentReport("Bla");
-
+                                saveReportForHistory(compact);
                                 getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                             }
@@ -379,5 +382,23 @@ public class Review extends Fragment {
         else{
             receiveDataFromChannel(data);
         }
+    }
+
+    // Saving reports locally for the History
+    public void saveReportForHistory(CompactReport cmpReport){
+
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+        Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+
+        String title = reportData.get("title");
+        String information = reportData.get("information");
+        double latitude = cmpReport.getLatitude();
+        double longitude = cmpReport.getLongitude();
+        long unixTime = System.currentTimeMillis() / 1000L;
+
+        Report report = new Report(title, information, latitude, longitude, unixTime);
+
+        DatabaseHandler db = new DatabaseHandler(getContext());
+        db.addReport(report);
     }
 }

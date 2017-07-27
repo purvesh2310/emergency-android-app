@@ -189,21 +189,19 @@ public class Dashboard extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-          /*  Intent intent = new Intent(getApplicationContext(), UserAccount.class);
-            startActivity(intent);*/
+        if (id == R.id.nav_nearbyIncident) {
+            fragment = new InformationListView();
+        } else if (id == R.id.nav_subscription) {
+            fragment = new SubscriptionFragment();
+        } else if (id == R.id.nav_history) {
+            fragment = new HistoryFragment();
+        } else if (id == R.id.nav_account) {
             fragment = new Account();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.mainFrame, fragment);
-            ft.commit();
-
         }
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.mainFrame, fragment);
+        ft.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
