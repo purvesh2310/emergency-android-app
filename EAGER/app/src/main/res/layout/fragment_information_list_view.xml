@@ -21,7 +21,7 @@
         app:fabSize="normal"
         android:tint="#FFFFFF"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <!--android.support.design.widget.FloatingActionButton
         android:id="@+id/viewMapFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_dialog_map"
         app:fabSize="mini"
-        android:tint="#FFFFFF"/>
+        android:tint="#FFFFFF"/-->
 
 
 </FrameLayout>

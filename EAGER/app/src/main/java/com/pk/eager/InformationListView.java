@@ -126,8 +126,8 @@ public class InformationListView extends Fragment {
 
             }
         });
-
-        FloatingActionButton viewMapFab = (FloatingActionButton) view.findViewById(R.id.viewMapFAB);
+        /*
+        FloatingActionButton viewMapFab = (FloatingActionButton) view.findViewById(R.id .viewMapFAB);
         viewMapFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -141,7 +141,7 @@ public class InformationListView extends Fragment {
                 ft.commit();
 
             }
-        });
+        });*/
 
         checkPermission();
 

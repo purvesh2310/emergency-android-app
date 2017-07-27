@@ -51,7 +51,8 @@ public class Dashboard extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener,
         InformationListView.OnFragmentInteractionListener,
         MapReportInfo.OnFragmentInteractionListener,
-        Account.OnFragmentInteractionListener{
+        Account.OnFragmentInteractionListener,
+        TabFragment.OnFragmentInteractionListener{
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
@@ -84,10 +85,17 @@ public class Dashboard extends AppCompatActivity
         /****?
          * End
          */
-
+        /*
         if(savedInstanceState == null) {
            // fragment = new ChooseAction();
             fragment = new InformationListView();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrame, fragment);
+            ft.commit();
+        }*/
+        if(savedInstanceState == null) {
+            // fragment = new ChooseAction();
+            fragment = new TabFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
