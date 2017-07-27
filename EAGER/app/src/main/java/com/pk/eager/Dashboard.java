@@ -34,6 +34,7 @@ import com.pk.eager.ReportFragments.Review;
 import com.pk.eager.ReportFragments.TrafficEmergency;
 import com.pk.eager.ReportFragments.UtilityEmergency;
 import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.User.Account;
 
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -49,7 +50,8 @@ public class Dashboard extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         InformationListView.OnFragmentInteractionListener,
-        MapReportInfo.OnFragmentInteractionListener{
+        MapReportInfo.OnFragmentInteractionListener,
+        Account.OnFragmentInteractionListener{
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");
@@ -186,6 +188,12 @@ public class Dashboard extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
+          /*  Intent intent = new Intent(getApplicationContext(), UserAccount.class);
+            startActivity(intent);*/
+            fragment = new Account();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrame, fragment);
+            ft.commit();
 
         }
 
