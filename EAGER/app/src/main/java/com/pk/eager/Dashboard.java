@@ -190,7 +190,7 @@ public class Dashboard extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_nearbyIncident) {
-            fragment = new InformationListView();
+            fragment = new TabFragment();
         } else if (id == R.id.nav_subscription) {
             fragment = new SubscriptionFragment();
         } else if (id == R.id.nav_history) {
