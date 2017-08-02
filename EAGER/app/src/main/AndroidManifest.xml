@@ -41,8 +41,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBkSQMvp93eV2DlTSDgXA88rFyAWfoCf5U" />
 
-        <activity android:name=".Subcription" />
-
         <!--
              Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more.

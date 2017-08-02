@@ -1,6 +1,9 @@
 package com.pk.eager;
 
+import android.*;
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,11 +12,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,20 +47,18 @@ import static android.content.ContentValues.TAG;
 
 public class InformationListView extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final String REPORT = "report";
 
     private DatabaseReference db;
     List<CompactReport> reportList;
     RecyclerView reportRecyclerView;
-    private FusedLocationProviderClient mFusedLocationClient;
-    public static final int PERMISSIONS_REQUEST_LOCATION = 99;
-
     LatLng currentLocation;
+    public String phoneNumber;
 
-    private String mParam1;
-    private String mParam2;
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    public static final int PERMISSIONS_REQUEST_LOCATION = 99;
+    public static final int PERMISSIONS_REQUEST_PHONE = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,8 +69,6 @@ public class InformationListView extends Fragment {
     public static InformationListView newInstance(String param1, String param2) {
         InformationListView fragment = new InformationListView();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,11 +76,6 @@ public class InformationListView extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         db = FirebaseDatabase.getInstance().getReference().child("Reports");
     }
 
@@ -102,7 +99,7 @@ public class InformationListView extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Nearby Incidents");
-        reportRecyclerView = (RecyclerView)view.findViewById(R.id.informationListView);
+        reportRecyclerView = (RecyclerView) view.findViewById(R.id.informationListView);
 
         reportList = new ArrayList<>();
 
@@ -111,7 +108,7 @@ public class InformationListView extends Fragment {
             public void onClick(View v) {
 
                 Fragment fragment = Dashboard.incidentType;
-                if(fragment == null) {
+                if (fragment == null) {
                     Dashboard.incidentType = new IncidentType();
                     fragment = Dashboard.incidentType;
                 }
@@ -126,24 +123,9 @@ public class InformationListView extends Fragment {
 
             }
         });
-        /*
-        FloatingActionButton viewMapFab = (FloatingActionButton) view.findViewById(R.id .viewMapFAB);
-        viewMapFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Fragment fragment = new Information();
-                FragmentTransaction ft = getActivity()
-                        .getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.mainFrame, fragment)
-                        .addToBackStack("information");
-
-                ft.commit();
-
-            }
-        });*/
 
         checkPermission();
+        getPhonePermission();
 
     }
 
@@ -168,7 +150,7 @@ public class InformationListView extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void checkPermission(){
+    public void checkPermission() {
 
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -183,13 +165,13 @@ public class InformationListView extends Fragment {
                 }
             });
 
-        } else{
+        } else {
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_LOCATION );
+                    PERMISSIONS_REQUEST_LOCATION);
         }
     }
 
-    public void fetchDataFromFirebase(){
+    public void fetchDataFromFirebase() {
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         reportRecyclerView.setLayoutManager(llm);
@@ -202,7 +184,7 @@ public class InformationListView extends Fragment {
                     reportList.add(cmp);
                 }
 
-                Log.d("MyTAG",String.valueOf(currentLocation.latitude));
+                Log.d("MyTAG", String.valueOf(currentLocation.latitude));
                 InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
                 reportRecyclerView.setAdapter(adapter);
                 reportRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), reportRecyclerView, new ClickListener() {
@@ -239,15 +221,58 @@ public class InformationListView extends Fragment {
             case PERMISSIONS_REQUEST_LOCATION: {
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    try{
+                    try {
                         checkPermission();
-                    }catch (SecurityException e){
-                        Log.e("EAGER",e.getMessage());
+                    } catch (SecurityException e) {
+                        Log.e("EAGER", e.getMessage());
                     }
+                }
+                return;
+            }
+            case PERMISSIONS_REQUEST_PHONE: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //read phone number
+                    getPhoneNumberFromDevice();
+                    Log.d(TAG, "Phone number"+ phoneNumber);
+                } else {
+                    Log.d(TAG, "Permission denied");
+                    final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                    alertDialog.setTitle("Phone Permission Required");
+                    alertDialog.setMessage("Phone permission is needed to submit a report");
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Retry", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_PHONE);
+                        }
+                    });
+                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel reporting", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                    alertDialog.show();
                 }
                 return;
             }
         }
 
+    }
+
+    public void getPhonePermission() {
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{android.Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_PHONE);
+            Log.d(TAG, "Permission requested");
+        } else {
+            getPhoneNumberFromDevice();
+        }
+    }
+
+    public void getPhoneNumberFromDevice(){
+        TelephonyManager tMgr = (TelephonyManager)this.getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        phoneNumber = tMgr.getDeviceId();
     }
 }

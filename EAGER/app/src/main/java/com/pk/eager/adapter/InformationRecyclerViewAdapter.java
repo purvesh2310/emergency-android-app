@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -29,6 +30,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         TextView reportTitle;
         TextView reportInformation;
         TextView reportLocation;
+        ImageView incidentTypeLogo;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -36,6 +38,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportTitle = (TextView) itemView.findViewById(R.id.reportTitleTextView);
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
+            incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
 
             /*
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +84,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
         double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
         String roundDistance = String.format("%.2f", distanceInMile);
-        roundDistance = roundDistance + " miles far";
+        roundDistance = roundDistance + " miles";
 
         String reportTitle = reportData.get("title");
         String fullInfo = reportData.get("information");
@@ -89,5 +92,23 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         informationViewHolder.reportTitle.setText(reportTitle);
         informationViewHolder.reportInformation.setText(fullInfo);
         informationViewHolder.reportLocation.setText(roundDistance);
+
+        switch(reportTitle){
+            case "Medical":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.hospital);
+                break;
+            case "Fire":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.flame);
+                break;
+            case "Police":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.siren);
+                break;
+            case "Traffic":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.cone);
+                break;
+            case "Utility":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.repairing);
+                break;
+        }
     }
 }
