@@ -134,6 +134,7 @@ public class Account extends Fragment {
                 FirebaseAuth.getInstance().signOut();
                 signOut.setVisibility(View.GONE);
                 signIn.setVisibility(View.VISIBLE);
+                textView.setText("Please sign in or create an account");
             }
         });
 
