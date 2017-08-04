@@ -1,0 +1,8 @@
+
+SpotCrime
+
+Keys:
+['summary_detail', 'links', 'published_parsed', 'title', 'geo_point', 'geo_lat', 'summary', 'guidislink', 'title_detail', 'link', 'published', 'geo_long', 'where', 'id']
+
+Keys - Values:
+[('summary_detail', {'base': u'http://s3.spotcrime.com/cache/rss/sanjose.xml', 'type': u'text/html', 'value': u'DISTURBANCE. DISPOSITION: Canceled. Call Number: P171740956. This is from San Jose 911 call data. Information is subject to change.', 'language': None}), ('links', [{'href': u'https://spotcrime.com/crime-report/94371809/other+on+1700+block+of+guadalupe+av%2C+san+jose%2C+ca', 'type': u'text/html', 'rel': u'alternate'}]), ('published_parsed', time.struct_time(tm_year=2017, tm_mon=6, tm_mday=23, tm_hour=4, tm_min=0, tm_sec=0, tm_wday=4, tm_yday=174, tm_isdst=0)), ('title', u'Other on 1700 BLOCK OF GUADALUPE AV, San Jose, CA (via spotcrime.com)'), ('geo_point', u''), ('geo_lat', u'37.3018106'), ('summary', u'DISTURBANCE. DISPOSITION: Canceled. Call Number: P171740956. This is from San Jose 911 call data. Information is subject to change.'), ('guidislink', True), ('title_detail', {'base': u'http://s3.spotcrime.com/cache/rss/sanjose.xml', 'type': u'text/plain', 'value': u'Other on 1700 BLOCK OF GUADALUPE AV, San Jose, CA (via spotcrime.com)', 'language': None}), ('link', u'https://spotcrime.com/crime-report/94371809/other+on+1700+block+of+guadalupe+av%2C+san+jose%2C+ca'), ('published', u'Fri, 23 Jun 2017 00:00:00 -0400'), ('geo_long', u'-121.88105'), ('where', {u'type': u'Point', u'coordinates': (-121.88105, 37.3018106)}), ('id', u'https://spotcrime.com/crime-report/94371809/other+on+1700+block+of+guadalupe+av%2C+san+jose%2C+ca')]
