@@ -10,13 +10,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign Up"/>
+        android:text="Sign Up"
+        android:gravity="center"/>
 
     <EditText
         android:id="@+id/signUp_email_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
+        android:gravity="center"
         android:hint="Email"/>
 
     <EditText
@@ -24,30 +26,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
+        android:gravity="center"
         android:hint="Password"/>
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:onClick="onCreateAccountWithEmailAndPasswordButton"/>
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Up"
+            android:onClick="onCreateAccountWithEmailAndPasswordButton"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign In With Google"
-        android:onClick="onSignInWithGoogle"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign In"
+            android:onClick="onSwitchToLoginButton"/>
 
-    <Button
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Or Sign In Using"
+        android:gravity="center"/>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/signUp_google_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="I have an account"
-        android:onClick="onSwitchToLoginButton"/>
+        />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/signUp_facebook_login_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         />
+
 
 </LinearLayout>

@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,8 +31,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 
@@ -45,6 +49,7 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
     private CallbackManager mCallbackManager;
     private FirebaseDatabase database;
     private DatabaseReference usersRef;
+    private boolean firstTimeUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +58,36 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         usersRef = database.getReference("Users");
+        firstTimeUser = true;
 
         configureGoogleAuth();
-        
-        // Set up facebook
+        configureFacebookAuth();
+    }
+
+
+    //Configure google for authentication - onCreate
+    public void configureGoogleAuth(){
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this/* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        SignInButton ggLoginButton = (SignInButton) findViewById(R.id.signUp_google_login_button);
+        ggLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSignInWithGoogle();
+            }
+        });
+    }
+
+    //configure facebook for authentication - onCreate
+    public void configureFacebookAuth(){
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton fbloginButton = (LoginButton) findViewById(R.id.signUp_facebook_login_button);
@@ -81,35 +112,20 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
                 Toast.makeText(getApplicationContext(), "Error Logging in with Facebook", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    public void configureGoogleAuth(){
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this/* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-    }
-
-
+    //email sign in
     public void onCreateAccountWithEmailAndPasswordButton(View view){
         auth = FirebaseAuth.getInstance();
-        String email = ((EditText)findViewById(R.id.signUp_email_editText)).getText().toString();
+        final String email = ((EditText)findViewById(R.id.signUp_email_editText)).getText().toString();
         String password = ((EditText)findViewById(R.id.signUp_password_editText)).getText().toString();
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d(TAG, "create user with email and pw complete");
                 if(task.isSuccessful()){
-                    addUser(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail());
-                    gotoDashBoard();
+                    String uid = auth.getCurrentUser().getUid();
+                    verifyAndAddUser(uid, email);
                 }else{
                     Toast.makeText(SignUp.this, "Sign Up failed", Toast.LENGTH_SHORT).show();
                 }
@@ -117,32 +133,62 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
         });
     }
 
-    public void onSignInWithGoogle(View view) {
+    //google sign in
+    public void onSignInWithGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, GG_SIGN_IN);
     }
 
-    private void onSignInWithFacebook(View view){
+    //call to google auth when login success
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = auth.getCurrentUser();
+                            verifyAndAddUser(user.getUid(), user.getEmail());
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    //call to facebook auth when login success
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = auth.getCurrentUser();
+                            verifyAndAddUser(user.getUid(), user.getEmail());
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(SignUp.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
 
-    public void addUser(String uid, String email){
-        User newUser = new User(email);
-        usersRef.child(uid).setValue(newUser);
-    }
-
-    public void gotoDashBoard(){
-        Intent intent = new Intent(this, Dashboard.class);
-        startActivity(intent);
-    }
-
-    public void onSwitchToLoginButton(View view){
-        Intent intent = new Intent(this, SignIn.class);
-        startActivity(intent);
-    }
-
-    //On google login result returns
+    //On result returns for google and facebook
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -164,61 +210,51 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
 
     }
 
-    //call to auth when login success
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = auth.getCurrentUser();
-                            gotoDashBoard();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
     //Google Api client on connection fail
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
-    // [START auth_with_facebook]
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+    //--------Database related functions---------//
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = auth.getCurrentUser();
-                            gotoDashBoard();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(SignUp.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    public void addUser(String uid, String email){
+        User newUser = new User(email);
+        usersRef.child(uid).setValue(newUser);
     }
-    // [END auth_with_facebook]
 
+    private void verifyAndAddUser(final String uid, final String email){
+        DatabaseReference ref = usersRef.child(uid);
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()==null)
+                    addUser(uid, email);
+                gotoDashBoard();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
+    //----intents to other activity-----//
+
+    public void gotoDashBoard(){
+        Intent intent = new Intent(this, Dashboard.class);
+        startActivity(intent);
+    }
+
+    public void onSwitchToLoginButton(View view){
+        Intent intent = new Intent(this, SignIn.class);
+        startActivity(intent);
+    }
 
 
 
