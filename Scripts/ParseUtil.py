@@ -48,7 +48,7 @@ def parseSpotCrime(v):
 		};
 
 
-		dic = {'type': 'feed-crime', 'compactReports': compactReport, 'latitude':0, 'longitude':0, 'phoneNumber':'0'}
+		dic = {'type': 'feed-crime', 'compactReports': compactReport, 'latitude':geo_lat, 'longitude':geo_long, 'phoneNumber':'0'}
 
 
 		s = json.dumps(dic)
