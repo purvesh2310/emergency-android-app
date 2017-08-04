@@ -35,7 +35,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Sign In With Google"
+        android:onClick="onSignInWithGoogle"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="I have an account"
         android:onClick="onSwitchToLoginButton"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/signUp_facebook_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>
