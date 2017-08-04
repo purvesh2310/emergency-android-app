@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.data.DataHolder;
 import com.google.android.gms.maps.model.LatLng;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +53,10 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
             });*/
         }
+    }
+
+    public InformationRecyclerViewAdapter(){
+
     }
 
     public InformationRecyclerViewAdapter(Context context, List<CompactReport> reportList, LatLng location){
@@ -110,5 +116,28 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
                 informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.repairing);
                 break;
         }
+    }
+
+    public void updateList(List<CompactReport> list){
+        reportList = list;
+        notifyDataSetChanged();
+    }
+
+    public void filter(String query){
+        List<CompactReport> temp = new ArrayList();
+
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for(CompactReport d: reportList){
+
+            Map<String, String> reportData = cmpUtil.parseReportData(d);
+            String reportTitle = reportData.get("title");
+
+            if(reportTitle.toLowerCase().equals(query.toLowerCase())){
+                temp.add(d);
+            }
+        }
+        //update recyclerview
+       updateList(temp);
     }
 }

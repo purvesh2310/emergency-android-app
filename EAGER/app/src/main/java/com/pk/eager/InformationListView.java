@@ -16,14 +16,28 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -54,6 +68,10 @@ public class InformationListView extends Fragment {
     RecyclerView reportRecyclerView;
     LatLng currentLocation;
     public String phoneNumber;
+    private MenuItem mSearchAction;
+    private boolean isSearchOpened = false;
+    private EditText searchBar;
+    InformationRecyclerViewAdapter adapter;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -77,6 +95,7 @@ public class InformationListView extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseDatabase.getInstance().getReference().child("Reports");
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -100,8 +119,6 @@ public class InformationListView extends Fragment {
 
         getActivity().setTitle("Nearby Incidents");
         reportRecyclerView = (RecyclerView) view.findViewById(R.id.informationListView);
-
-        reportList = new ArrayList<>();
 
         FloatingActionButton newReportFab = (FloatingActionButton) view.findViewById(R.id.reportIncidentFAB);
         newReportFab.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +144,14 @@ public class InformationListView extends Fragment {
         checkPermission();
         getPhonePermission();
 
+        /*Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        bt = new Button(getContext());
+        bt.setText("Search");
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
+        params.gravity = Gravity.RIGHT;
+        bt.setLayoutParams(params);
+        toolbar.addView(bt);*/
     }
 
     @Override
@@ -173,6 +198,7 @@ public class InformationListView extends Fragment {
 
     public void fetchDataFromFirebase() {
 
+        reportList = new ArrayList<>();
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         reportRecyclerView.setLayoutManager(llm);
 
@@ -184,16 +210,15 @@ public class InformationListView extends Fragment {
                     reportList.add(cmp);
                 }
 
-                Log.d("MyTAG", String.valueOf(currentLocation.latitude));
-                InformationRecyclerViewAdapter adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
+                adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
                 reportRecyclerView.setAdapter(adapter);
+
                 reportRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), reportRecyclerView, new ClickListener() {
                     @Override
                     public void onClick(View view, int position) {
                         CompactReport report = reportList.get(position);
                         Intent intent = new Intent(getContext(), ViewNotification.class);
                         intent.putExtra(REPORT, report);
-
 
                         startActivity(intent);
                     }
@@ -274,5 +299,86 @@ public class InformationListView extends Fragment {
     public void getPhoneNumberFromDevice(){
         TelephonyManager tMgr = (TelephonyManager)this.getActivity().getSystemService(Context.TELEPHONY_SERVICE);
         phoneNumber = tMgr.getDeviceId();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_dashboard, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        mSearchAction = menu.findItem(R.id.action_search);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_search:
+                handleMenuSearch();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void handleMenuSearch(){
+        ActionBar action = ((AppCompatActivity)getActivity()).getSupportActionBar(); //get the actionbar
+
+        if(isSearchOpened){ //test if the search is open
+
+            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
+            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+
+            //hides the keyboard
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);
+
+            mSearchAction.setIcon(getResources().getDrawable(R.drawable.magnifying_glass));
+
+            fetchDataFromFirebase();
+
+            isSearchOpened = false;
+        } else { //open the search entry
+
+            action.setDisplayShowCustomEnabled(true); //enable it to display a
+            // custom view in the action bar.
+            action.setCustomView(R.layout.search_bar);//add the custom view
+            action.setDisplayShowTitleEnabled(false); //hide the title
+
+            searchBar = (EditText)action.getCustomView().findViewById(R.id.searchBar); //the text editor
+
+            //this is a listener to do a search when the user clicks on search button
+            searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);
+
+                        String searchQuery = searchBar.getText().toString();
+                        adapter.filter(searchQuery);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+
+            searchBar.requestFocus();
+
+            //open the keyboard focused in the edtSearch
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
+
+            //add the close icon
+            mSearchAction.setIcon(getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel));
+
+            isSearchOpened = true;
+        }
     }
 }
