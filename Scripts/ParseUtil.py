@@ -8,7 +8,6 @@ def parseDate(date):
 	if date == "": return ""
 	return date[:16]
 
-
 def parseSpotCrime(v):
 	source = v;
 	filename = "spotcrime.json"
@@ -41,23 +40,16 @@ def parseSpotCrime(v):
 		else:
 			image = ""
 
-		dic = {'address':str(loc),
-			   'agency':'Yes',
-			   'alertId': '',
-			   'author':'SpotCrime.com',
-			   'authorId':'',
-			   'category':'Crime',
-			   'comment':0,
-			   'confirmation':0,
-			   'description': description,
-			   'endDate': date,
-			   'image': image,
-			   'latitude': geo_long,
-			   'longitude': geo_lat,
-			   'share':0,
-			   'startDate':date,
-			   'time':''
-			   }
+		compactReport = {
+			'address':str(loc),
+			'author':'SpotCrime.com',
+			'description': description,
+			'date': date,		
+		};
+
+
+		dic = {'type': 'feed-crime', 'compactReports': compactReport, 'latitude':0, 'longitude':0, 'phoneNumber':'0'}
+
 
 		s = json.dumps(dic)
 		file.write(s)
@@ -69,9 +61,56 @@ def parseSpotCrime(v):
 
 
 def parseWeather(v):
-	return 0
+	source = v;
+	filename = "weather.json"
+
+	#open file
+	file = open(filename,'w')
+
+	#parse feed
+	parser = feedparser.parse(source)
+
+	#entries are <item> tags
+	entries = parser.entries
+
+	# [ ] for json file
+	file.write('[')
+	i = 0
+	for e in entries:
+		title = e.get('cap_event', '')
+		summary = e.get('title', '')
+		effectiveDate = e.get('cap_effective', '')
+		expireDate = e.get('cap_expires', '')
+		severity = e.get('cap_severity', '')
+		link = e.get('link', '')
+		detail = e.get('summary_detail','').get('value', '')
+		area = e.get('cap_areadesc')
+		
+		compactReport = {
+			'title': title,
+			'summary': summary,
+			'effectiveDate': effectiveDate,
+			'expireDate': expireDate,
+			'severity': severity,
+			'link': link,
+			'detail': detail,
+			'area': area		
+		};
+
+		dic = {'type': 'feed-weather', 'compactReports': compactReport, 'latitude':0, 'longitude':0, 'phoneNumber':'0'}
+		
+
+		s = json.dumps(dic)
+		file.write(s)
+		if e != entries[-1]:
+			file.write(',')
+		i+=1
+	file.write(']')
+	file.close()
 
 
 
 def parseMissingKid(v):
 	return 0
+
+

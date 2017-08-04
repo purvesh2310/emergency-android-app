@@ -6,3 +6,62 @@ Keys:
 
 Keys - Values:
 [('summary_detail', {'base': u'http://s3.spotcrime.com/cache/rss/sanjose.xml', 'type': u'text/html', 'value': u'DISTURBANCE. DISPOSITION: Canceled. Call Number: P171740956. This is from San Jose 911 call data. Information is subject to change.', 'language': None}), ('links', [{'href': u'https://spotcrime.com/crime-report/94371809/other+on+1700+block+of+guadalupe+av%2C+san+jose%2C+ca', 'type': u'text/html', 'rel': u'alternate'}]), ('published_parsed', time.struct_time(tm_year=2017, tm_mon=6, tm_mday=23, tm_hour=4, tm_min=0, tm_sec=0, tm_wday=4, tm_yday=174, tm_isdst=0)), ('title', u'Other on 1700 BLOCK OF GUADALUPE AV, San Jose, CA (via spotcrime.com)'), ('geo_point', u''), ('geo_lat', u'37.3018106'), ('summary', u'DISTURBANCE. DISPOSITION: Canceled. Call Number: P171740956. This is from San Jose 911 call data. Information is subject to change.'), ('guidislink', True), ('title_detail', {'base': u'http://s3.spotcrime.com/cache/rss/sanjose.xml', 'type': u'text/plain', 'value': u'Other on 1700 BLOCK OF GUADALUPE AV, San Jose, CA (via spotcrime.com)', 'language': None}), ('link', u'https://spotcrime.com/crime-report/94371809/other+on+1700+block+of+guadalupe+av%2C+san+jose%2C+ca'), ('published', u'Fri, 23 Jun 2017 00:00:00 -0400'), ('geo_long', u'-121.88105'), ('where', {u'type': u'Point', u'coordinates': (-121.88105, 37.3018106)}), ('id', u'https://spotcrime.com/crime-report/94371809/other+on+1700+block+of+guadalupe+av%2C+san+jose%2C+ca')]
+
+Weather
+
+1 -- ('updated_parsed', time.struct_time(tm_year=2017, tm_mon=8, tm_mday=4, tm_hour=3, tm_min=58, tm_sec=0, tm_wday=4, tm_yday=216, tm_isdst=0))
+2 -- ('links', [{'href': u'https://alerts.weather.gov/cap/wwacapget.php?x=CA1258619C00D8.RedFlagWarning.125861AB5380CA.MFRRFWMFR.3bcdc4d2ebab6ad80a4504f6bbb994ff', 'type': u'text/html', 'rel': u'alternate'}])
+3 -- ('cap_expires', u'2017-08-04T21:00:00-07:00')
+4 -- ('valuename', u'VTEC')
+5 -- ('summary_detail', {'base': u'https://alerts.weather.gov/cap/ca.php?x=0', 'type': u'text/plain', 'value': u'...RED FLAG WARNING REMAINS IN EFFECT FROM 1 PM TO 9 PM PDT FRIDAY FOR LOW RELATIVE HUMIDITIES AND GUSTY WINDS IN FIRE WEATHER ZONE 285... ...FIRE WEATHER WATCH REMAINS IN EFFECT FROM SATURDAY AFTERNOON THROUGH SATURDAY EVENING FOR ABUNDANT LIGHTNING ON DRY FUELS IN FIRE WEATHER ZONE 285...', 'language': None})
+6 -- ('cap_status', u'Actual')
+7 -- ('cap_event', u'Red Flag Warning')
+8 -- ('id', u'https://alerts.weather.gov/cap/wwacapget.php?x=CA1258619C00D8.RedFlagWarning.125861AB5380CA.MFRRFWMFR.3bcdc4d2ebab6ad80a4504f6bbb994ff')
+9 -- ('published_parsed', time.struct_time(tm_year=2017, tm_mon=8, tm_mday=4, tm_hour=3, tm_min=58, tm_sec=0, tm_wday=4, tm_yday=216, tm_isdst=0))
+10 -- ('author', u'w-nws.webmaster@noaa.gov')
+11 -- ('cap_effective', u'2017-08-04T13:00:00-07:00')
+12 -- ('cap_geocode', u'')
+13 -- ('title_detail', {'base': u'https://alerts.weather.gov/cap/ca.php?x=0', 'type': u'text/plain', 'value': u'Red Flag Warning issued August 03 at 8:58PM PDT until August 04 at 9:00PM PDT by NWS', 'language': None})
+14 -- ('updated', u'2017-08-03T20:58:00-07:00')
+15 -- ('cap_severity', u'Severe')
+16 -- ('cap_msgtype', u'Alert')
+17 -- ('link', u'https://alerts.weather.gov/cap/wwacapget.php?x=CA1258619C00D8.RedFlagWarning.125861AB5380CA.MFRRFWMFR.3bcdc4d2ebab6ad80a4504f6bbb994ff')
+18 -- ('authors', [{'name': u'w-nws.webmaster@noaa.gov'}])
+19 -- ('cap_polygon', u'')
+20 -- ('author_detail', {'name': u'w-nws.webmaster@noaa.gov'})
+21 -- ('cap_certainty', u'Likely')
+22 -- ('cap_category', u'Met')
+23 -- ('cap_urgency', u'Expected')
+24 -- ('cap_parameter', u'')
+25 -- ('value', u'/O.CON.KMFR.FW.W.0021.170804T2000Z-170805T0400Z/\n/O.CON.KMFR.FW.A.0015.170805T2100Z-170806T0600Z/')
+26 -- ('summary', u'...RED FLAG WARNING REMAINS IN EFFECT FROM 1 PM TO 9 PM PDT FRIDAY FOR LOW RELATIVE HUMIDITIES AND GUSTY WINDS IN FIRE WEATHER ZONE 285... ...FIRE WEATHER WATCH REMAINS IN EFFECT FROM SATURDAY AFTERNOON THROUGH SATURDAY EVENING FOR ABUNDANT LIGHTNING ON DRY FUELS IN FIRE WEATHER ZONE 285...')
+27 -- ('guidislink', True)
+28 -- ('published', u'2017-08-03T20:58:00-07:00')
+29 -- ('title', u'Red Flag Warning issued August 03 at 8:58PM PDT until August 04 at 9:00PM PDT by NWS')
+30 -- ('cap_areadesc', u'Modoc County Except for the Surprise Valley')
+
+
+
+--------sample json------------
+Weather
+{
+"latitude": 0,
+"phoneNumber": "0",
+"type": "feed-crime",
+"longitude": 0,
+"compactReports":
+{
+	"expireDate": "2017-08-04T21:00:00-07:00",
+	"link": "https://alerts.weather.gov/cap/wwacapget.php?x=CA1258619C00D8.RedFlagWarning.125861AB5380CA.MFRRFWMFR.3bcdc4d2ebab6ad80a4504f6bbb994ff",
+	"severity": "Severe", "effectiveDate": "2017-08-04T13:00:00-07:00",
+	"title": "Red Flag Warning", "area": "Modoc County Except for the Surprise Valley",
+	"detail": "...RED FLAG WARNING REMAINS IN EFFECT FROM 1 PM TO 9 PM PDT FRIDAY FOR LOW RELATIVE HUMIDITIES AND GUSTY WINDS IN FIRE WEATHER ZONE 285... ...FIRE WEATHER WATCH REMAINS IN EFFECT FROM SATURDAY AFTERNOON THROUGH SATURDAY EVENING FOR ABUNDANT LIGHTNING ON DRY FUELS IN FIRE WEATHER ZONE 285...",
+	"summary": "Red Flag Warning issued August 03 at 8:58PM PDT until August 04 at 9:00PM PDT by NWS"
+}
+}
+
+
+
+
+
+
