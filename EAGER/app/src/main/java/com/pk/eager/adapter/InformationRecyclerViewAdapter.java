@@ -119,25 +119,86 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
     }
 
     public void updateList(List<CompactReport> list){
-        reportList = list;
+        reportList.clear();
+        reportList.addAll(list);
         notifyDataSetChanged();
     }
 
-    public void filter(String query){
+    public void filterByQuery(String query){
         List<CompactReport> temp = new ArrayList();
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
 
-        for(CompactReport d: reportList){
+        for(CompactReport cmpReport: reportList){
 
-            Map<String, String> reportData = cmpUtil.parseReportData(d);
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
             String reportTitle = reportData.get("title");
 
             if(reportTitle.toLowerCase().equals(query.toLowerCase())){
-                temp.add(d);
+                temp.add(cmpReport);
             }
         }
         //update recyclerview
        updateList(temp);
+    }
+
+    public void filterByCategory(List<String> categoryList){
+
+        List<CompactReport> temp = new ArrayList();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for(CompactReport cmpReport: reportList){
+
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            String reportTitle = reportData.get("title");
+
+            for(String category: categoryList){
+                if(reportTitle.toLowerCase().equals(category.toLowerCase())){
+                    temp.add(cmpReport);
+                }
+            }
+
+        }
+        //update recyclerview
+        updateList(temp);
+    }
+
+    public void filterByDistance(double queryDistance){
+
+        List<CompactReport> temp = new ArrayList();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for(CompactReport cmpReport: reportList){
+            LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
+            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+
+            if (distanceInMile <= queryDistance){
+                temp.add(cmpReport);
+            }
+        }
+        updateList(temp);
+    }
+
+    public void combineFilter(List<String> categoryList, double queryDistance) {
+
+        List<CompactReport> temp = new ArrayList();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for (CompactReport cmpReport : reportList) {
+
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            String reportTitle = reportData.get("title");
+
+            LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
+            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+
+            for (String category : categoryList) {
+                if ((reportTitle.toLowerCase().equals(category.toLowerCase())) && distanceInMile <= queryDistance) {
+                    temp.add(cmpReport);
+                }
+            }
+        }
+
+        updateList(temp);
     }
 }

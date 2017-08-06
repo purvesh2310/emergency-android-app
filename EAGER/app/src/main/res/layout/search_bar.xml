@@ -11,7 +11,7 @@
         android:imeOptions="actionSearch"
         android:textCursorDrawable="@null"
         android:textColor="#FFFFFF"
-        android:hint="Search Nearby Incidents"
+        android:hint="Search Here"
         android:background="@android:color/transparent"/>
 
 </LinearLayout>

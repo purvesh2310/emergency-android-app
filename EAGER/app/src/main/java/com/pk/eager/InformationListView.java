@@ -2,6 +2,7 @@ package com.pk.eager;
 
 import android.*;
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -69,7 +71,9 @@ public class InformationListView extends Fragment {
     LatLng currentLocation;
     public String phoneNumber;
     private MenuItem mSearchAction;
+    private MenuItem mFilterAction;
     private boolean isSearchOpened = false;
+    private boolean isFilterApplied = false;
     private EditText searchBar;
     InformationRecyclerViewAdapter adapter;
 
@@ -310,6 +314,7 @@ public class InformationListView extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         mSearchAction = menu.findItem(R.id.action_search);
+        mFilterAction = menu.findItem(R.id.action_filter);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -320,6 +325,9 @@ public class InformationListView extends Fragment {
         switch (id) {
             case R.id.action_search:
                 handleMenuSearch();
+                return true;
+            case R.id.action_filter:
+                handleMenuFilter();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -361,7 +369,7 @@ public class InformationListView extends Fragment {
                         imm.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);
 
                         String searchQuery = searchBar.getText().toString();
-                        adapter.filter(searchQuery);
+                        adapter.filterByQuery(searchQuery);
                         return true;
                     }
                     return false;
@@ -376,9 +384,48 @@ public class InformationListView extends Fragment {
             imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
 
             //add the close icon
-            mSearchAction.setIcon(getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel));
+            mSearchAction.setIcon(getResources().getDrawable(R.drawable.close));
 
             isSearchOpened = true;
         }
+    }
+
+    public void handleMenuFilter(){
+
+        if(isFilterApplied){
+            mSearchAction.setVisible(true);
+            mFilterAction.setIcon(getResources().getDrawable(R.drawable.filter));
+            isFilterApplied = false;
+            fetchDataFromFirebase();
+        }else {
+            Intent intent = new Intent(getContext(), IncidentFilterActivity.class);
+            startActivityForResult(intent, 1);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+
+                isFilterApplied = true;
+
+                int distance = data.getIntExtra("distance",0);
+                ArrayList<String> categoryList = data.getStringArrayListExtra("selectedCategory");
+
+                if(categoryList.size()>0 && distance!=0){
+                    adapter.combineFilter(categoryList,distance);
+                }else if(categoryList.size()>0){
+                    adapter.filterByCategory(categoryList);
+                }else{
+                    adapter.filterByDistance(distance);
+                }
+
+                mSearchAction.setVisible(false);
+                mFilterAction.setIcon(getResources().getDrawable(R.drawable.close));
+            }
+        }
+
     }
 }
