@@ -1,7 +1,6 @@
 package com.pk.eager;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,7 +36,6 @@ import com.pk.eager.User.Account;
 
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ChooseAction.OnFragmentInteractionListener,
         IncidentType.OnFragmentInteractionListener,
         MedicalEmergency.OnFragmentInteractionListener,
         FireEmergency.OnFragmentInteractionListener,
@@ -109,7 +106,6 @@ public class Dashboard extends AppCompatActivity
                     .build();
         }
 
-
     }
 
     public void onStart(){
@@ -122,8 +118,6 @@ public class Dashboard extends AppCompatActivity
         googleApiClient.disconnect();
     }
 
-
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -132,32 +126,7 @@ public class Dashboard extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-
-
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.dashboard, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        Intent intent = new Intent(this, Subcription.class);
-        startActivity(intent);
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     //Google api client implementation
     @Override
@@ -179,9 +148,6 @@ public class Dashboard extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -218,8 +184,4 @@ public class Dashboard extends AppCompatActivity
         MapReportInfo editNameDialogFragment = MapReportInfo.newInstance(title, info, location);
         editNameDialogFragment.show(fm, "fragment_map_report_info");
     }
-
-
-
-
 }

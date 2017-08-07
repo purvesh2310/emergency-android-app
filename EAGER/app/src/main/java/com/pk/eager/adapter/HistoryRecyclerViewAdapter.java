@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -29,6 +30,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         TextView reportTitle;
         TextView reportInformation;
         TextView reportLocation;
+        ImageView incidentTypeLogo;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -36,6 +38,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             reportTitle = (TextView) itemView.findViewById(R.id.reportTitleTextView);
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
+            incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
         }
     }
 
@@ -74,6 +77,24 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         holder.reportTitle.setText(title);
         holder.reportInformation.setText(information);
         holder.reportLocation.setText(roundDistance);
+
+        switch(title){
+            case "Medical":
+                holder.incidentTypeLogo.setImageResource(R.drawable.hospital);
+                break;
+            case "Fire":
+                holder.incidentTypeLogo.setImageResource(R.drawable.flame);
+                break;
+            case "Police":
+                holder.incidentTypeLogo.setImageResource(R.drawable.siren);
+                break;
+            case "Traffic":
+                holder.incidentTypeLogo.setImageResource(R.drawable.cone);
+                break;
+            case "Utility":
+                holder.incidentTypeLogo.setImageResource(R.drawable.repairing);
+                break;
+        }
 
     }
 }

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -12,6 +13,7 @@ import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         TextView reportTitle;
         TextView reportInformation;
         TextView reportLocation;
+        ImageView incidentTypeLogo;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -36,9 +39,14 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportTitle = (TextView) itemView.findViewById(R.id.reportTitleTextView);
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
+            incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
 
 
         }
+    }
+
+    public InformationRecyclerViewAdapter(){
+
     }
 
     public InformationRecyclerViewAdapter(Context context, List<CompactReport> reportList, LatLng location){
@@ -76,11 +84,114 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             roundDistance = String.format("%.2f", distanceInMile);
             roundDistance = roundDistance + " miles far";
         }
+
         String reportTitle = reportData.get("title");
         String fullInfo = reportData.get("information");
 
         informationViewHolder.reportTitle.setText(reportTitle);
         informationViewHolder.reportInformation.setText(fullInfo);
         informationViewHolder.reportLocation.setText(roundDistance);
+
+        switch(reportTitle){
+            case "Medical":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.hospital);
+                break;
+            case "Fire":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.flame);
+                break;
+            case "Police":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.siren);
+                break;
+            case "Traffic":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.cone);
+                break;
+            case "Utility":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.repairing);
+                break;
+        }
+    }
+
+    public void updateList(List<CompactReport> list){
+        reportList.clear();
+        reportList.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public void filterByQuery(String query){
+        List<CompactReport> temp = new ArrayList();
+
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for(CompactReport cmpReport: reportList){
+
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            String reportTitle = reportData.get("title");
+
+            if(reportTitle.toLowerCase().equals(query.toLowerCase())){
+                temp.add(cmpReport);
+            }
+        }
+        //update recyclerview
+       updateList(temp);
+    }
+
+    public void filterByCategory(List<String> categoryList){
+
+        List<CompactReport> temp = new ArrayList();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for(CompactReport cmpReport: reportList){
+
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            String reportTitle = reportData.get("title");
+
+            for(String category: categoryList){
+                if(reportTitle.toLowerCase().equals(category.toLowerCase())){
+                    temp.add(cmpReport);
+                }
+            }
+
+        }
+        //update recyclerview
+        updateList(temp);
+    }
+
+    public void filterByDistance(double queryDistance){
+
+        List<CompactReport> temp = new ArrayList();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for(CompactReport cmpReport: reportList){
+            LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
+            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+
+            if (distanceInMile <= queryDistance){
+                temp.add(cmpReport);
+            }
+        }
+        updateList(temp);
+    }
+
+    public void combineFilter(List<String> categoryList, double queryDistance) {
+
+        List<CompactReport> temp = new ArrayList();
+        CompactReportUtil cmpUtil = new CompactReportUtil();
+
+        for (CompactReport cmpReport : reportList) {
+
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            String reportTitle = reportData.get("title");
+
+            LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
+            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+
+            for (String category : categoryList) {
+                if ((reportTitle.toLowerCase().equals(category.toLowerCase())) && distanceInMile <= queryDistance) {
+                    temp.add(cmpReport);
+                }
+            }
+        }
+
+        updateList(temp);
     }
 }
