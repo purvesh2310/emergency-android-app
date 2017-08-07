@@ -19,6 +19,9 @@ public class CompactReport implements Parcelable{
     public Double longitude;
     public Double latitude;
     public String phoneNumber;
+    public String type;
+    public String timestamp;
+
 
     public CompactReport(){}
 
@@ -28,6 +31,22 @@ public class CompactReport implements Parcelable{
 
     public void setCompactReports(Map<String, ArrayList<String>> compactReports) {
         this.compactReports = compactReports;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Double getLongitude() {
@@ -54,7 +73,7 @@ public class CompactReport implements Parcelable{
         this.phoneNumber = phoneNumber;
     }
 
-    public CompactReport(IncidentReport incidentReport, Double longitude, Double latitude, String phone){
+    public CompactReport(IncidentReport incidentReport, Double longitude, Double latitude, String phone, String type, String timestamp){
 
         for(Report r : incidentReport.reports){
             Log.d("CompactReport", r.toString());
@@ -69,6 +88,8 @@ public class CompactReport implements Parcelable{
         this.longitude = longitude;
         this.latitude = latitude;
         this.phoneNumber = phone;
+        this.type = type;
+        this.timestamp = timestamp;
     }
 
     //parceble implementation
@@ -83,6 +104,8 @@ public class CompactReport implements Parcelable{
         dest.writeString(phoneNumber);
         dest.writeDouble(longitude);
         dest.writeDouble(latitude);
+        dest.writeString(type);
+        dest.writeString(timestamp);
         dest.writeInt(compactReports.size());
         for(Map.Entry<String, ArrayList<String>> entry : compactReports.entrySet()){
             dest.writeString(entry.getKey());
@@ -105,6 +128,8 @@ public class CompactReport implements Parcelable{
         phoneNumber = in.readString();
         longitude = in.readDouble();
         latitude = in.readDouble();
+        type = in.readString();
+        timestamp = in.readString();
         int size = in.readInt();
         for(int i = 0; i < size; i++){
             String key = in.readString();

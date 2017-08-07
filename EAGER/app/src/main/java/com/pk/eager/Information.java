@@ -32,8 +32,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
@@ -56,7 +54,10 @@ public class Information extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_information, container, false);
 
+        /**change**/
         db = FirebaseDatabase.getInstance().getReference().child("Reports");
+        //db = FirebaseDatabase.getInstance().getReference().child("Reports2");
+
         final CompactReportUtil cmpUtil = new CompactReportUtil();
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);

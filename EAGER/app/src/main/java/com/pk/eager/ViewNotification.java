@@ -37,7 +37,7 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
     private double longitude;
     private double latitude;
     private SupportMapFragment mapFragment;
-    LatLng location;
+    LatLng mapLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,14 +118,20 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
 
         if(report!=null) {
 
-            Map<String, String> map = cmpUtils.parseReportData(report);
+            CompactReportUtil cmpUtil = new CompactReportUtil();
+            Map<String, String> map = cmpUtil.parseReportData(report);
 
             String title = map.get("title");
             String information = map.get("information");
             String location = map.get("location");
 
-            latitude = Double.parseDouble(location.split(",")[0]);
-            longitude = Double.parseDouble(location.split(",")[1]);
+            if(!report.type.equals("feed-weather") && !report.type.equals("feed-missing")) {
+                latitude = Double.parseDouble(location.split(",")[0]);
+                longitude = Double.parseDouble(location.split(",")[1]);
+                mapLocation = new LatLng(latitude, longitude);
+                mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.viewReportDetail_mapfragment);
+                mapFragment.getMapAsync(this);
+            }
 
             Log.d(TAG, "Title " + map.get("title"));
             Log.d(TAG, "Information " + map.get("information"));
@@ -142,24 +148,22 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
             }
         }
 
-        location = new LatLng(latitude, longitude);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.viewReportDetail_mapfragment);
-        mapFragment.getMapAsync(this);
+
 
         setTitle("Incident Information");
     }
 
 
     public void setLocation(Double lat, Double longitude){
-        location = new LatLng(lat, longitude);
+        mapLocation = new LatLng(lat, longitude);
     }
 
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, location.toString());
-        googleMap.addMarker(new MarkerOptions().position(location).title("Marker in Location"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,16));
+        Log.d(TAG, mapLocation.toString());
+        googleMap.addMarker(new MarkerOptions().position(mapLocation).title("Marker in Location"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapLocation,16));
     }
 }
