@@ -40,6 +40,8 @@ import com.pk.eager.db.handler.DatabaseHandler;
 import com.pk.eager.db.model.Report;
 import com.pk.eager.util.CompactReportUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,7 +89,10 @@ public class Review extends Fragment {
         }
 
         incidentReport = Dashboard.incidentReport;
+        /**change**/
         db = FirebaseDatabase.getInstance().getReference("Reports");
+        //db = FirebaseDatabase.getInstance().getReference("Reports2");
+
 
         resultReceiver = new AddressResultReceiver(null);
     }
@@ -205,7 +210,7 @@ public class Review extends Fragment {
                 if(!isConnected){
                     location = Dashboard.location;
                     IncidentReport smallerSize = Utils.compacitize(incidentReport);
-                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999");
+                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999", null, null);
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
                     sendDataOverChannel(data);
@@ -285,8 +290,9 @@ public class Review extends Fragment {
                         DatabaseReference newChild = db.push();
                         final String key = newChild.getKey();
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
-                        Log.d(TAG, "Smaller report " + smallerSize.toString());
-                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999");
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+                        String timestamp = simpleDateFormat.format(new Date());
+                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999", "Report", timestamp);
 
 
                         newChild.setValue(compact, new DatabaseReference.CompletionListener() {
