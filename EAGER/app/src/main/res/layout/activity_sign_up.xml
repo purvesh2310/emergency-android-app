@@ -7,64 +7,113 @@
     tools:context="com.pk.eager.User.SignUp"
     android:orientation="vertical">
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:gravity="center"/>
+        android:layout_height="200dp"
+        android:src="@drawable/emergency_banner"
+        android:scaleType="fitXY"/>
 
     <EditText
         android:id="@+id/signUp_email_editText"
-        android:layout_width="match_parent"
+        android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:gravity="center"
-        android:hint="Email"/>
+        android:hint="Enter Email"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"/>
 
     <EditText
         android:id="@+id/signUp_password_editText"
-        android:layout_width="match_parent"
+        android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:gravity="center"
-        android:hint="Password"/>
+        android:hint="Enter Password"
+        android:fontFamily="sans-serif"
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign Up"
-            android:onClick="onCreateAccountWithEmailAndPasswordButton"/>
+        android:orientation="vertical"
+        >
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign In"
-            android:onClick="onSwitchToLoginButton"/>
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="Sign Up"
+                android:onClick="onCreateAccountWithEmailAndPasswordButton"
+                style="@style/submitButton"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"/>
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="Sign In"
+                android:onClick="onSwitchToLoginButton"
+                style="@style/submitButton"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <View
+                android:layout_width="120dp"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_margin="6dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Or Sign In Using"
+                android:layout_margin="6dp"/>
+
+            <View
+                android:layout_width="120dp"
+                android:layout_height="1dp"
+                android:background="#c0c0c0"
+                android:layout_margin="6dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/signUp_google_login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="5dp"
+                />
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/signUp_facebook_login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                />
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Or Sign In Using"
-        android:gravity="center"/>
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/signUp_google_login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/signUp_facebook_login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        />
-
 
 </LinearLayout>

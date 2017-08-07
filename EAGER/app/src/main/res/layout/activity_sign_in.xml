@@ -1,42 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.pk.eager.User.SignIn"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign In"/>
-
     <EditText
         android:id="@+id/signIn_email_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="textEmailAddress"/>
+        android:hint="Enter Email"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="20dp"/>
 
     <EditText
         android:id="@+id/signIn_password_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"/>
+        android:hint="Enter Password"
+        android:inputType="textPassword"
+        android:fontFamily="sans-serif"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+       android:layout_marginTop="100dp">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
         android:text="Sign In"
-        android:onClick="signInWithEmailAndPassword"/>
+        android:onClick="signInWithEmailAndPassword"
+        style="@style/submitButton"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <View
+            android:layout_width="120dp"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"
+            android:layout_margin="6dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OR"
+            android:layout_margin="6dp"/>
+
+        <View
+            android:layout_width="120dp"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"
+           android:layout_margin="6dp"/>
+
+    </LinearLayout>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
         android:text="Create An Account"
-        android:onClick="switchToSignup"/>
+        android:onClick="switchToSignup"
+        style="@style/submitButton"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>
