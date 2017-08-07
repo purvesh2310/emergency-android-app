@@ -37,16 +37,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
 
-            /*
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-
-
-                }
-
-            });*/
         }
     }
 
@@ -75,14 +66,16 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
         CompactReport report = reportList.get(i);
         LatLng reportLocation = new LatLng(report.latitude,report.longitude);
+        String roundDistance = "";
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
         Map<String, String> reportData = cmpUtil.parseReportData(report);
 
-        double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
-        String roundDistance = String.format("%.2f", distanceInMile);
-        roundDistance = roundDistance + " miles far";
-
+        if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather")){
+            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+            roundDistance = String.format("%.2f", distanceInMile);
+            roundDistance = roundDistance + " miles far";
+        }
         String reportTitle = reportData.get("title");
         String fullInfo = reportData.get("information");
 

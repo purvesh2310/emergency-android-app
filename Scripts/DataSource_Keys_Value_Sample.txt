@@ -62,6 +62,27 @@ Weather
 
 
 
+1 -- ('summary_detail', {'base': u'http://www.missingkids.org/missingkids/servlet/XmlServlet?act=rss&LanguageCountry=en_US&orgPrefix=NCMC&state=CA', 'type': u'text/html', 'value': u'BRIA TELLEZ, Age Now: 15, Missing: 07/07/2017. Missing From LA VERNE, CA. ANYONE HAVING INFORMATION SHOULD CONTACT: La Verne Police Department (California) 1-909-596-1913.', 'language': None})
+2 -- ('published_parsed', time.struct_time(tm_year=2017, tm_mon=8, tm_mday=4, tm_hour=16, tm_min=0, tm_sec=0, tm_wday=4, tm_yday=216, tm_isdst=0))
+3 -- ('links', 
+[
+
+{'href': u'http://www.missingkids.com/missingkids/servlet/PubCaseSearchServlet?act=viewChildDetail&LanguageCountry=en_US&searchLang=en_US&caseLang=en_US&orgPrefix=NCMC&caseNum=1302821&seqNum=1', 'type': u'text/html', 'rel': u'alternate'},
+ 
+{'length': u'1655', 'href': u'http://www.missingkids.com/photographs/NCMC1302821c1t.jpg', 'type': u'image/jpeg', 'rel': u'enclosure'}]
+
+
+)
+
+
+
+
+
+4 -- ('title', u'Missing: BRIA TELLEZ (CA)')
+5 -- ('summary', u'BRIA TELLEZ, Age Now: 15, Missing: 07/07/2017. Missing From LA VERNE, CA. ANYONE HAVING INFORMATION SHOULD CONTACT: La Verne Police Department (California) 1-909-596-1913.')
+6 -- ('title_detail', {'base': u'http://www.missingkids.org/missingkids/servlet/XmlServlet?act=rss&LanguageCountry=en_US&orgPrefix=NCMC&state=CA', 'type': u'text/plain', 'value': u'Missing: BRIA TELLEZ (CA)', 'language': None})
+7 -- ('link', u'http://www.missingkids.com/missingkids/servlet/PubCaseSearchServlet?act=viewChildDetail&LanguageCountry=en_US&searchLang=en_US&caseLang=en_US&orgPrefix=NCMC&caseNum=1302821&seqNum=1')
+8 -- ('published', u'Fri, 04 Aug 2017 12:00:00 EDT')
 
 
 
