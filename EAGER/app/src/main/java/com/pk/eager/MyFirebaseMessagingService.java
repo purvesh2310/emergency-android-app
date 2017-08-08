@@ -1,5 +1,9 @@
 package com.pk.eager;
 
+import android.util.Log;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -10,9 +14,13 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     final static String KEY = "key";
-
+    final static String TAG = MyFirebaseMessagingService.class.getSimpleName();
+    DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("UserNotification");
 
     public void onMessageReceived(RemoteMessage remoteMessage){
+        DatabaseReference newChild = notificationRef.push();
+        newChild.setValue("onMessageReceived Called");
+        Log.d(TAG, "onMessageReceived Called");
         /*
         String title = remoteMessage.getNotification().getTitle();
         String body = remoteMessage.getNotification().getBody();

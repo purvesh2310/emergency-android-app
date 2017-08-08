@@ -12,13 +12,15 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 		var message = event.data.val().message;
 		var mkey = event.data.val().key;
 		const payload = {
+			/*
 			notification: {
 				title: "EAGER",
 				click_action: "OPEN_VIEW_NOTIFICATION",
 				body: message
-			},
+			},*/
 			data: {
-				key: mkey
+				key: mkey,
+				body: message
 			}
 		};
 
