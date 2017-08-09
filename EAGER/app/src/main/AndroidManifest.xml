@@ -73,10 +73,10 @@
 
         <activity
             android:name=".ViewNotification"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:parentActivityName=".Dashboard">
             <intent-filter>
                 <action android:name="OPEN_VIEW_NOTIFICATION" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

@@ -117,7 +117,7 @@ public class Information extends Fragment {
                                             for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
 
                                                 CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
-                                                Map<String, String> reportData = cmpUtil.parseReportData(cmp);
+                                                Map<String, String> reportData = cmpUtil.parseReportData(cmp,"info");
 
                                                 String title = reportData.get("title");
                                                 String info = reportData.get("information");

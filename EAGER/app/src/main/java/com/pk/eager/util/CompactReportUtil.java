@@ -17,9 +17,9 @@ import java.util.Map;
 
 public class CompactReportUtil {
 
-    public Map<String,String> parseReportData(CompactReport report){
+    public Map<String,String> parseReportData(CompactReport report, String source){
 
-        if(report.type.equals("Report")) {
+     if(report.type.equals("Report")) {
             String reportTitle = "";
             ArrayList<String> reportInfoList = new ArrayList<String>();
             String individualInformation = "";
@@ -55,37 +55,38 @@ public class CompactReportUtil {
 
             return reportData;
         }else if(report.type.equals("feed-crime")){
-            String reportTitle = "";
+            String reportTitle = "Crime";
             String info = "";
             String location = "";
 
             Map<String, ArrayList<String>> compactReports = report.compactReports;
             Map<String, String> reportData = new HashMap<String, String>();
 
-            reportTitle = "Crime";
             info = compactReports.get("description").get(0)+"\n"+compactReports.get("date").get(0);
             location = String.valueOf(report.latitude) + "," + String.valueOf(report.longitude);
+
             reportData.put("title", reportTitle);
             reportData.put("information", info);
             reportData.put("location", location);
 
             return reportData;
         }else if(report.type.equals("feed-weather")){
-            String reportTitle = "Weather";
+
+         String reportTitle = "Weather";
             String info = "";
             String location = "";
 
             Map<String, ArrayList<String>> compactReports = report.compactReports;
             Map<String, String> reportData = new HashMap<String, String>();
 
-            info = compactReports.get("title").get(0);
-            info+= compactReports.get("summary").get(0)+"\n";
-            info+= "Severity: "+compactReports.get("severity").get(0)+"\n";
-            info+= "Area affected: " + compactReports.get("area").get(0)+"\n";
-            info+= "Effective "+compactReports.get("effectiveDate").get(0) + "\n";
-            info+= "Expire "+compactReports.get("expireDate").get(0)+"\n";
-            location = "";
-
+            switch (source){
+                case "list":
+                    info = parseWeatherInformationForListView(compactReports);
+                    break;
+                case "info":
+                    info = parseWeatherInformationForInformationView(compactReports);
+                    break;
+            }
 
             reportData.put("title", reportTitle);
             reportData.put("information", info);
@@ -99,10 +100,14 @@ public class CompactReportUtil {
             Map<String, ArrayList<String>> compactReports = report.compactReports;
             Map<String, String> reportData = new HashMap<String, String>();
 
-            info = compactReports.get("title").get(0);
-            info+= compactReports.get("summary").get(0)+"\n";
-            info+= compactReports.get("date").get(0)+"\n";
-            location = "";
+            switch (source){
+                case "list":
+                    info = parseMissingPersonInfoForListView(compactReports);
+                    break;
+                case "info":
+                    info = parseMissingPersonInfoForInforamtionView(compactReports);
+                    break;
+            }
 
             reportData.put("title", reportTitle);
             reportData.put("information", info);
@@ -121,6 +126,83 @@ public class CompactReportUtil {
         double distanceInMile = results[0] * 0.000621371192;
 
         return distanceInMile;
+
+    }
+
+    public String parseWeatherInformationForListView(Map<String, ArrayList<String>> compactReports){
+
+        StringBuffer info = new StringBuffer();
+
+        String title = compactReports.get("title").get(0);
+        String summary = compactReports.get("summary").get(0);
+
+        summary = summary.replace(title + " ","");
+
+        info.append(title);
+        info.append("\n");
+        info.append(summary);
+        return info.toString();
+
+    }
+
+    public String parseWeatherInformationForInformationView(Map<String, ArrayList<String>> compactReports){
+
+        StringBuffer info = new StringBuffer();
+
+        String title = compactReports.get("title").get(0);
+        String summary = compactReports.get("summary").get(0);
+        String severity = compactReports.get("severity").get(0);
+        String area = compactReports.get("area").get(0);
+        String effectiveDate = compactReports.get("effectiveDate").get(0);
+        String expiryDate = compactReports.get("expireDate").get(0);
+
+        summary = summary.replace(title + " ","");
+
+        info.append(title);
+        info.append("\n");
+        info.append(summary);
+        info.append("\n");
+        info.append("Severity: " + severity);
+        info.append("\n");
+        info.append("Area Affected: " + area);
+        info.append("\n");
+        info.append("Effective Date: " + effectiveDate );
+        info.append("\n");
+        info.append("Expiry Date: "+ expiryDate);
+
+        return info.toString();
+    }
+
+    public String parseMissingPersonInfoForListView(Map<String, ArrayList<String>> compactReports){
+
+        StringBuffer info = new StringBuffer();
+
+        String summary = compactReports.get("summary").get(0);
+        String date = compactReports.get("date").get(0);
+
+        info.append(summary);
+        info.append("\n");
+        info.append(date);
+
+        return info.toString();
+
+    }
+
+    public String parseMissingPersonInfoForInforamtionView(Map<String, ArrayList<String>> compactReports){
+
+        StringBuffer info = new StringBuffer();
+
+        String title = compactReports.get("title").get(0);
+        String summary = compactReports.get("summary").get(0);
+        String date = compactReports.get("date").get(0);
+
+        info.append(title);
+        info.append("\n");
+        info.append(summary);
+        info.append("\n");
+        info.append(date);
+
+        return info.toString();
 
     }
 }

@@ -394,7 +394,7 @@ public class Review extends Fragment {
     public void saveReportForHistory(CompactReport cmpReport){
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
-        Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+        Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"info");
 
         String title = reportData.get("title");
         String information = reportData.get("information");

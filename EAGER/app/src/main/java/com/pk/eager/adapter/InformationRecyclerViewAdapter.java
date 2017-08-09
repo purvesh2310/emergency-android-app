@@ -32,6 +32,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         TextView reportInformation;
         TextView reportLocation;
         ImageView incidentTypeLogo;
+        ImageView locationMarkerIcon;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -40,7 +41,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
             incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
-
+            locationMarkerIcon = (ImageView) itemView.findViewById(R.id.locationMarkerIcon);
 
         }
     }
@@ -77,12 +78,16 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         String roundDistance = "";
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
-        Map<String, String> reportData = cmpUtil.parseReportData(report);
+        Map<String, String> reportData = cmpUtil.parseReportData(report,"list");
 
         if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather")){
             double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
             roundDistance = String.format("%.2f", distanceInMile);
             roundDistance = roundDistance + " miles far";
+            informationViewHolder.locationMarkerIcon.setVisibility(View.VISIBLE);
+        } else {
+            // Hiding the location icon as it is not available for feed-missing & feed-weather
+            informationViewHolder.locationMarkerIcon.setVisibility(View.INVISIBLE);
         }
 
         String reportTitle = reportData.get("title");
@@ -108,6 +113,11 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             case "Utility":
                 informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.repairing);
                 break;
+            case "Weather":
+            case "Missing":
+            case "Crime":
+                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.rss);
+                break;
         }
     }
 
@@ -124,7 +134,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
         for(CompactReport cmpReport: reportList){
 
-            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
             String reportTitle = reportData.get("title");
 
             if(reportTitle.toLowerCase().equals(query.toLowerCase())){
@@ -142,11 +152,12 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
         for(CompactReport cmpReport: reportList){
 
-            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
             String reportTitle = reportData.get("title");
 
-            for(String category: categoryList){
-                if(reportTitle.toLowerCase().equals(category.toLowerCase())){
+            for (String category : categoryList) {
+
+                if (reportTitle.toLowerCase().equals(category.toLowerCase())) {
                     temp.add(cmpReport);
                 }
             }
@@ -179,7 +190,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
         for (CompactReport cmpReport : reportList) {
 
-            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+            Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
             String reportTitle = reportData.get("title");
 
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);

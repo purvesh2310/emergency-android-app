@@ -44,6 +44,8 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_notification);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         db = FirebaseDatabase.getInstance();
         cmpUtils = new CompactReportUtil();
 
@@ -63,7 +65,7 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         report = dataSnapshot.getValue(CompactReport.class);
-                        Map<String, String> map = cmpUtils.parseReportData(report);
+                        Map<String, String> map = cmpUtils.parseReportData(report,"info");
 
                         String title = map.get("title");
                         String information = map.get("information");
@@ -119,7 +121,7 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
         if(report!=null) {
 
             CompactReportUtil cmpUtil = new CompactReportUtil();
-            Map<String, String> map = cmpUtil.parseReportData(report);
+            Map<String, String> map = cmpUtil.parseReportData(report,"info");
 
             String title = map.get("title");
             String information = map.get("information");
