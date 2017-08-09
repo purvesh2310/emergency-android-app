@@ -12,8 +12,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-  <!--  <ImageView
-        android:id="@+id/imageView"
+   <ImageView
+        android:id="@+id/nav_userImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
@@ -23,13 +23,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:id="@+id/nav_username"
         android:text="John Doe"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/nav_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="john.doe@gmail.com" /> -->
+        android:text="john.doe@gmail.com" />
 
 </LinearLayout>

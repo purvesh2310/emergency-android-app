@@ -11,7 +11,8 @@
         android:id="@+id/account_name_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your profile"/>
+        android:text="Your profile"
+        android:textSize="18dp"/>
 
     <TextView
         android:id="@+id/account_email_textview"
@@ -23,21 +24,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/account_signup_Button"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:text="Log In"
-            android:textSize="8dp"
-
+            style="@style/submitButton"
             />
 
         <Button
             android:id="@+id/account_signout_Button"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textSize="8dp"
+            android:layout_height="40dp"
             android:text="Log Out"
+            style="@style/submitButton"
             />
     </LinearLayout>
 

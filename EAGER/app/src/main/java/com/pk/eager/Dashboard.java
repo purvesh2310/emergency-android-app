@@ -19,10 +19,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.pk.eager.ReportFragments.FireEmergency;
 import com.pk.eager.ReportFragments.IncidentType;
@@ -33,6 +38,7 @@ import com.pk.eager.ReportFragments.TrafficEmergency;
 import com.pk.eager.ReportFragments.UtilityEmergency;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.User.Account;
+
 
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -56,6 +62,8 @@ public class Dashboard extends AppCompatActivity
     public static Fragment incidentType;
     protected GoogleApiClient googleApiClient;
     public static Location location;
+    private FirebaseUser currentUser;
+
     final static String TAG = "Dashboard";
 
     @Override
@@ -105,6 +113,8 @@ public class Dashboard extends AppCompatActivity
                     .addApi(LocationServices.API)
                     .build();
         }
+
+        setupUserInfoInNavigationDrawer();
 
     }
 
@@ -184,4 +194,27 @@ public class Dashboard extends AppCompatActivity
         MapReportInfo editNameDialogFragment = MapReportInfo.newInstance(title, info, location);
         editNameDialogFragment.show(fm, "fragment_map_report_info");
     }
+
+    public void setupUserInfoInNavigationDrawer(){
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView username = (TextView) headerView.findViewById(R.id.nav_username);
+        TextView email = (TextView) headerView.findViewById(R.id.nav_email);
+        ImageView profileImage = (ImageView) headerView.findViewById(R.id.nav_userImage);
+
+        if(currentUser != null) {
+            username.setText(currentUser.getDisplayName());
+            email.setText(currentUser.getEmail());
+        } else {
+            username.setVisibility(View.INVISIBLE);
+            email.setVisibility(View.INVISIBLE);
+            profileImage.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
 }
