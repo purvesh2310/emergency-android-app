@@ -30,6 +30,7 @@ import com.pk.eager.adapter.NotificationRecyclerViewAdapter;
 import com.pk.eager.adapter.RecyclerTouchListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 /**
@@ -103,6 +104,7 @@ public class SubscriptionFragment extends Fragment {
                     notificationList.add(notification);
                     Log.d(TAG, "body " + notification.getBody());
                 }
+                Collections.reverse(notificationList);
                 notificationAdapter = new NotificationRecyclerViewAdapter(notificationList);
                 notificationRecyclerView.setAdapter(notificationAdapter);
 
