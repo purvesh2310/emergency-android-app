@@ -53,9 +53,9 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
         informationTextView = (TextView) findViewById(R.id.viewNotificationReportInformation);
         locationTextView = (TextView) findViewById(R.id.viewNotificationReportLocation);
 
-        if (getIntent().hasExtra(REPORT)) {
+        if (getIntent().hasExtra(REPORT)) {   //case when ViewNotification was triggered by an intent from another activity
             report = getIntent().getParcelableExtra(REPORT);
-        } else {
+        } else { //case ViewNotification was triggered by clickAction when user taps on notification
             if (getIntent() != null && getIntent().getExtras() != null)
                 reportKey = getIntent().getExtras().getString("key");
 

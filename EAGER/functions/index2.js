@@ -38,12 +38,14 @@ function sendNotificationToTopic(zipcode, key, message, onSuccess) {
 			'Authorization': 'key='+API_KEY
 	},
 	body: JSON.stringify({
+		/*
 		notification: {
 			title: "EAGER"
 			body: message
-		},
+		},*/
 		data: {
-			"key": key
+			"key": key,
+			"body": message
 		}
 		to : '/topics/'+zipcode
 	})

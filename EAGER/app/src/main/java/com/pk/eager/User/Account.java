@@ -73,9 +73,10 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() != null)
+                    if (dataSnapshot.getValue() != null) {
                         user = dataSnapshot.getValue(User.class);
-                    setUpUserInfoInUI(user);
+                        setUpUserInfoInUI(user);
+                    }
                 }
 
                 @Override
