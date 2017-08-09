@@ -19,6 +19,10 @@ public class IncidentFilterActivity extends AppCompatActivity {
     private CheckBox categoryTraffic;
     private CheckBox categoryUtility;
 
+    private CheckBox weatherFeed;
+    private CheckBox crimeFeed;
+    private CheckBox missingPersonFeed;
+
     private SeekBar seekBar;
 
     private TextView seekBarProgress;
@@ -37,6 +41,10 @@ public class IncidentFilterActivity extends AppCompatActivity {
         categoryPolice = (CheckBox) findViewById(R.id.checkbox_filter_police);
         categoryTraffic = (CheckBox) findViewById(R.id.checkbox_filter_Traffic);
         categoryUtility = (CheckBox) findViewById(R.id.checkbox_filter_utility);
+
+        weatherFeed = (CheckBox) findViewById(R.id.checkbox_filter_weatherFeed);
+        crimeFeed = (CheckBox) findViewById(R.id.checkbox_filter_crimeFeed);
+        missingPersonFeed = (CheckBox) findViewById(R.id.checkbox_filter_missingPersonFeed);
 
         seekBarProgress = (TextView) findViewById(R.id.seekBarProgress);
         seekBarProgress.setText("0 mile(s)");
@@ -94,6 +102,15 @@ public class IncidentFilterActivity extends AppCompatActivity {
         }
         if(categoryUtility.isChecked()){
             categorySelected.add("Utility");
+        }
+        if(weatherFeed.isChecked()){
+            categorySelected.add("Weather");
+        }
+        if(crimeFeed.isChecked()){
+            categorySelected.add("Crime");
+        }
+        if(missingPersonFeed.isChecked()){
+            categorySelected.add("Missing");
         }
 
         return categorySelected;
