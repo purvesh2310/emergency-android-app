@@ -28,7 +28,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.pk.eager.ReportFragments.FireEmergency;
 import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportFragments.MedicalEmergency;
@@ -82,22 +81,6 @@ public class Dashboard extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*******
-         *Subcribing test
-         */
-        FirebaseMessaging.getInstance().subscribeToTopic("95138");
-        //FirebaseMessaging.getInstance().subscribeToTopic("95112");
-        /****?
-         * End
-         */
-        /*
-        if(savedInstanceState == null) {
-           // fragment = new ChooseAction();
-            fragment = new InformationListView();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.mainFrame, fragment);
-            ft.commit();
-        }*/
         if(savedInstanceState == null) {
             // fragment = new ChooseAction();
             fragment = new TabFragment();

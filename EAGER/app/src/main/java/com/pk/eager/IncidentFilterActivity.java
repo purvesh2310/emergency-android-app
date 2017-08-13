@@ -27,6 +27,7 @@ public class IncidentFilterActivity extends AppCompatActivity {
 
     private TextView seekBarProgress;
 
+
     public ArrayList<String> categorySelected;
 
     @Override

@@ -11,6 +11,7 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 		var zipcode = event.data.val().zipcode;
 		var message = event.data.val().message;
 		var mkey = event.data.val().key;
+		var type = event.data.val().type;
 		const payload = {
 			/*
 			notification: {
@@ -20,7 +21,9 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 			},*/
 			data: {
 				key: mkey,
-				body: message
+				body: message,
+				zipcode: zipcode,
+				type: type
 			}
 		};
 

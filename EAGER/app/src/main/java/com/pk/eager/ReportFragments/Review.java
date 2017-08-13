@@ -259,13 +259,14 @@ public class Review extends Fragment {
         return view;
     }
 
-    public void sendNotificationToZipCode(String zipcode, String key, String message){
+    public void sendNotificationToZipCode(String zipcode, String key, String message, String type){
         DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("notificationRequests");
 
         Map notification = new HashMap<>();
         notification.put("zipcode", zipcode);
         notification.put("key", key);
         notification.put("message", message);
+        notification.put("type", type);
         Log.d(TAG, "Push notification " + key);
         notificationRef.push().setValue(notification);
 
@@ -289,6 +290,8 @@ public class Review extends Fragment {
                         final String zipcode = address.getPostalCode();
                         DatabaseReference newChild = db.push();
                         final String key = newChild.getKey();
+                        String reportType = incidentReport.getFirstType();
+                        Log.d(TAG, "type "+reportType);
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
                         String timestamp = simpleDateFormat.format(new Date());
@@ -305,7 +308,10 @@ public class Review extends Fragment {
 
                             }
                         });
-                        sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact));
+
+
+
+                        sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact), reportType);
 
                     }
                 });

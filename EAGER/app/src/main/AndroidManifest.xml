@@ -77,15 +77,18 @@
             android:parentActivityName=".Dashboard">
             <intent-filter>
                 <action android:name="OPEN_VIEW_NOTIFICATION" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".User.SignUp" />
         <activity android:name=".User.UserAccount" />
         <activity android:name=".User.SignIn" />
-        <activity android:name=".IncidentFilterActivity"
+        <activity
+            android:name=".IncidentFilterActivity"
             android:parentActivityName=".Dashboard"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"></activity>
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+        <activity android:name=".NotificationSetting"></activity>
     </application>
 
 </manifest>

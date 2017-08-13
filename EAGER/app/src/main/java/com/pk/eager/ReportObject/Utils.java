@@ -126,7 +126,7 @@ public class Utils {
     }
 
     public static String notificationMessage(CompactReport report) {
-        String s = "Emergency: ";
+        String s = "Report of ";
         for (String key : report.compactReports.keySet()) {
             s += key + ",";
         }

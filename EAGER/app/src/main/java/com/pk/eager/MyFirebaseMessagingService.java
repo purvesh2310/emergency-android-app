@@ -31,7 +31,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user!=null){
-
             //push the notification to user's list of notifications
             DatabaseReference newNode = notificationRef.child(user.getUid()).push();
             newNode.setValue(remoteMessage.getData());
