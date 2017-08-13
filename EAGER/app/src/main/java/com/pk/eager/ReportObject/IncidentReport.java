@@ -42,6 +42,14 @@ public class IncidentReport implements Parcelable {
         return s;
     }
 
+    public String getFirstType(){
+        for(Report r : reports){
+            if(!r.isEmpty()) return r.getType();
+        }
+        return "";
+    }
+
+
     //Parceble implementation
 
     @Override

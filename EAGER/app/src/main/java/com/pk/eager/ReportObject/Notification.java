@@ -7,6 +7,8 @@ package com.pk.eager.ReportObject;
 public class Notification {
     String body;
     String key;
+    String zipcode;
+    String type;
 
     public Notification(){}
 
@@ -25,5 +27,21 @@ public class Notification {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

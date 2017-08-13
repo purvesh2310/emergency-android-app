@@ -21,6 +21,7 @@ requests.on('child_added', function(requestSnapshot) {
 		request.zipcode, 
 		request.key,
 		request.message,
+		request.type,
 		function() {
 			//requestSnapshot.ref.remove();
 		}
@@ -29,7 +30,7 @@ requests.on('child_added', function(requestSnapshot) {
 	console.error(error);
 });
 
-function sendNotificationToTopic(zipcode, key, message, onSuccess) {
+function sendNotificationToTopic(zipcode, key, message, type, onSuccess) {
 	request({
 		url: 'https://fcm.googleapis.com/fcm/send',
 		method: 'POST',
@@ -45,7 +46,9 @@ function sendNotificationToTopic(zipcode, key, message, onSuccess) {
 		},*/
 		data: {
 			"key": key,
-			"body": message
+			"body": message,
+			"zipcode": zipcode,
+			"type": type
 		}
 		to : '/topics/'+zipcode
 	})

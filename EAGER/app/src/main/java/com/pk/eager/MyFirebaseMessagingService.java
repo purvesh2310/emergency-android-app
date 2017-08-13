@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -31,54 +33,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user!=null){
+            String type = remoteMessage.getData().get("type");
+            if(isTypeSubscribedByUser(type)) {
+                //push the notification to user's list of notifications
+                DatabaseReference newNode = notificationRef.child(user.getUid()).push();
+                newNode.setValue(remoteMessage.getData());
 
-            //push the notification to user's list of notifications
-            DatabaseReference newNode = notificationRef.child(user.getUid()).push();
-            newNode.setValue(remoteMessage.getData());
-            Log.d(TAG, "remort msg "+ remoteMessage);
-            Log.d(TAG, "data " + remoteMessage.getData());
-
-            //issue a notification to user
-            String body = remoteMessage.getData().get("body");
-            String key = remoteMessage.getData().get("key");
-
-            Log.d(TAG, "Body " + remoteMessage.getData().get("body"));
-            Log.d(TAG, "Key " + remoteMessage.getData().get("key"));
-
-
-            String clickAction = "OPEN_VIEW_NOTIFICATION";
-            Intent intent = new Intent(clickAction);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(KEY, key);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-            notificationBuilder.setContentTitle(EAGER);
-            notificationBuilder.setContentText(body);
-            notificationBuilder.setAutoCancel(true);
-            notificationBuilder.setSmallIcon(R.drawable.ic_notification);
-            notificationBuilder.setContentIntent(pendingIntent);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(0, notificationBuilder.build());
+                //issue a notification to user
+                sendReportNotification(remoteMessage);
+            }
         }
+    }
 
+    public boolean isTypeSubscribedByUser(String type){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean defaultValue = false;
+        boolean value = sharedPreferences.getBoolean(type, defaultValue);
+        Log.d(TAG, "Default value "+value);
+        return value;
+    }
 
-        /*
-        String title = remoteMessage.getNotification().getTitle();
-        String body = remoteMessage.getNotification().getBody();
-        String clickAction = remoteMessage.getNotification().getClickAction();
+    public void sendReportNotification(RemoteMessage remoteMessage){
+        Log.d(TAG, "Body " + remoteMessage.getData().get("body"));
+        Log.d(TAG, "Key " + remoteMessage.getData().get("key"));
+        String body = remoteMessage.getData().get("body");
+        String key = remoteMessage.getData().get("key");
+
+        String clickAction = "OPEN_VIEW_NOTIFICATION";
         Intent intent = new Intent(clickAction);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(KEY, title);
+        intent.putExtra(KEY, key);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setContentTitle(title);
+        notificationBuilder.setContentTitle(EAGER);
         notificationBuilder.setContentText(body);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         notificationBuilder.setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, notificationBuilder.build());*/
+        notificationManager.notify(0, notificationBuilder.build());
     }
+
 
 
 }

@@ -319,6 +319,7 @@ public class InformationListView extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "list view");
         int id = item.getItemId();
 
         switch (id) {
