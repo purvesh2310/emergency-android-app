@@ -1,15 +1,16 @@
 package com.pk.eager;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class NotificationSetting extends AppCompatActivity {
 
@@ -19,24 +20,16 @@ public class NotificationSetting extends AppCompatActivity {
     private CheckBox categoryPolice;
     private CheckBox categoryTraffic;
     private CheckBox categoryUtility;
-
-    private CheckBox weatherFeed;
-    private CheckBox crimeFeed;
-    private CheckBox missingPersonFeed;
-
-    private SeekBar seekBar;
-
-    private TextView seekBarProgress;
-
-
-    public ArrayList<String> categorySelected;
+    private EditText zipcode1;
+    private EditText zipcode2;
+    private Button apply;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_incident_filter);
+        setContentView(R.layout.activity_notification_setting);
 
-        setTitle("Choose Filter");
+        setTitle("Notification Setting");
 
         categoryMedical = (CheckBox) findViewById(R.id.checkbox_filter_medical);
         categoryFire = (CheckBox) findViewById(R.id.checkbox_filter_fire);
@@ -44,78 +37,91 @@ public class NotificationSetting extends AppCompatActivity {
         categoryTraffic = (CheckBox) findViewById(R.id.checkbox_filter_Traffic);
         categoryUtility = (CheckBox) findViewById(R.id.checkbox_filter_utility);
 
-        weatherFeed = (CheckBox) findViewById(R.id.checkbox_filter_weatherFeed);
-        crimeFeed = (CheckBox) findViewById(R.id.checkbox_filter_crimeFeed);
-        missingPersonFeed = (CheckBox) findViewById(R.id.checkbox_filter_missingPersonFeed);
+        readSharedPreference();
 
-        seekBarProgress = (TextView) findViewById(R.id.seekBarProgress);
-        seekBarProgress.setText("0 mile(s)");
+        zipcode1 = (EditText) findViewById(R.id.subscription_setting_zipcode1);
+        zipcode2 = (EditText) findViewById(R.id.subscription_setting_zipcode2);
 
-        seekBar = (SeekBar) findViewById(R.id.distanceSeekBar);
-        seekBar.setMax(50);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarProgress.setText(String.valueOf(progress) + " mile(s)");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        apply = (Button) findViewById(R.id.subscription_setting_apply);
     }
 
-    public void applyFilter(View view){
-
-        ArrayList<String> selectedCategory = getCategorySelected();
-
-        int distance = seekBar.getProgress();
-
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("distance", distance);
-        returnIntent.putStringArrayListExtra("selectedCategory",selectedCategory);
-
-        setResult(Activity.RESULT_OK,returnIntent);
-        finish();
-
+    public void onSubscribeAddClick(View v){
+        String zipcode = (zipcode1).getText().toString();
+        if(zipcode.length()!=0 && zipcode.length()==5 && zipcode.matches("[0-9]+")) {
+            FirebaseMessaging.getInstance().subscribeToTopic(zipcode);
+            Toast.makeText(getApplicationContext(), "Subcribed to "+zipcode, Toast.LENGTH_SHORT).show();
+            zipcode1.setText("");
+        }
+        else
+            Toast.makeText(getApplicationContext(), "Please enter correct zipcode", Toast.LENGTH_SHORT).show();
     }
 
-    public ArrayList<String> getCategorySelected(){
+    public void onUnSubcribeAddClick(View v){
+        String zipcode = (zipcode1).getText().toString();
+        if(zipcode.length()!=0 && zipcode.length()==5 && zipcode.matches("[0-9]+")) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(zipcode);
+            Toast.makeText(getApplicationContext(), "Unsubcribed from "+zipcode, Toast.LENGTH_SHORT).show();
+            zipcode2.setText("");
+        }
+        else
+            Toast.makeText(getApplicationContext(), "Please enter correct zipcode", Toast.LENGTH_SHORT).show();
+    }
 
-        categorySelected = new ArrayList<>();
+    public void readSharedPreference(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        setCheckBoxBaseOnPreference(categoryMedical, "Medical", sharedPreferences);
+        setCheckBoxBaseOnPreference(categoryFire, "Fire", sharedPreferences);
+        setCheckBoxBaseOnPreference(categoryPolice, "Police", sharedPreferences);
+        setCheckBoxBaseOnPreference(categoryTraffic, "Traffic", sharedPreferences);
+        setCheckBoxBaseOnPreference(categoryUtility, "Utility", sharedPreferences);
+    }
+
+    public void setCheckBoxBaseOnPreference(CheckBox box, String val, SharedPreferences sharedPreferences){
+        boolean defaultValue = false;
+        defaultValue = sharedPreferences.getBoolean(val, defaultValue);
+        if(defaultValue)
+            box.setChecked(true);
+        else box.setChecked(false);
+    }
+
+
+
+
+    public void onApplyClick(View v){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if(categoryMedical.isChecked()){
-            categorySelected.add("Medical");
-        }
+            editor.putBoolean("Medical", true);
+        }else editor.putBoolean("Medical", false);
+
         if(categoryFire.isChecked()){
-            categorySelected.add("Fire");
-        }
+            editor.putBoolean("Fire", true);
+        }else editor.putBoolean("Fire", false);
+
         if(categoryPolice.isChecked()){
-            categorySelected.add("Police");
-        }
+            editor.putBoolean("Police", true);
+        }else editor.putBoolean("Police", false);
+
         if(categoryTraffic.isChecked()){
-            categorySelected.add("Traffic");
-        }
+            editor.putBoolean("Traffic", true);
+        }else editor.putBoolean("Traffic", false);
+
         if(categoryUtility.isChecked()){
-            categorySelected.add("Utility");
-        }
-        if(weatherFeed.isChecked()){
-            categorySelected.add("Weather");
-        }
-        if(crimeFeed.isChecked()){
-            categorySelected.add("Crime");
-        }
-        if(missingPersonFeed.isChecked()){
-            categorySelected.add("Missing");
-        }
+            editor.putBoolean("Utility", true);
+        }else editor.putBoolean("Utility", false);
 
-        return categorySelected;
-
+        editor.commit();
+        finish();
     }
+
+
+
+
+
+
+
+
+
 }

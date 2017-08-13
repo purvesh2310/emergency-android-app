@@ -88,7 +88,10 @@
             android:name=".IncidentFilterActivity"
             android:parentActivityName=".Dashboard"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
-        <activity android:name=".NotificationSetting"></activity>
+        <activity
+            android:name=".NotificationSetting"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
+            />
     </application>
 
 </manifest>

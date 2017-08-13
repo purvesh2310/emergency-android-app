@@ -61,7 +61,7 @@ public class SubscriptionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //setButtonListener();
+        setButtonListener();
 
         //recycler view stuff
         notificationRecyclerView = (RecyclerView) getView().findViewById(R.id.subscriptionRecyclerView);
@@ -127,11 +127,7 @@ public class SubscriptionFragment extends Fragment {
         Intent intent = new Intent(getContext(), Dashboard.class);
         //startActivityForResult(intent, 1);
         startActivity(intent);
-
-
         return true;
-
-
     }
 
 

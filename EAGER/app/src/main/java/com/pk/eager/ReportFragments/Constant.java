@@ -12,4 +12,5 @@ public class Constant {
     final static int POLICE = 3;
     final static int TRAFFIC = 4;
     final static int UTILITY = 5;
+
 }
