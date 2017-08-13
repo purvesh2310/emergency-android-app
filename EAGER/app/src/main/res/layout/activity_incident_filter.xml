@@ -92,6 +92,32 @@
                 android:text="By Distance"
                 android:layout_marginBottom="5dp"/>
 
+            <RadioGroup
+                android:id="@+id/radioLocationPreference"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/radioCurrentLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Current Location"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioSpecificLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Specific Location" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/specificLocation"
+                    android:visibility="gone"/>
+
+            </RadioGroup>
+
             <SeekBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

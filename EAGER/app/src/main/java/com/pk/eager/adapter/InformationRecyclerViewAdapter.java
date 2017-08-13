@@ -167,14 +167,20 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         updateList(temp);
     }
 
-    public void filterByDistance(double queryDistance){
+    public void filterByDistance(double queryDistance, LatLng specifiedLocation){
 
         List<CompactReport> temp = new ArrayList();
         CompactReportUtil cmpUtil = new CompactReportUtil();
+        double distanceInMile;
 
         for(CompactReport cmpReport: reportList){
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
-            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+
+            if(specifiedLocation != null){
+                distanceInMile = cmpUtil.distanceBetweenPoints(specifiedLocation,reportLocation);
+            }else{
+                distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+            }
 
             if (distanceInMile <= queryDistance){
                 temp.add(cmpReport);
@@ -183,10 +189,11 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         updateList(temp);
     }
 
-    public void combineFilter(List<String> categoryList, double queryDistance) {
+    public void combineFilter(List<String> categoryList, double queryDistance, LatLng specifiedLocation) {
 
         List<CompactReport> temp = new ArrayList();
         CompactReportUtil cmpUtil = new CompactReportUtil();
+        double distanceInMile;
 
         for (CompactReport cmpReport : reportList) {
 
@@ -194,7 +201,12 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             String reportTitle = reportData.get("title");
 
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
-            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+
+            if(specifiedLocation != null){
+                distanceInMile = cmpUtil.distanceBetweenPoints(specifiedLocation,reportLocation);
+            }else{
+                distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
+            }
 
             for (String category : categoryList) {
                 if ((reportTitle.toLowerCase().equals(category.toLowerCase())) && distanceInMile <= queryDistance) {

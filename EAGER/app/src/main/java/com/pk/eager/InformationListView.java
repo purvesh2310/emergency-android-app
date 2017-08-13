@@ -412,13 +412,14 @@ public class InformationListView extends Fragment {
 
                 int distance = data.getIntExtra("distance",0);
                 ArrayList<String> categoryList = data.getStringArrayListExtra("selectedCategory");
+                LatLng ll = data.getParcelableExtra("longLat_dataProvider");
 
                 if(categoryList.size()>0 && distance!=0){
-                    adapter.combineFilter(categoryList,distance);
+                    adapter.combineFilter(categoryList,distance,ll);
                 }else if(categoryList.size()>0){
                     adapter.filterByCategory(categoryList);
                 }else{
-                    adapter.filterByDistance(distance);
+                    adapter.filterByDistance(distance,ll);
                 }
 
                 mSearchAction.setVisible(false);
