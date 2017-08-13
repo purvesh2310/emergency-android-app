@@ -82,7 +82,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".User.SignUp" />
-        <activity android:name=".User.UserAccount" />
         <activity android:name=".User.SignIn" />
         <activity
             android:name=".IncidentFilterActivity"

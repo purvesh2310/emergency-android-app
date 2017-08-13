@@ -6,11 +6,12 @@ package com.pk.eager.ReportFragments;
 
 
 public class Constant {
-    final static int TRAP = 0;
-    final static int MEDICAL = 1;
-    final static int FIRE = 2;
-    final static int POLICE = 3;
-    final static int TRAFFIC = 4;
-    final static int UTILITY = 5;
+    public final static int TRAP = 0;
+    public final static int MEDICAL = 1;
+    public final static int FIRE = 2;
+    public final static int POLICE = 3;
+    public final static int TRAFFIC = 4;
+    public final static int UTILITY = 5;
+    public final static String PHONE_NUMBER = "PHONE_NUMBER";
 
 }

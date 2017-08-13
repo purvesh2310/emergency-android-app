@@ -17,7 +17,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -129,7 +128,6 @@ public class Dashboard extends AppCompatActivity
             return;
         }
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        Log.d(TAG, "longitude" + location.getLongitude());
     }
 
     @Override

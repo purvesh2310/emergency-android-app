@@ -3,6 +3,7 @@ package com.pk.eager.ReportFragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -65,6 +68,7 @@ public class Review extends Fragment {
     private AddressResultReceiver resultReceiver;
     private OnFragmentInteractionListener mListener;
     private Location location;
+    private String phoneNumber;
 
     public Review() {
         // Required empty public constructor
@@ -169,8 +173,21 @@ public class Review extends Fragment {
             layout.addView(traffic);
             layout.addView(getHorizontalSeparatorView());
         }
+        getphoneNumber();
         setButtonListener();
     }
+
+    public void getphoneNumber(){
+        //get phone number from sharedPreference
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        phoneNumber = "";
+        phoneNumber = sharedPreferences.getString(Constant.PHONE_NUMBER, phoneNumber);
+        if (phoneNumber==null)
+            phoneNumber = "";
+    }
+
+
+
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -210,7 +227,10 @@ public class Review extends Fragment {
                 if(!isConnected){
                     location = Dashboard.location;
                     IncidentReport smallerSize = Utils.compacitize(incidentReport);
-                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999", null, null);
+
+
+
+                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, null, null);
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
                     sendDataOverChannel(data);
@@ -295,7 +315,7 @@ public class Review extends Fragment {
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
                         String timestamp = simpleDateFormat.format(new Date());
-                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999", "Report", timestamp);
+                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, "Report", timestamp);
 
 
                         newChild.setValue(compact, new DatabaseReference.CompletionListener() {
@@ -349,7 +369,7 @@ public class Review extends Fragment {
                         if (location != null) {
                             getAddress();
                         } else {
-                            //error message
+                            Toast.makeText(getContext(), "Location "+ location, Toast.LENGTH_SHORT);
                         }
                     }
                 });
