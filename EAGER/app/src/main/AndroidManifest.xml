@@ -96,6 +96,8 @@
             android:name=".NotificationSetting"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
             />
+        <activity android:name=".AdminChatThread" />
+        <activity android:name=".ClientChatThread"></activity>
     </application>
 
 </manifest>
