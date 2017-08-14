@@ -8,27 +8,29 @@
             android:layout_height="wrap_content"
             android:id="@+id/subscription_incident_logo"
             android:src="@drawable/flame"
-            android:layout_gravity="top"
+            android:layout_gravity="center_vertical"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="5dp"/>
+           />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
                 android:id="@+id/row_notification_textview1"
-                android:text="title"/>
+                android:text="title"
+                style="@style/reportList"/>
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
                 android:id="@+id/row_notification_textview2"
-                android:text="detail"/>
+                android:text="detail"
+                android:textColor="#2F4F4F"
+                android:textSize="14dp"/>
         </LinearLayout>
 </LinearLayout>

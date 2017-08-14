@@ -121,17 +121,6 @@ public class SubscriptionFragment extends Fragment {
         setHasOptionsMenu(false);
     }
 
-
-    public boolean handleMenuFilter(){
-        Log.d(TAG, "intent started");
-        Intent intent = new Intent(getContext(), Dashboard.class);
-        //startActivityForResult(intent, 1);
-        startActivity(intent);
-        return true;
-    }
-
-
-
     public void setButtonListener(){
 
         settingButton = (FloatingActionButton) getView().findViewById(R.id.subscription_settingFAB);
@@ -144,23 +133,5 @@ public class SubscriptionFragment extends Fragment {
 
             }
         });
-
-/*
-        submitButton = (Button) getActivity().findViewById(R.id.subscriptionSubmitButton);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                String topic;
-
-                EditText editText = (EditText) getActivity().findViewById(R.id.subscriptionZipCode);
-                topic = editText.getText().toString();
-                FirebaseMessaging.getInstance().subscribeToTopic(topic);
-
-                TextView textView = (TextView) getActivity().findViewById(R.id.subscriptionTextView);
-                textView.setText(textView.getText().toString()+"\n"+topic);
-            }
-        });*/
     }
 }

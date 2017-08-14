@@ -54,7 +54,9 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         if(holder!=null && holder.textview!=null) {
+
             Log.d(TAG, notificationList.get(position).getBody());
+
             holder.textview.setText(notificationList.get(position).getBody());
             holder.textView2.setText("From " + notificationList.get(position).getZipcode());
             String reportTitle = notificationList.get(position).getType();
