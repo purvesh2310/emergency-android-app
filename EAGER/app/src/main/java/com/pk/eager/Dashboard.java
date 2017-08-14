@@ -22,6 +22,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.digi.xbee.api.exceptions.XBeeException;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -64,6 +66,9 @@ public class Dashboard extends AppCompatActivity
 
     final static String TAG = "Dashboard";
 
+    private XBeeManager xbeeManager;
+    private boolean connecting = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +102,27 @@ public class Dashboard extends AppCompatActivity
         }
 
         setupUserInfoInNavigationDrawer();
+
+        //Open XBee connection
+        xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
+        if (connecting)
+            return;
+        xbeeManager.createXBeeDevice(9600);
+        Thread connectThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                connecting = true;
+                try {
+                    //showToastMessage("opening connection");
+                    xbeeManager.openConnection();
+                } catch (XBeeException e) {
+                    // showToastMessage("error: " + e.getMessage());
+                }
+                connecting = false;
+            }
+        });
+        connectThread.start();
+
 
     }
 

@@ -28,6 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.digi.xbee.api.listeners.IDataReceiveListener;
+import com.pk.eager.XBeeManager;
+import com.pk.eager.XBeeManagerApplication;
+import android.widget.Toast;
+import com.digi.xbee.api.XBeeDevice;
+import com.digi.xbee.api.exceptions.XBeeException;
+import com.digi.xbee.api.models.XBeeMessage;
+
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -59,7 +67,7 @@ import static com.google.android.gms.internal.zzagz.runOnUiThread;
  * Use the {@link Review#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Review extends Fragment {
+public class Review extends Fragment implements IDataReceiveListener {
 
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
@@ -69,6 +77,10 @@ public class Review extends Fragment {
     private OnFragmentInteractionListener mListener;
     private Location location;
     private String phoneNumber;
+
+    private XBeeManager xbeeManager;
+    private boolean connecting = false;
+    private XBeeDevice myXBeeDevice = null;
 
     public Review() {
         // Required empty public constructor
@@ -99,6 +111,16 @@ public class Review extends Fragment {
 
 
         resultReceiver = new AddressResultReceiver(null);
+
+        xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()) {
+            xbeeManager.subscribeDataPacketListener(this);
+        }
     }
 
     public void getAddress(){
@@ -210,6 +232,7 @@ public class Review extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        xbeeManager.unsubscribeDataPacketListener(this);
     }
 
     public interface OnFragmentInteractionListener {
@@ -386,8 +409,7 @@ public class Review extends Fragment {
 
     // To send the data using XBE/BLE mode of communication
     public void sendDataOverChannel(String data){
-
-
+        xbeeBroadcast(data);
     }
 
     // Receive data over XBE/BLE and upload to Firebase
@@ -433,4 +455,48 @@ public class Review extends Fragment {
         DatabaseHandler db = new DatabaseHandler(getContext());
         db.addReport(report);
     }
+
+    public void xbeeBroadcast(String data){
+        final String reportData = data;
+        Thread sendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if(xbeeManager.getLocalXBeeDevice().isOpen()) {
+                        String DATA_TO_SEND = reportData;
+                        byte[] dataToSend = DATA_TO_SEND.getBytes();
+                        xbeeManager.broadcastData(dataToSend);
+                        showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
+                    }
+                } catch (XBeeException e) {
+                    //showToastMessage("error: " + e.getMessage());
+                }
+            }
+        });
+        sendThread.start();
+    }
+    @Override
+    public void dataReceived(XBeeMessage xbeeMessage){
+        showToastMessage("inside recieve message toast");
+        String data = new String(xbeeMessage.getData());
+        showToastMessage("data received from: "+ xbeeMessage.getDevice().get64BitAddress()+ ", message: "+new String(xbeeMessage.getData()));
+        receiveDataFromChannel(data);
+    }
+
+    /**
+     * Displays the given message.
+     *
+     * @param message The message to show.
+     */
+    private void showToastMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show
+                        ();
+            }
+        });
+    }
+
+
 }
