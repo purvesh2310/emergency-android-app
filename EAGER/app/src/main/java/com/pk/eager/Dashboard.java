@@ -17,18 +17,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.digi.xbee.api.exceptions.XBeeException;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.ReportFragments.FireEmergency;
 import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportFragments.MedicalEmergency;
@@ -83,6 +85,10 @@ public class Dashboard extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if(!FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN))
+            navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
+
         navigationView.setNavigationItemSelectedListener(this);
 
         if(savedInstanceState == null) {
@@ -154,6 +160,7 @@ public class Dashboard extends AppCompatActivity
             return;
         }
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        Log.d(TAG, "longitude" + location.getLongitude());
     }
 
     @Override
@@ -180,6 +187,12 @@ public class Dashboard extends AppCompatActivity
             fragment = new HistoryFragment();
         } else if (id == R.id.nav_account) {
             fragment = new Account();
+        }
+
+        // Add admin mode here
+        else if (id == R.id.nav_admin_mode
+                && FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN)){
+                fragment = new AdminMode();
         }
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

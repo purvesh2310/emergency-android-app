@@ -39,6 +39,7 @@ import com.digi.xbee.api.models.XBeeMessage;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.pk.eager.Dashboard;
 import com.pk.eager.LocationUtils.GeoConstant;
@@ -346,7 +347,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 Dashboard.incidentType = null;
                                 Dashboard.incidentReport = new IncidentReport("Bla");
-                                saveReportForHistory(compact);
+                                saveReportForHistory(compact, key);
                                 getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                             }
@@ -355,6 +356,10 @@ public class Review extends Fragment implements IDataReceiveListener {
 
 
                         sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact), reportType);
+
+			// This is a way to know that which device create the alert, store the information on Firebase (NB)
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        ref.child("ReportOwner").child(key).child("owner").setValue(FirebaseInstanceId.getInstance().getToken());
 
                     }
                 });
@@ -439,18 +444,19 @@ public class Review extends Fragment implements IDataReceiveListener {
     }
 
     // Saving reports locally for the History
-    public void saveReportForHistory(CompactReport cmpReport){
+    public void saveReportForHistory(CompactReport cmpReport, String key){
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
         Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"info");
 
+        String uid = key;
         String title = reportData.get("title");
         String information = reportData.get("information");
         double latitude = cmpReport.getLatitude();
         double longitude = cmpReport.getLongitude();
         long unixTime = System.currentTimeMillis() / 1000L;
 
-        Report report = new Report(title, information, latitude, longitude, unixTime);
+        Report report = new Report(uid, title, information, latitude, longitude, unixTime);
 
         DatabaseHandler db = new DatabaseHandler(getContext());
         db.addReport(report);

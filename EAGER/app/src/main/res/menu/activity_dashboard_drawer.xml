@@ -18,6 +18,10 @@
             android:id="@+id/nav_account"
             android:icon="@drawable/ic_menu_manage"
             android:title="Account" />
+        <item
+            android:id="@+id/nav_admin_mode"
+            android:icon="@drawable/ic_admin_mode"
+            android:title="Admin Mode" />
     </group>
 
 </menu>

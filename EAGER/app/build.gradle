@@ -44,6 +44,8 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.slf4j:slf4j-android:1.7.12'
     compile 'com.digi:android-sdk-addon:3'
+    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.firebaseui:firebase-ui-database:1.2.0'
     compile files('libs/xbee-java-library-1.2.0.jar')
 
     testCompile 'junit:junit:4.12'
