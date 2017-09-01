@@ -45,19 +45,12 @@ import com.pk.eager.User.Account;
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         IncidentType.OnFragmentInteractionListener,
-        MedicalEmergency.OnFragmentInteractionListener,
-        FireEmergency.OnFragmentInteractionListener,
-        PoliceEmergency.OnFragmentInteractionListener,
-        TrafficEmergency.OnFragmentInteractionListener,
-        UtilityEmergency.OnFragmentInteractionListener,
-        Review.OnFragmentInteractionListener,
         Information.OnFragmentInteractionListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         InformationListView.OnFragmentInteractionListener,
         MapReportInfo.OnFragmentInteractionListener,
-        Account.OnFragmentInteractionListener,
-        TabFragment.OnFragmentInteractionListener{
+        Account.OnFragmentInteractionListener{
 
     public Fragment fragment;
     public static IncidentReport incidentReport = new IncidentReport("bla");

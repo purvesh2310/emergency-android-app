@@ -1,7 +1,5 @@
 package com.pk.eager.ReportFragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,15 +21,6 @@ import com.pk.eager.ReportObject.Report;
 
 import java.util.ArrayList;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FireEmergency.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FireEmergency#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FireEmergency extends Fragment {
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
@@ -41,21 +30,12 @@ public class FireEmergency extends Fragment {
     private int[] radioId = new int[]{R.id.radio_fireq1_a, R.id.radio_fireq1_b, R.id.radio_fireq1_c};
     private int[] checkId = new int[]{R.id.checkbox_fireq2_a, R.id.checkbox_fireq2_b, R.id.checkbox_fireq2_c};
 
-
-    private OnFragmentInteractionListener mListener;
-
     public Button nextButton;
 
     public FireEmergency() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment FireEmergency.
-     */
-    // TODO: Rename and change types and number of parameters
     public static FireEmergency newInstance(IncidentReport report) {
         FireEmergency fragment = new FireEmergency();
         Bundle args = new Bundle();
@@ -100,46 +80,6 @@ public class FireEmergency extends Fragment {
                     radio.setChecked(true);
             }
         }
-    }
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public void setButtonListener(){

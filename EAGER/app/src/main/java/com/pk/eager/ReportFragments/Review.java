@@ -9,7 +9,6 @@ import android.location.Address;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,14 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.digi.xbee.api.listeners.IDataReceiveListener;
-import com.pk.eager.XBeeManager;
-import com.pk.eager.XBeeManagerApplication;
-import android.widget.Toast;
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.exceptions.XBeeException;
+import com.digi.xbee.api.listeners.IDataReceiveListener;
 import com.digi.xbee.api.models.XBeeMessage;
-
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,6 +43,8 @@ import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Utils;
+import com.pk.eager.XBeeManager;
+import com.pk.eager.XBeeManagerApplication;
 import com.pk.eager.db.handler.DatabaseHandler;
 import com.pk.eager.db.model.Report;
 import com.pk.eager.util.CompactReportUtil;
@@ -59,15 +56,6 @@ import java.util.Map;
 
 import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Review.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Review#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Review extends Fragment implements IDataReceiveListener {
 
     private static final String REPORT = "report";
@@ -75,7 +63,6 @@ public class Review extends Fragment implements IDataReceiveListener {
     private static final String TAG = "Review";
     private DatabaseReference db;
     private AddressResultReceiver resultReceiver;
-    private OnFragmentInteractionListener mListener;
     private Location location;
     private String phoneNumber;
 
@@ -207,37 +194,6 @@ public class Review extends Fragment implements IDataReceiveListener {
         phoneNumber = sharedPreferences.getString(Constant.PHONE_NUMBER, phoneNumber);
         if (phoneNumber==null)
             phoneNumber = "";
-    }
-
-
-
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-        xbeeManager.unsubscribeDataPacketListener(this);
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     public void setButtonListener(){
