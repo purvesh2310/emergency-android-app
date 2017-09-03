@@ -47,6 +47,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_place_black_24dp"
                         android:tint="#A9A9A9"
+                        android:id="@+id/locationMarkerIcon"
                         />
 
                     <TextView

@@ -8,25 +8,28 @@
 
     <EditText
         android:id="@+id/signIn_email_edittext"
-        android:layout_width="match_parent"
+        android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:hint="Enter Email"
         android:inputType="textEmailAddress"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        />
 
     <EditText
         android:id="@+id/signIn_password_edittext"
-        android:layout_width="match_parent"
+        android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:hint="Enter Password"
         android:inputType="textPassword"
-        android:fontFamily="sans-serif"/>
+        android:fontFamily="sans-serif"
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-       android:layout_marginTop="100dp">
+       android:layout_marginTop="40dp">
 
     <Button
         android:layout_width="200dp"

@@ -3,15 +3,16 @@ package com.pk.eager.ReportFragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,10 +25,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.digi.xbee.api.XBeeDevice;
+import com.digi.xbee.api.exceptions.XBeeException;
+import com.digi.xbee.api.listeners.IDataReceiveListener;
+import com.digi.xbee.api.models.XBeeMessage;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.pk.eager.Dashboard;
 import com.pk.eager.LocationUtils.GeoConstant;
@@ -36,6 +43,8 @@ import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Utils;
+import com.pk.eager.XBeeManager;
+import com.pk.eager.XBeeManagerApplication;
 import com.pk.eager.db.handler.DatabaseHandler;
 import com.pk.eager.db.model.Report;
 import com.pk.eager.util.CompactReportUtil;
@@ -47,24 +56,19 @@ import java.util.Map;
 
 import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Review.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Review#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class Review extends Fragment {
+public class Review extends Fragment implements IDataReceiveListener {
 
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
     private static final String TAG = "Review";
     private DatabaseReference db;
     private AddressResultReceiver resultReceiver;
-    private OnFragmentInteractionListener mListener;
     private Location location;
+    private String phoneNumber;
+
+    private XBeeManager xbeeManager;
+    private boolean connecting = false;
+    private XBeeDevice myXBeeDevice = null;
 
     public Review() {
         // Required empty public constructor
@@ -95,6 +99,16 @@ public class Review extends Fragment {
 
 
         resultReceiver = new AddressResultReceiver(null);
+
+        xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()) {
+            xbeeManager.subscribeDataPacketListener(this);
+        }
     }
 
     public void getAddress(){
@@ -169,34 +183,17 @@ public class Review extends Fragment {
             layout.addView(traffic);
             layout.addView(getHorizontalSeparatorView());
         }
+        getphoneNumber();
         setButtonListener();
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+    public void getphoneNumber(){
+        //get phone number from sharedPreference
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        phoneNumber = "";
+        phoneNumber = sharedPreferences.getString(Constant.PHONE_NUMBER, phoneNumber);
+        if (phoneNumber==null)
+            phoneNumber = "";
     }
 
     public void setButtonListener(){
@@ -210,7 +207,10 @@ public class Review extends Fragment {
                 if(!isConnected){
                     location = Dashboard.location;
                     IncidentReport smallerSize = Utils.compacitize(incidentReport);
-                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999", null, null);
+
+
+
+                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, null, null);
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
                     sendDataOverChannel(data);
@@ -259,13 +259,14 @@ public class Review extends Fragment {
         return view;
     }
 
-    public void sendNotificationToZipCode(String zipcode, String key, String message){
+    public void sendNotificationToZipCode(String zipcode, String key, String message, String type){
         DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("notificationRequests");
 
         Map notification = new HashMap<>();
         notification.put("zipcode", zipcode);
         notification.put("key", key);
         notification.put("message", message);
+        notification.put("type", type);
         Log.d(TAG, "Push notification " + key);
         notificationRef.push().setValue(notification);
 
@@ -289,10 +290,12 @@ public class Review extends Fragment {
                         final String zipcode = address.getPostalCode();
                         DatabaseReference newChild = db.push();
                         final String key = newChild.getKey();
+                        String reportType = incidentReport.getFirstType();
+                        Log.d(TAG, "type "+reportType);
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
                         String timestamp = simpleDateFormat.format(new Date());
-                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), "4089299999", "Report", timestamp);
+                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, "Report", timestamp);
 
 
                         newChild.setValue(compact, new DatabaseReference.CompletionListener() {
@@ -300,12 +303,19 @@ public class Review extends Fragment {
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 Dashboard.incidentType = null;
                                 Dashboard.incidentReport = new IncidentReport("Bla");
-                                saveReportForHistory(compact);
+                                saveReportForHistory(compact, key);
                                 getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                             }
                         });
-                        sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact));
+
+
+
+                        sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact), reportType);
+
+			// This is a way to know that which device create the alert, store the information on Firebase (NB)
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        ref.child("ReportOwner").child(key).child("owner").setValue(FirebaseInstanceId.getInstance().getToken());
 
                     }
                 });
@@ -343,7 +353,7 @@ public class Review extends Fragment {
                         if (location != null) {
                             getAddress();
                         } else {
-                            //error message
+                            Toast.makeText(getContext(), "Location "+ location, Toast.LENGTH_SHORT);
                         }
                     }
                 });
@@ -360,8 +370,7 @@ public class Review extends Fragment {
 
     // To send the data using XBE/BLE mode of communication
     public void sendDataOverChannel(String data){
-
-
+        xbeeBroadcast(data);
     }
 
     // Receive data over XBE/BLE and upload to Firebase
@@ -391,20 +400,65 @@ public class Review extends Fragment {
     }
 
     // Saving reports locally for the History
-    public void saveReportForHistory(CompactReport cmpReport){
+    public void saveReportForHistory(CompactReport cmpReport, String key){
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
-        Map<String, String> reportData = cmpUtil.parseReportData(cmpReport);
+        Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"info");
 
+        String uid = key;
         String title = reportData.get("title");
         String information = reportData.get("information");
         double latitude = cmpReport.getLatitude();
         double longitude = cmpReport.getLongitude();
         long unixTime = System.currentTimeMillis() / 1000L;
 
-        Report report = new Report(title, information, latitude, longitude, unixTime);
+        Report report = new Report(uid, title, information, latitude, longitude, unixTime);
 
         DatabaseHandler db = new DatabaseHandler(getContext());
         db.addReport(report);
     }
+
+    public void xbeeBroadcast(String data){
+        final String reportData = data;
+        Thread sendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if(xbeeManager.getLocalXBeeDevice().isOpen()) {
+                        String DATA_TO_SEND = reportData;
+                        byte[] dataToSend = DATA_TO_SEND.getBytes();
+                        xbeeManager.broadcastData(dataToSend);
+                        showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
+                    }
+                } catch (XBeeException e) {
+                    //showToastMessage("error: " + e.getMessage());
+                }
+            }
+        });
+        sendThread.start();
+    }
+    @Override
+    public void dataReceived(XBeeMessage xbeeMessage){
+        showToastMessage("inside recieve message toast");
+        String data = new String(xbeeMessage.getData());
+        showToastMessage("data received from: "+ xbeeMessage.getDevice().get64BitAddress()+ ", message: "+new String(xbeeMessage.getData()));
+        receiveDataFromChannel(data);
+    }
+
+    /**
+     * Displays the given message.
+     *
+     * @param message The message to show.
+     */
+    private void showToastMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show
+                        ();
+            }
+        });
+    }
+
+
 }

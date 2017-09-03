@@ -13,6 +13,9 @@ import java.util.List;
 
 /**
  * Created by Purvesh on 7/26/2017.
+ *
+ * NB add-on:
+ * Make some modification so that we can store the alert's uid into the user's local database.
  */
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -22,6 +25,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String TABLE_REPORTS = "reports";
     private static final String KEY_ID = "id";
+    private static final String KEY_UID = "uid";
     private static final String KEY_TITLE = "title";
     private static final String KEY_INFORMATION = "information";
     private static final String KEY_LATITUDE = "latitude";
@@ -36,10 +40,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String CREATE_REPORTS_TABLE = "CREATE TABLE " + TABLE_REPORTS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT,"
-                + KEY_INFORMATION + " TEXT," + KEY_LATITUDE + " TEXT,"
-                + KEY_LONGITUDE + " TEXT," + KEY_TIMESTAMP + " TEXT)";
-
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_UID + " TEXT,"
+                + KEY_TITLE + " TEXT," + KEY_INFORMATION + " TEXT,"
+                + KEY_LATITUDE + " TEXT," + KEY_LONGITUDE + " TEXT,"
+                + KEY_TIMESTAMP + " TEXT)";
         db.execSQL(CREATE_REPORTS_TABLE);
 
     }
@@ -60,6 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_UID, report.getUid());
         values.put(KEY_TITLE, report.getTitle());
         values.put(KEY_INFORMATION, report.getInformation());
         values.put(KEY_LATITUDE, report.getLatitude());
@@ -87,10 +92,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 Report report = new Report();
                 report.setId(Integer.parseInt(cursor.getString(0)));
-                report.setTitle(cursor.getString(1));
-                report.setInformation(cursor.getString(2));
-                report.setLatitude(Double.parseDouble(cursor.getString(3)));
-                report.setLongitude(Double.parseDouble(cursor.getString(4)));
+                report.setUid(cursor.getString(1));
+                report.setTitle(cursor.getString(2));
+                report.setInformation(cursor.getString(3));
+                report.setLatitude(Double.parseDouble(cursor.getString(4)));
+                report.setLongitude(Double.parseDouble(cursor.getString(5)));
 
                 // Adding individual report to list
                 reportList.add(report);

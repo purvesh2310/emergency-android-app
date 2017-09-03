@@ -4,6 +4,7 @@ package com.pk.eager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.pk.eager.ReportObject.Notification;
 import com.pk.eager.adapter.ClickListener;
 import com.pk.eager.adapter.NotificationRecyclerViewAdapter;
@@ -40,7 +37,7 @@ public class SubscriptionFragment extends Fragment {
 
     private static final String USER_NOTIFICATION_REF = "UserNotification";
     private static final String TAG = SubscriptionFragment.class.getSimpleName();
-    private Button submitButton;
+    private FloatingActionButton settingButton;
     private ArrayList<Notification> notificationList = new ArrayList<Notification>();
     private RecyclerView notificationRecyclerView;
     private NotificationRecyclerViewAdapter notificationAdapter;
@@ -58,7 +55,7 @@ public class SubscriptionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        getActivity().setTitle("Subscribe");
+        getActivity().setTitle("Notifications");
         return inflater.inflate(R.layout.fragment_subscription, container, false);
     }
 
@@ -93,9 +90,6 @@ public class SubscriptionFragment extends Fragment {
         }
         ));
 
-
-
-
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -123,22 +117,22 @@ public class SubscriptionFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(false);
+    }
+
     public void setButtonListener(){
 
-        submitButton = (Button) getActivity().findViewById(R.id.subscriptionSubmitButton);
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        settingButton = (FloatingActionButton) getView().findViewById(R.id.subscription_settingFAB);
 
+        settingButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg0) {
+                Intent intent = new Intent(getContext(), NotificationSetting.class);
+                startActivity(intent);
 
-                String topic;
-
-                EditText editText = (EditText) getActivity().findViewById(R.id.subscriptionZipCode);
-                topic = editText.getText().toString();
-                FirebaseMessaging.getInstance().subscribeToTopic(topic);
-
-                TextView textView = (TextView) getActivity().findViewById(R.id.subscriptionTextView);
-                textView.setText(textView.getText().toString()+"\n"+topic);
             }
         });
     }

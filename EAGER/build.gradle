@@ -16,6 +16,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'http://ftp1.digi.com/support/m-repo' }
     }
 }
 

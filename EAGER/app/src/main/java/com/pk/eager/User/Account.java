@@ -64,6 +64,7 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Account Options");
         configureGoogle();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser!=null) {

@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -44,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.adapter.ClickListener;
@@ -301,7 +304,11 @@ public class InformationListView extends Fragment {
 
     public void getPhoneNumberFromDevice(){
         TelephonyManager tMgr = (TelephonyManager)this.getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-        phoneNumber = tMgr.getDeviceId();
+        phoneNumber = tMgr.getLine1Number();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(Constant.PHONE_NUMBER, phoneNumber);
+        editor.commit();
     }
 
     @Override
@@ -319,6 +326,7 @@ public class InformationListView extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "list view");
         int id = item.getItemId();
 
         switch (id) {
@@ -412,13 +420,14 @@ public class InformationListView extends Fragment {
 
                 int distance = data.getIntExtra("distance",0);
                 ArrayList<String> categoryList = data.getStringArrayListExtra("selectedCategory");
+                LatLng ll = data.getParcelableExtra("longLat_dataProvider");
 
                 if(categoryList.size()>0 && distance!=0){
-                    adapter.combineFilter(categoryList,distance);
+                    adapter.combineFilter(categoryList,distance,ll);
                 }else if(categoryList.size()>0){
                     adapter.filterByCategory(categoryList);
                 }else{
-                    adapter.filterByDistance(distance);
+                    adapter.filterByDistance(distance,ll);
                 }
 
                 mSearchAction.setVisible(false);

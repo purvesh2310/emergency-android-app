@@ -1,6 +1,7 @@
 package com.pk.eager.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.pk.eager.ClientChatThread;
 import com.pk.eager.R;
 import com.pk.eager.db.model.Report;
 import com.pk.eager.util.CompactReportUtil;
@@ -24,6 +26,9 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     Context context;
     List<Report> reportList;
     LatLng currentLocation;
+    String roundDistance;
+
+    private Intent clientChatThread;
 
     public static class InformationViewHolder extends RecyclerView.ViewHolder {
 
@@ -32,6 +37,8 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         TextView reportLocation;
         ImageView incidentTypeLogo;
 
+        private ClickListener mClickListener;
+
         InformationViewHolder(View itemView) {
             super(itemView);
 
@@ -39,6 +46,33 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
             incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
+
+            // Set ClickListener for the entire row, can set on individual components within a row
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onItemClick(v, getAdapterPosition());
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mClickListener.onItemLongClick(v, getAdapterPosition());
+                    return true;
+                }
+            });
+        }
+
+        public void setOnClickListener(ClickListener clickListener) {
+            mClickListener = clickListener;
+        }
+
+        //Interface to send callbacks...
+        public interface ClickListener {
+            void onItemClick(View view, int position);
+
+            void onItemLongClick(View view, int position);
         }
     }
 
@@ -52,6 +86,17 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     public InformationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_information_list, parent, false);
         HistoryRecyclerViewAdapter.InformationViewHolder ivh = new HistoryRecyclerViewAdapter.InformationViewHolder(v);
+        ivh.setOnClickListener(new InformationViewHolder.ClickListener() {
+            @Override
+            public void onItemClick(View v, int pos) {
+                switchActivity(v, pos);
+            }
+
+            @Override
+            public void onItemLongClick(View v, int pos) {
+                switchActivity(v, pos);
+            }
+        });
         return ivh;
     }
 
@@ -71,7 +116,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
         double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,incidentLocation);
-        String roundDistance = String.format("%.2f", distanceInMile);
+        roundDistance = String.format("%.2f", distanceInMile);
         roundDistance = roundDistance + " miles far";
 
         holder.reportTitle.setText(title);
@@ -96,5 +141,14 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
                 break;
         }
 
+    }
+
+    private void switchActivity(View v, int pos){
+        Report report = reportList.get(pos);
+        Context context = v.getContext();
+        clientChatThread = new Intent(context, ClientChatThread.class);
+        clientChatThread.putExtra("reportObj", report);
+        clientChatThread.putExtra("roundDistance", roundDistance);
+        context.startActivity(clientChatThread);
     }
 }
