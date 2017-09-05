@@ -45,49 +45,49 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 		allSubscriptionsRef.orderByChild("topic").on('value', function(snapshot){
 			snapshot.forEach(function(childSnapshot){
 				var topic = childSnapshot.val().topic;	
-				console.log("string long " + topic.split("_")[0]);
-				console.log("string lat " + topic.split("_")[1]);
 
-				var snapshotLongitude = parseFloat(topic.split("_")[0]);
-				var snapshotLatitude = parseFloat(topic.split("_")[1]);
+				if(topic){
+					var snapshotLongitude = parseFloat(topic.split("_")[0]);
+					var snapshotLatitude = parseFloat(topic.split("_")[1]);
 
-				
-				var dist = 0;
-				dist = geodist({lat: latitude, lon: longitude}, {lat: snapshotLatitude, lon: snapshotLongitude});
-				console.log("Distance " + dist);
+					
+					var dist = 0;
+					dist = geodist({lat: latitude, lon: longitude}, {lat: snapshotLatitude, lon: snapshotLongitude});
+					console.log("Distance " + dist);
 
-				switch(true){
-					case (dist <= 0.1):
-						sendmessage(topic+"_"+"0.1", payload);
-						console.log("Send to 0.1");
-					case (dist <= 0.2):
-						sendmessage(topic+"_"+"0.2", payload);
-						console.log("Send to 0.2");
-					case (dist <= 0.3):
-						sendmessage(topic+"_"+"0.3", payload);
-						console.log("Send to 0.3");
-					case (dist <= 0.5):
-						sendmessage(topic+"_"+"0.5", payload);
-						console.log("Send to 0.4");
-					case (dist <= 1.0):
-						sendmessage(topic+"_"+"1.0", payload);
-						console.log("Send to 0.5");
-					case (dist <= 1.5):
-						sendmessage(topic+"_"+"1.5", payload);
-						console.log("Send to 0.6");
-					case (dist <= 2.0):
-						sendmessage(topic+"_"+"2.0", payload);
-						console.log("Send to 0.7");
-					case (dist <= 2.5): "value", 
-						sendmessage(topic+"_"+"2.5", payload);
-						console.log("Send to 0.8");
-					case (dist <= 3.0):
-						sendmessage(topic+"_"+"3.0"), payload;
-						console.log("Send to 0.9");
-					case (dist <= 3.5):
-						sendmessage(topic+"_"+"3.5", payload);
-						console.log("Send to 0.10");
-						break;
+					switch(true){
+						case (dist <= 0.1):
+							sendmessage(topic+"_"+"0.1", payload);
+							console.log("Send to 0.1");
+						case (dist <= 0.2):
+							sendmessage(topic+"_"+"0.2", payload);
+							console.log("Send to 0.2");
+						case (dist <= 0.3):
+							sendmessage(topic+"_"+"0.3", payload);
+							console.log("Send to 0.3");
+						case (dist <= 0.5):
+							sendmessage(topic+"_"+"0.5", payload);
+							console.log("Send to 0.4");
+						case (dist <= 1.0):
+							sendmessage(topic+"_"+"1.0", payload);
+							console.log("Send to 0.5");
+						case (dist <= 1.5):
+							sendmessage(topic+"_"+"1.5", payload);
+							console.log("Send to 0.6");
+						case (dist <= 2.0):
+							sendmessage(topic+"_"+"2.0", payload);
+							console.log("Send to 0.7");
+						case (dist <= 2.5): "value", 
+							sendmessage(topic+"_"+"2.5", payload);
+							console.log("Send to 0.8");
+						case (dist <= 3.0):
+							sendmessage(topic+"_"+"3.0", payload);
+							console.log("Send to 0.9");
+						case (dist <= 3.5):
+							sendmessage(topic+"_"+"3.5", payload);
+							console.log("Send to 0.10");
+							break;
+					}
 				}
 			});
 		});
