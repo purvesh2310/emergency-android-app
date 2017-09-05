@@ -96,18 +96,37 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:text="Zipcode:"/>
-
+                            android:layout_weight="0.75"
+                            android:orientation="vertical">
                         <EditText
-                            android:id="@+id/subscription_setting_zipcode1"
-                            android:layout_width="0dp"
+                            android:id="@+id/subscription_setting_address"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:hint="Enter zipcode"/>
+                            android:layout_weight="0.75"
+                            android:hint="Enter address or places..."/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Set distance..."/>
+                            <Spinner
+                                android:id="@+id/subscription_setting_distance_spinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="mi"/>
+                        </LinearLayout>
+
+                        </LinearLayout>
+
 
                         <Button
                             android:id="@+id/subscription_setting_add1"
@@ -166,9 +185,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
-
-
-
 
             <Button
                 android:id="@+id/subscription_setting_apply"
