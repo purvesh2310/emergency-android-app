@@ -287,7 +287,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                     @Override
                     public void run() {  //this part is where you put whatever you want to do
                         Log.d(TAG, "In thead");
-                        final String zipcode = address.getPostalCode();
+                        final String locString = address.getLongitude()+"_"+address.getLatitude();
                         DatabaseReference newChild = db.push();
                         final String key = newChild.getKey();
                         String reportType = incidentReport.getFirstType();
@@ -311,7 +311,7 @@ public class Review extends Fragment implements IDataReceiveListener {
 
 
 
-                        sendNotificationToZipCode(zipcode, key, Utils.notificationMessage(compact), reportType);
+                        sendNotificationToZipCode(locString, key, Utils.notificationMessage(compact), reportType);
 
 			// This is a way to know that which device create the alert, store the information on Firebase (NB)
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();

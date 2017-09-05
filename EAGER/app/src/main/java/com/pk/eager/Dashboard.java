@@ -31,13 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.pk.eager.ReportFragments.Constant;
-import com.pk.eager.ReportFragments.FireEmergency;
 import com.pk.eager.ReportFragments.IncidentType;
-import com.pk.eager.ReportFragments.MedicalEmergency;
-import com.pk.eager.ReportFragments.PoliceEmergency;
-import com.pk.eager.ReportFragments.Review;
-import com.pk.eager.ReportFragments.TrafficEmergency;
-import com.pk.eager.ReportFragments.UtilityEmergency;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.User.Account;
 
