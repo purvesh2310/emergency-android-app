@@ -27,9 +27,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.listeners.IDataReceiveListener;
+import com.digi.xbee.api.models.XBee64BitAddress;
 import com.digi.xbee.api.models.XBeeMessage;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -213,6 +215,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                     CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, null, null);
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
+                    data+="#"+xbeeManager.getLocalXBee64BitAddress();
                     sendDataOverChannel(data);
                 }else {
                     showSubmitConfirmationDialog();
@@ -235,8 +238,35 @@ public class Review extends Fragment implements IDataReceiveListener {
             }
         });
 
-
+        final Button sendXbee = (Button) this.getView().findViewById(R.id.button_review_send);
+        sendXbee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendP2P();
+            }
+        });
     }
+
+    public void sendP2P(){
+
+        Thread sendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                XBee64BitAddress address64 = new XBee64BitAddress("0013A2004125D261");
+                RemoteXBeeDevice remote = new RemoteXBeeDevice(xbeeManager.getLocalXBeeDevice(),address64);
+                String data = "a";
+                byte[] bytedata = data.getBytes();
+                try {
+                    xbeeManager.sendDataToRemote(bytedata, remote);
+                    Log.d(TAG, "sending data " );
+                }catch(XBeeException e){
+                    Log.d(TAG, e.toString());
+                }
+            }
+        });
+        sendThread.start();
+    }
+
 
     // Formats the TextView to show in Review Screen
     public void formatReviewInformationTextView(TextView textView){
@@ -370,32 +400,44 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     // To send the data using XBE/BLE mode of communication
     public void sendDataOverChannel(String data){
+        Log.d(TAG,"Sending data over channel");
         xbeeBroadcast(data);
     }
 
     // Receive data over XBE/BLE and upload to Firebase
     public void receiveDataFromChannel(String data){
 
-        boolean isConnected = checkInternetConnection();
+        if(data.equals("a")){
+            Toast.makeText(this.getContext(), "P2P received", Toast.LENGTH_SHORT);
+        }else {
 
-        if(isConnected){
-            Gson gson = new Gson();
-            CompactReport cmpReport =  gson.fromJson(data,CompactReport.class);
+            boolean isConnected = checkInternetConnection();
 
-            DatabaseReference newChild = db.push();
+            if (isConnected) {
+                String[] input = data.split("#");
+                String adrr = input[1];
+                data = input[0];
+                Gson gson = new Gson();
+                CompactReport cmpReport = gson.fromJson(data, CompactReport.class);
 
-            newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    Dashboard.incidentType = null;
-                    getActivity().getSupportFragmentManager()
-                            .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-            });
-        }
+                DatabaseReference newChild = db.push();
 
-        else{
-            receiveDataFromChannel(data);
+                newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        Dashboard.incidentType = null;
+                        getActivity().getSupportFragmentManager()
+                                .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                });
+
+                DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
+                path.setValue(adrr + "->" + xbeeManager.getLocalXBee64BitAddress());
+
+
+            } else {
+                sendDataOverChannel(data);
+            }
         }
     }
 
@@ -420,18 +462,22 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     public void xbeeBroadcast(String data){
         final String reportData = data;
+        Log.d(TAG, "broadcast");
         Thread sendThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    Log.d(TAG, " in xbee broadcast thread");
                     if(xbeeManager.getLocalXBeeDevice().isOpen()) {
                         String DATA_TO_SEND = reportData;
                         byte[] dataToSend = DATA_TO_SEND.getBytes();
                         xbeeManager.broadcastData(dataToSend);
+                        Log.d(TAG, "Broadcasting ");
                         showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
-                    }
+                    }else Log.d(TAG, "xbee not open");
                 } catch (XBeeException e) {
                     //showToastMessage("error: " + e.getMessage());
+                    Log.d("Xbee exception ", e.toString());
                 }
             }
         });

@@ -73,8 +73,12 @@ public class Dashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        /*
         if(!FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN))
+            navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);*/
+        if(true)
             navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
+
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -108,8 +112,10 @@ public class Dashboard extends AppCompatActivity
                 try {
                     //showToastMessage("opening connection");
                     xbeeManager.openConnection();
+                    //Log.d(TAG, xbeeManager.getLocalXBeeDevice().isOpen()+" ");
                 } catch (XBeeException e) {
-                    // showToastMessage("error: " + e.getMessage());
+                    // showToastMessage("error: " +
+                    Log.d(TAG, e.toString());
                 }
                 connecting = false;
             }
