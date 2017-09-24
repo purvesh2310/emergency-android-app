@@ -1,5 +1,7 @@
 package com.pk.eager.ReportFragments;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,9 +14,11 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +40,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.pk.eager.BluetoothChatService;
+import com.pk.eager.BluetoothDeviceListActivity;
 import com.pk.eager.Dashboard;
 import com.pk.eager.LocationUtils.GeoConstant;
 import com.pk.eager.LocationUtils.GeocodeIntentService;
@@ -70,6 +76,27 @@ public class Review extends Fragment implements IDataReceiveListener {
     private boolean connecting = false;
     private XBeeDevice myXBeeDevice = null;
 
+    private static int REQUEST_ENABLE_BT = 100;
+    private static int REQUEST_SELECT_BT = 101;
+
+    private static final boolean D = true;
+
+    // Message types sent from the BluetoothMessageService Handler
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
+
+    // Key names received from the BluetoothMessageService Handler
+    public static final String DEVICE_NAME = "device_name";
+    public static final String TOAST = "toast";
+
+    private BluetoothAdapter mBluetoothAdapter;
+    private String mConnectedDeviceName = null;
+    private StringBuffer mOutStringBuffer;
+    private BluetoothChatService mChatService = null;
+
     public Review() {
         // Required empty public constructor
     }
@@ -97,7 +124,6 @@ public class Review extends Fragment implements IDataReceiveListener {
         db = FirebaseDatabase.getInstance().getReference("Reports");
         //db = FirebaseDatabase.getInstance().getReference("Reports2");
 
-
         resultReceiver = new AddressResultReceiver(null);
 
         xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
@@ -106,9 +132,16 @@ public class Review extends Fragment implements IDataReceiveListener {
     @Override
     public void onStart() {
         super.onStart();
+
         if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()) {
             xbeeManager.subscribeDataPacketListener(this);
         }
+
+       /* // Initialize the BluetoothChatService to perform bluetooth connections
+        mChatService = new BluetoothChatService(getActivity(), mHandler);
+
+        // Initialize the buffer for outgoing mess
+        mOutStringBuffer = new StringBuffer("");*/
     }
 
     public void getAddress(){
@@ -185,6 +218,16 @@ public class Review extends Fragment implements IDataReceiveListener {
         }
         getphoneNumber();
         setButtonListener();
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+            mChatService = new BluetoothChatService(getActivity(), mHandler);
+            mOutStringBuffer = new StringBuffer("");
+        }
     }
 
     public void getphoneNumber(){
@@ -205,15 +248,18 @@ public class Review extends Fragment implements IDataReceiveListener {
             public void onClick(View v) {
                 boolean isConnected = checkInternetConnection();
                 if(!isConnected){
-                    location = Dashboard.location;
-                    IncidentReport smallerSize = Utils.compacitize(incidentReport);
 
+                    if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()){
 
+                        Log.i("Review","XBEE Not Connected. Attempting with Bluetooth");
 
-                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, null, null);
-                    Gson gson = new Gson();
-                    String data = gson.toJson(compact);
-                    sendDataOverChannel(data);
+                        // XBEE Code to be Uncommented After Blutooth Implementation
+                        String data = getReportDataAsJSON();
+                        sendDataOverChannel(data);
+                    } else {
+                        sendDataOverBluetooth();
+                    }
+
                 }else {
                     showSubmitConfirmationDialog();
                 }
@@ -232,6 +278,16 @@ public class Review extends Fragment implements IDataReceiveListener {
                         .replace(R.id.mainFrame, fragment)
                         .addToBackStack("review");
                 ft.commit();
+            }
+        });
+
+        Button bluetooth = (Button) this.getView().findViewById(R.id.button_send_bluetooth);
+        bluetooth.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                String data = getReportDataAsJSON();
+                sendMessage(data);
             }
         });
 
@@ -388,14 +444,15 @@ public class Review extends Fragment implements IDataReceiveListener {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     Dashboard.incidentType = null;
-                    getActivity().getSupportFragmentManager()
-                            .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                    /*getActivity().getSupportFragmentManager()
+                            .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);*/
                 }
             });
         }
 
         else{
-            receiveDataFromChannel(data);
+            sendDataOverChannel(data);
         }
     }
 
@@ -460,5 +517,178 @@ public class Review extends Fragment implements IDataReceiveListener {
         });
     }
 
+    private void sendDataOverBluetooth(){
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getActivity(), "Bluetooth not supported. Cannot Send Message.", Toast.LENGTH_LONG).show();
+        } else {
+            // Starting Bluetooth process
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } else {
+                Intent intent = new Intent(getContext(), BluetoothDeviceListActivity.class);
+                startActivityForResult(intent, REQUEST_SELECT_BT);
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == REQUEST_ENABLE_BT && resultCode == getActivity().RESULT_OK){
+            // Bluetooth Turned On
+            Toast.makeText(getActivity(), "Bluetooth Turned On", Toast.LENGTH_LONG).show();
+
+            mChatService = new BluetoothChatService(getActivity(), mHandler);
+            mOutStringBuffer = new StringBuffer("");
+
+            Intent intent = new Intent(getContext(), BluetoothDeviceListActivity.class);
+            startActivityForResult(intent, REQUEST_SELECT_BT);
+        }
+
+        if(requestCode == REQUEST_SELECT_BT && resultCode == getActivity().RESULT_OK){
+            String macAddressOfReceiver =  data.getStringExtra("device_address");
+
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(macAddressOfReceiver);
+            mChatService.connect(device, true);
+
+        }
+
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = getActivity();
+            Log.i("MessageSTATE","-->"+msg.what);
+            switch (msg.what) {
+                case MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothChatService.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            break;
+                        case BluetoothChatService.STATE_CONNECTING:
+                            setStatus(getString(R.string.title_connecting));
+                            break;
+                        case BluetoothChatService.STATE_LISTEN:
+                        case BluetoothChatService.STATE_NONE:
+                            setStatus(getString(R.string.title_not_connected));
+                            break;
+                    }
+                    break;
+                case MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    break;
+                case MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(activity,readMessage, Toast.LENGTH_LONG).show();
+                    receiveDataFromChannel(readMessage);
+                    break;
+                case MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
+
+    /**
+     * Makes this device discoverable for 300 seconds (5 minutes).
+     */
+    private void ensureDiscoverable() {
+        if (mBluetoothAdapter.getScanMode() !=
+                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+    }
+
+    private void setStatus(String subTitle) {
+      Log.i("BluetoothChatService",subTitle);
+    }
+
+    /**
+     * Sends a message.
+     *
+     * @param message A string of text to send.
+     */
+    private void sendMessage(String message) {
+
+        Log.i("BluetoothChatService","Just before sending the message" + mChatService.getState());
+
+        /* Check that we're actually connected before trying anything
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }*/
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            mChatService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mChatService != null) {
+            mChatService.stop();
+        }
+    }
+
+    public String getReportDataAsJSON(){
+
+        location = Dashboard.location;
+        IncidentReport smallerSize = Utils.compacitize(incidentReport);
+        CompactReport compact = new
+                CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, null, null);
+        Gson gson = new Gson();
+        String data = gson.toJson(compact);
+
+        return data;
+
+    }
 
 }
