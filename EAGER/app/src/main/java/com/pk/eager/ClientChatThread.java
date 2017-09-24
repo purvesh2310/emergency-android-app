@@ -8,16 +8,30 @@ package com.pk.eager;
  */
 
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -25,13 +39,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.db.model.Report;
 import com.pk.eager.util.ChatPOJO;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +64,8 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
     public static class ChatViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imgThis;
+        ImageView imageMessageThis;
+        VideoView videoViewThis;
         TextView tvMessageThis;
         TextView tvMessengerThis;
         TextView tvTimestampThis;
@@ -51,9 +75,12 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
         TextView tvMessengerThat;
         TextView tvTimestampThat;
 
-        ChatViewHolder(View v) {
+        public ChatViewHolder(View v) {
             super(v);
+
             imgThis = (ImageView) itemView.findViewById(R.id.image_message_profile_this);
+            imageMessageThis = (ImageView) itemView.findViewById(R.id.imageView_this);
+            videoViewThis = (VideoView) itemView.findViewById(R.id.videoView_this);
             tvMessageThis = (TextView) itemView.findViewById(R.id.messageTextView_this);
             tvMessengerThis = (TextView) itemView.findViewById(R.id.messengerTextView_this);
             tvTimestampThis = (TextView) itemView.findViewById(R.id.text_message_time_this);
@@ -69,6 +96,8 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
 
     private Report mReport;
     private DatabaseReference mFirebaseReference;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageRef;
 
     private String uid;
     private String title;
@@ -85,10 +114,14 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
     private ImageView reportLogo;
     private EditText chatInput;
     private ImageButton sendButton;
+    private ImageButton uploadImageButton;
 
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private FirebaseRecyclerAdapter<ChatPOJO, ChatViewHolder> mAdapter;
+    private static final int REQUEST_IMAGE_CAPTURE = 111;
+    private static final int SELECT_IMAGE = 1234;
+    private static final int SELECT_VIDEO = 789;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +131,9 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
 
         deviceToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, deviceToken);
+
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageRef = firebaseStorage.getReference();
 
         getAllInfo();
         getRecyclerView();
@@ -133,7 +169,24 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
 
                 if (mMessage.getMessage() != null && messenger.equals("client")) {
                     viewHolder.imgThat.setImageResource(R.drawable.man);
-                    viewHolder.tvMessageThis.setText(mMessage.getMessage());
+
+                    if(mMessage.getMessageType().equals("TEXT")){
+                        viewHolder.tvMessageThis.setText(mMessage.getMessage());
+                    } else if (mMessage.getMessageType().equals("IMAGE")){
+                        GlideApp.with(ClientChatThread.this).load(mMessage.getMessage()).into(viewHolder.imageMessageThis);
+                        viewHolder.imageMessageThis.setVisibility(View.VISIBLE);
+                        viewHolder.tvMessageThis.setVisibility(View.GONE);
+                    } else if(mMessage.getMessageType().equals("IMAGE-CAMERA")){
+                        Bitmap imageBitmap = decodeFromFirebaseBase64(mMessage.getMessage());
+                        viewHolder.imageMessageThis.setImageBitmap(imageBitmap);
+                        viewHolder.imageMessageThis.setVisibility(View.VISIBLE);
+                        viewHolder.tvMessageThis.setVisibility(View.GONE);
+                    } else if(mMessage.getMessageType().equals("VIDEO")){
+                        viewHolder.videoViewThis.setVideoPath(mMessage.getMessage());
+                        viewHolder.videoViewThis.setVisibility(View.VISIBLE);
+                        viewHolder.imageMessageThis.setVisibility(View.GONE);
+                        viewHolder.tvMessageThis.setVisibility(View.GONE);
+                    }
                     viewHolder.tvMessengerThis.setText(mMessage.getMessenger());
                     viewHolder.tvTimestampThis.setText(mMessage.getTimestamp());
                     hideOther(viewHolder.imgThat,
@@ -185,6 +238,7 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
 
         chatInput = (EditText) findViewById(R.id.etChatInput);
         sendButton = (ImageButton) findViewById(R.id.bSend);
+        uploadImageButton = (ImageButton) findViewById(R.id.bImageUpload);
 
         reportTitle.setText(title);
         reportInformation.setText(information);
@@ -208,26 +262,28 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
         }
 
         sendButton.setOnClickListener(this);
+        uploadImageButton.setOnClickListener(this);
 
     }
 
-    private void sendMessage(){
+    private void sendMessage(String message, String type){
 
         /*
         Check for device's token, if is not equal to the admin's token then it is the client. Change
         the token below if needed, also replace the this class's introduction in line 4 when do so.
         */
         if(!deviceToken.equals(Constant.ADMIN)) {
+
             messenger = "client";
 
-            chatString = chatInput.getText().toString();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
             timestamp = simpleDateFormat.format(new Date());
-            ChatPOJO chatPOJO = new ChatPOJO("client", chatString, timestamp);
+            ChatPOJO chatPOJO = new ChatPOJO("client", message, timestamp, type);
             mFirebaseReference = FirebaseDatabase.getInstance().getReference().child("ChatRoom")
                     .child(uid).push();
             mFirebaseReference.setValue(chatPOJO);
             chatInput.setText("");
+
             StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://wwwsjsu-closer.000webhostapp.com/SinglePushNotification.php",
                     new Response.Listener<String>() {
                         @Override
@@ -240,6 +296,7 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
 
                         }
                     }) {
+
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
@@ -251,6 +308,20 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
                 }
             };
             MyVolley.getInstance(this).addToRequestQueue(stringRequest);
+        }
+    }
+
+    private void uploadImage(){
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_DENIED){
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, REQUEST_IMAGE_CAPTURE);
+            } else {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 
@@ -266,7 +337,167 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
     public void onClick(View v){
         int i = v.getId();
         if(i == R.id.bSend)
-            sendMessage();
+            sendTextMessage();
+        if(i == R.id.bImageUpload)
+            uploadImage();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        boolean cameraAccepted =false;
+        switch (requestCode){
+            case 111:
+                cameraAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
+        }
+
+        if(cameraAccepted){
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            encodeBitmapAndSaveToFirebase(imageBitmap);
+        }
+
+        if(requestCode == SELECT_IMAGE && resultCode == this.RESULT_OK){
+
+            Uri uri = data.getData();
+
+            Long tsLong = System.currentTimeMillis();
+            String imageName = "IMG_" + tsLong;
+
+            StorageReference imagesRef = storageRef.child("images/"+imageName);
+
+            try{
+                InputStream iStream =   getContentResolver().openInputStream(uri);
+                byte[] inputData = getBytes(iStream);
+
+                UploadTask uploadTask = imagesRef.putBytes(inputData);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        sendMessage(downloadUrl.toString(),"IMAGE");
+                    }
+                });
+
+            } catch (IOException e){
+
+            }
+        }
+
+        if(requestCode == SELECT_VIDEO && resultCode == this.RESULT_OK){
+
+            Uri uri = data.getData();
+
+            Long tsLong = System.currentTimeMillis();
+            String imageName = "VID_" + tsLong;
+
+            StorageReference imagesRef = storageRef.child("videos/"+imageName);
+
+            try{
+                InputStream iStream =   getContentResolver().openInputStream(uri);
+                byte[] inputData = getBytes(iStream);
+
+                UploadTask uploadTask = imagesRef.putBytes(inputData);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        sendMessage(downloadUrl.toString(),"VIDEO");
+                    }
+                });
+
+            } catch (IOException e){
+
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_chat, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_attach_image:
+                openGalleryToSelectImage();
+                return true;
+            case R.id.action_attach_video:
+                openGalleryToSelectVideo();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+        public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+
+        String messageType = "IMAGE-CAMERA";
+
+        sendMessage(imageEncoded, messageType);
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    public void openGalleryToSelectImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"),SELECT_IMAGE);
+    }
+
+    public void openGalleryToSelectVideo(){
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"),SELECT_VIDEO);
+    }
+
+    public void sendTextMessage(){
+
+        chatString = chatInput.getText().toString();
+        String messageType = "TEXT";
+
+        sendMessage(chatString, messageType);
+    }
+
+    public static Bitmap decodeFromFirebaseBase64(String image){
+        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+    }
 }

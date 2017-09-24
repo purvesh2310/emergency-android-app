@@ -4,10 +4,17 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.hardware.usb.host" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -96,6 +103,7 @@
             android:name=".NotificationSetting"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
             />
+        <activity android:name=".BluetoothDeviceListActivity"></activity>
         <activity android:name=".AdminChatThread" />
         <activity android:name=".ClientChatThread"></activity>
     </application>

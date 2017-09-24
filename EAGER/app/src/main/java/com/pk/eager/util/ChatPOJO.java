@@ -11,14 +11,16 @@ public class ChatPOJO {
     private String message;
     private String messenger;
     private String timestamp;
+    private String messageType;
 
     public ChatPOJO() {
     }
 
-    public ChatPOJO(String messenger, String message, String timestamp) {
+    public ChatPOJO(String messenger, String message, String timestamp, String messageType) {
         this.messenger = messenger;
         this.message = message;
         this.timestamp = timestamp;
+        this.messageType = messageType;
     }
 
     public String getUid() {
@@ -51,5 +53,13 @@ public class ChatPOJO {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
     }
 }

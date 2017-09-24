@@ -73,8 +73,10 @@ public class Dashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        if(!FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN))
+        if( FirebaseInstanceId.getInstance().getToken()!= null &&
+                !FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN)) {
             navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -101,6 +103,7 @@ public class Dashboard extends AppCompatActivity
         if (connecting)
             return;
         xbeeManager.createXBeeDevice(9600);
+
         Thread connectThread = new Thread(new Runnable() {
             @Override
             public void run() {

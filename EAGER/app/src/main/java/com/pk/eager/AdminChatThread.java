@@ -239,13 +239,15 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
 
         if(deviceToken.equals(Constant.ADMIN)) {
 
+            String messageType = "TEXT";
+
             messenger = "dispatcher";
             chatString = chatInput.getText().toString();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
             timestamp = simpleDateFormat.format(new Date());
 
             // Create the chat Object with the messenger, message input and the timestamp
-            ChatPOJO chatPOJO = new ChatPOJO("dispatcher", chatString, timestamp);
+            ChatPOJO chatPOJO = new ChatPOJO("dispatcher", chatString, timestamp, messageType);
             mFirebaseReference = FirebaseDatabase.getInstance().getReference().child("ChatRoom")
                     .child(uid).push();
             mFirebaseReference.setValue(chatPOJO);
