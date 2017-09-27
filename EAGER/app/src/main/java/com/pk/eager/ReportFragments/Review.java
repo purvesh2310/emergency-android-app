@@ -52,8 +52,10 @@ import com.pk.eager.db.model.Report;
 import com.pk.eager.util.CompactReportUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.android.gms.internal.zzagz.runOnUiThread;
@@ -205,17 +207,26 @@ public class Review extends Fragment implements IDataReceiveListener {
 
             @Override
             public void onClick(View v) {
+
                 boolean isConnected = checkInternetConnection();
+
                 if(!isConnected){
-                    location = Dashboard.location;
                     IncidentReport smallerSize = Utils.compacitize(incidentReport);
 
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+                    String timestamp = simpleDateFormat.format(new Date());
+                    location = Dashboard.location;
 
+                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, "Report", timestamp);
 
-                    CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, null, null);
+                    // Setting XBEE address of the originator device
+                    String deviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
+                    List<String> pathToServer = new ArrayList<String>();
+                    pathToServer.add(deviceAddress);
+                    compact.setPathToServer(pathToServer);
+
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
-                    data+="#"+xbeeManager.getLocalXBee64BitAddress();
                     sendDataOverChannel(data);
                 }else {
                     showSubmitConfirmationDialog();
@@ -411,15 +422,17 @@ public class Review extends Fragment implements IDataReceiveListener {
             Toast.makeText(this.getContext(), "P2P received", Toast.LENGTH_SHORT);
         }else {
 
+            // On Receiving the data, convert it to object and add the XBEE device id in path to server
+            Gson gson = new Gson();
+            CompactReport cmpReport = gson.fromJson(data, CompactReport.class);
+
+            List<String> pathToServer = cmpReport.getPathToServer();
+            String receiverDeviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
+            pathToServer.add(receiverDeviceAddress);
+
             boolean isConnected = checkInternetConnection();
 
             if (isConnected) {
-                String[] input = data.split("#");
-                String adrr = input[1];
-                data = input[0];
-                Gson gson = new Gson();
-                CompactReport cmpReport = gson.fromJson(data, CompactReport.class);
-
                 DatabaseReference newChild = db.push();
 
                 newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
@@ -431,11 +444,8 @@ public class Review extends Fragment implements IDataReceiveListener {
                     }
                 });
 
-                DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
-                path.setValue(adrr + "->" + xbeeManager.getLocalXBee64BitAddress());
-
-
             } else {
+                data = gson.toJson(cmpReport);
                 sendDataOverChannel(data);
             }
         }

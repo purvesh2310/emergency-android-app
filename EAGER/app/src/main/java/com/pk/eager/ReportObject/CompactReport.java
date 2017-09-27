@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +22,7 @@ public class CompactReport implements Parcelable{
     public String phoneNumber;
     public String type;
     public String timestamp;
+    public List<String> pathToServer;
 
 
     public CompactReport(){}
@@ -71,6 +73,14 @@ public class CompactReport implements Parcelable{
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public List<String> getPathToServer() {
+        return pathToServer;
+    }
+
+    public void setPathToServer(List<String> pathToServer) {
+        this.pathToServer = pathToServer;
     }
 
     public CompactReport(IncidentReport incidentReport, Double longitude, Double latitude, String phone, String type, String timestamp){
