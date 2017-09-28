@@ -433,8 +433,11 @@ public class Review extends Fragment implements IDataReceiveListener {
             boolean isConnected = checkInternetConnection();
 
             if (isConnected) {
-                DatabaseReference newChild = db.push();
+                // Saving the path to Firebase without report ID. Need to add report id afterwards
+                DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
+                path.setValue(pathToServer);
 
+                DatabaseReference newChild = db.push();
                 newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
