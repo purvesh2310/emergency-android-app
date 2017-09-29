@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.pk.eager.Dashboard;
 import com.pk.eager.LocationUtils.GeoConstant;
@@ -436,6 +437,8 @@ public class Review extends Fragment implements IDataReceiveListener {
                 // Saving the path to Firebase without report ID. Need to add report id afterwards
                 DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
                 path.setValue(pathToServer);
+                String key = path.getKey();
+                FirebaseMessaging.getInstance().subscribeToTopic(key);
 
                 DatabaseReference newChild = db.push();
                 newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {

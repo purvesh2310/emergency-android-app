@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,42 +29,53 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     final static String TAG = MyFirebaseMessagingService.class.getSimpleName();
     final static String EAGER = "EAGER";
     DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("UserNotification");
+    private XBeeManager xbeeManager;
+
+
 
 
     public void onMessageReceived(RemoteMessage remoteMessage){
         Log.d(TAG, "onMessageReceived Called");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(user!=null){
-            String type = remoteMessage.getData().get("type");
-            if(isTypeSubscribedByUser(type)) {
-                //push the notification to user's list of notifications
-                DatabaseReference newNode = notificationRef.child(user.getUid()).push();
-                newNode.setValue(remoteMessage.getData());
+        if(remoteMessage.getData()!=null && !remoteMessage.getData().get("msgType").equals("Ack")) {
+            if (user != null) {
+                String type = remoteMessage.getData().get("type");
+                if (isTypeSubscribedByUser(type)) {
+                    //push the notification to user's list of notifications
+                    DatabaseReference newNode = notificationRef.child(user.getUid()).push();
+                    newNode.setValue(remoteMessage.getData());
 
-                //issue a notification to user
-                sendReportNotification(remoteMessage);
+                    //issue a notification to user
+                    sendReportNotification(remoteMessage);
+                }
+            } else if (remoteMessage.getData().get("notificationType").equals("ChatNotification")) {
+                Intent intent = new Intent(this, HistoryFragment.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                        PendingIntent.FLAG_ONE_SHOT);
+
+                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("Firebase Push Notification")
+                        .setContentText(remoteMessage.getNotification().getBody())
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(0, notificationBuilder.build());
             }
-        } else if(remoteMessage.getData().get("notificationType").equals("ChatNotification")){
-            Intent intent = new Intent(this, HistoryFragment.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                    PendingIntent.FLAG_ONE_SHOT);
-
-            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle("Firebase Push Notification")
-                    .setContentText(remoteMessage.getNotification().getBody())
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
-
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            notificationManager.notify(0, notificationBuilder.build());
+        }else if(remoteMessage.getData()!=null && !remoteMessage.getData().get("msgType").equals("Ack")){
+            Log.d(TAG, "Ack msg received "+ remoteMessage.getData());
+            String pathKey = remoteMessage.getData().get("key");
+            String msg = remoteMessage.getData().get("msg");
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
         }
+
     }
 
     public boolean isTypeSubscribedByUser(String type){
