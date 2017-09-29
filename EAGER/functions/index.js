@@ -96,8 +96,8 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 
 
 
-function sendmessage(zipcode, payload){
-	admin.messaging().sendToTopic(zipcode, payload)
+function sendmessage(topic, payload){
+	admin.messaging().sendToTopic(topic, payload)
 			.then(function(response) {
 				// See the MessagingDeviceGroupResponse reference documentation for
 				// the contents of response.
@@ -108,3 +108,30 @@ function sendmessage(zipcode, payload){
 				console.log(error);
 			});
 }
+
+
+exports.sendAck = functions.database.ref("path/{pathID}").onWrite(event =>{
+	if(event.data.val()){
+		console.log(event.data.val());
+		const payload = {
+			data: {
+				msg: "Report submited through radio"
+			}
+		};
+		admin.messaging().sendToTopic(topic, payload)
+		.then(function(response){
+			console.log("Successfully sent message:", payload);
+			event.data.ref.remove();
+		})
+		.catch(function(error){
+			console.log(error);
+		});		
+	}
+		
+});
+
+
+
+
+
+
