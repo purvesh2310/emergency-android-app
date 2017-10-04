@@ -153,7 +153,6 @@ public class Dashboard extends AppCompatActivity
             return;
         }
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        Log.d(TAG, "longitude" + location.getLongitude());
     }
 
     @Override
