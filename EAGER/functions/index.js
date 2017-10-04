@@ -111,18 +111,18 @@ function sendmessage(topic, payload){
 
 
 exports.sendAck = functions.database.ref("path/{pathID}").onWrite(event =>{
-	if(event.data.key()){
+	if(event.data.key){
 		
-		var eventKey = event.data.key();
+		var eventKey = event.data.key;
 		console.log(eventKey);
 		const payload = {
 			data: {
 				msgType: "Ack",
 				msg: "Report submited through radio",
-				key: eventKey;
+				key: eventKey
 			}
 		};
-		admin.messaging().sendToTopic(topic, payload)
+		admin.messaging().sendToTopic(eventKey, payload)
 		.then(function(response){
 			console.log("Successfully sent message:", payload);
 			event.data.ref.remove();

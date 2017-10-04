@@ -419,8 +419,8 @@ public class Review extends Fragment implements IDataReceiveListener {
     // Receive data over XBE/BLE and upload to Firebase
     public void receiveDataFromChannel(String data){
 
-        if(data.equals("a")){
-            Toast.makeText(this.getContext(), "P2P received", Toast.LENGTH_SHORT);
+        if(data.contains("Report submited through radio")){
+            Toast.makeText(this.getContext(), data, Toast.LENGTH_SHORT);
         }else {
 
             // On Receiving the data, convert it to object and add the XBEE device id in path to server
@@ -489,10 +489,10 @@ public class Review extends Fragment implements IDataReceiveListener {
                         byte[] dataToSend = DATA_TO_SEND.getBytes();
                         xbeeManager.broadcastData(dataToSend);
                         Log.d(TAG, "Broadcasting ");
+                        Log.d(TAG, "xbeeBroadcast(String data)");
                         showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
                     }else Log.d(TAG, "xbee not open");
                 } catch (XBeeException e) {
-                    //showToastMessage("error: " + e.getMessage());
                     Log.d("Xbee exception ", e.toString());
                 }
             }
@@ -501,7 +501,7 @@ public class Review extends Fragment implements IDataReceiveListener {
     }
     @Override
     public void dataReceived(XBeeMessage xbeeMessage){
-        showToastMessage("inside recieve message toast");
+        Log.d(TAG, "dataReceived(XBeeMessage xbeeMessage)");
         String data = new String(xbeeMessage.getData());
         showToastMessage("data received from: "+ xbeeMessage.getDevice().get64BitAddress()+ ", message: "+new String(xbeeMessage.getData()));
         receiveDataFromChannel(data);
@@ -513,13 +513,15 @@ public class Review extends Fragment implements IDataReceiveListener {
      * @param message The message to show.
      */
     private void showToastMessage(final String message) {
-        runOnUiThread(new Runnable() {
+       runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show
+                if(getActivity() == null) Log.d(TAG, "Activity null");
+                else Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show
                         ();
             }
         });
+
     }
 
 

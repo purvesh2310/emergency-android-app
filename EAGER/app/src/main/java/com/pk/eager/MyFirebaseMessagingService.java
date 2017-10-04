@@ -10,20 +10,30 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.digi.xbee.api.RemoteXBeeDevice;
+import com.digi.xbee.api.exceptions.XBeeException;
+import com.digi.xbee.api.listeners.IDataReceiveListener;
+import com.digi.xbee.api.models.XBee64BitAddress;
+import com.digi.xbee.api.models.XBeeMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kimpham on 7/17/17.
  */
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
+public class MyFirebaseMessagingService extends FirebaseMessagingService implements IDataReceiveListener {
 
     final static String KEY = "key";
     final static String TAG = MyFirebaseMessagingService.class.getSimpleName();
@@ -31,14 +41,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("UserNotification");
     private XBeeManager xbeeManager;
 
+    public void onCreate(){
+        super.onCreate();
+        xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
+        if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()) {
+            xbeeManager.subscribeDataPacketListener(this);
+        }
+    }
+
+    @Override
+    public void dataReceived(XBeeMessage xbeeMessage){
+        Log.d(TAG, "data received in firebase msg");
+    }
 
 
-
-    public void onMessageReceived(RemoteMessage remoteMessage){
+    public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d(TAG, "onMessageReceived Called");
+        Log.d(TAG, remoteMessage.getData().toString());
+        Log.d(TAG, remoteMessage.getData().get("msgType"));
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(remoteMessage.getData()!=null && !remoteMessage.getData().get("msgType").equals("Ack")) {
+        if (remoteMessage.getData() != null && remoteMessage.getData().get("msgType")==null) {
             if (user != null) {
                 String type = remoteMessage.getData().get("type");
                 if (isTypeSubscribedByUser(type)) {
@@ -69,13 +93,57 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 notificationManager.notify(0, notificationBuilder.build());
             }
-        }else if(remoteMessage.getData()!=null && !remoteMessage.getData().get("msgType").equals("Ack")){
-            Log.d(TAG, "Ack msg received "+ remoteMessage.getData());
-            String pathKey = remoteMessage.getData().get("key");
-            String msg = remoteMessage.getData().get("msg");
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
-        }
+        } else if (remoteMessage.getData() != null && remoteMessage.getData().get("msgType")!=null) {
+            Log.d(TAG, "Ack msg received " + remoteMessage.getData());
 
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+            notificationBuilder.setContentTitle(EAGER);
+            notificationBuilder.setContentText("Report sent to database");
+            notificationBuilder.setAutoCancel(true);
+            notificationBuilder.setSmallIcon(R.drawable.ic_notification);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(0, notificationBuilder.build());
+
+            String pathKey = remoteMessage.getData().get("key");
+            final String msg = remoteMessage.getData().get("msg");
+            //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
+
+
+            DatabaseReference pathRef = FirebaseDatabase.getInstance().getReference("path").child(pathKey);
+            final List<String> pathList = new ArrayList<String>();
+
+            pathRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        pathList.add(snapshot.getValue().toString());
+                    }
+
+                    String data = "Message sent "+pathList.toString();
+
+                    if(pathList.size() >=1) {
+                        XBee64BitAddress start = new XBee64BitAddress(pathList.get(0));
+                        RemoteXBeeDevice remote = new RemoteXBeeDevice(xbeeManager.getLocalXBeeDevice(), start);
+                        try {
+                            Log.d(TAG, "send message back to device");
+                            xbeeManager.sendDataToRemote(data.getBytes(), remote);
+                        } catch (XBeeException ex) {
+                            Log.d(TAG, ex.toString());
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+        }
     }
 
     public boolean isTypeSubscribedByUser(String type){
@@ -106,6 +174,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, notificationBuilder.build());
     }
+
 
 
 
