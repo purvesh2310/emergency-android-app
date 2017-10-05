@@ -412,7 +412,6 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     // To send the data using XBE/BLE mode of communication
     public void sendDataOverChannel(String data){
-        Log.d(TAG,"Sending data over channel");
         xbeeBroadcast(data);
     }
 
@@ -420,7 +419,7 @@ public class Review extends Fragment implements IDataReceiveListener {
     public void receiveDataFromChannel(String data){
 
         if(data.contains("Report submited through radio")){
-            Toast.makeText(this.getContext(), data, Toast.LENGTH_SHORT);
+            Log.d(TAG, "data received");
         }else {
 
             // On Receiving the data, convert it to object and add the XBEE device id in path to server
@@ -488,9 +487,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                         String DATA_TO_SEND = reportData;
                         byte[] dataToSend = DATA_TO_SEND.getBytes();
                         xbeeManager.broadcastData(dataToSend);
-                        Log.d(TAG, "Broadcasting ");
-                        Log.d(TAG, "xbeeBroadcast(String data)");
-                        showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
+                        showToastMessage("Message sent: " + System.currentTimeMillis()%10000000);
                     }else Log.d(TAG, "xbee not open");
                 } catch (XBeeException e) {
                     Log.d("Xbee exception ", e.toString());
@@ -503,7 +500,7 @@ public class Review extends Fragment implements IDataReceiveListener {
     public void dataReceived(XBeeMessage xbeeMessage){
         Log.d(TAG, "dataReceived(XBeeMessage xbeeMessage)");
         String data = new String(xbeeMessage.getData());
-        showToastMessage("data received from: "+ xbeeMessage.getDevice().get64BitAddress()+ ", message: "+new String(xbeeMessage.getData()));
+        showToastMessage("data received "+"time: " + System.currentTimeMillis()%10000000 + " " + data);
         receiveDataFromChannel(data);
     }
 
