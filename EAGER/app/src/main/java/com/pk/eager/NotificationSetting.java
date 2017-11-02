@@ -60,7 +60,6 @@ public class NotificationSetting extends AppCompatActivity {
         readSharedPreference();
 
         addressTextField = (EditText) findViewById(R.id.subscription_setting_address);
-        zipcode2 = (EditText) findViewById(R.id.subscription_setting_zipcode2);
 
         //set up distance spinner
         distanceSpinner = (Spinner) findViewById(R.id.subscription_setting_distance_spinner);
@@ -120,15 +119,6 @@ public class NotificationSetting extends AppCompatActivity {
         } else
             Toast.makeText(getApplicationContext(), "Please enter correct zipcode", Toast.LENGTH_SHORT).show();
             */
-    }
-
-    public void onUnSubcribeAddClick(View v) {
-        String zipcode = (zipcode2).getText().toString();
-
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(zipcode);
-            Toast.makeText(getApplicationContext(), "Unsubcribed from " + zipcode.trim(), Toast.LENGTH_SHORT).show();
-            zipcode2.setText("");
-
     }
 
     public void readSharedPreference() {

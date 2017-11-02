@@ -252,14 +252,6 @@ public class Review extends Fragment implements IDataReceiveListener {
                 ft.commit();
             }
         });
-
-        final Button sendXbee = (Button) this.getView().findViewById(R.id.button_review_send);
-        sendXbee.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendP2P();
-            }
-        });
     }
 
     public void sendP2P(){
@@ -281,7 +273,6 @@ public class Review extends Fragment implements IDataReceiveListener {
         });
         sendThread.start();
     }
-
 
     // Formats the TextView to show in Review Screen
     public void formatReviewInformationTextView(TextView textView){
