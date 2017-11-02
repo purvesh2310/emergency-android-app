@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -96,14 +97,12 @@ public class Review extends Fragment implements IDataReceiveListener {
             incidentReport = new IncidentReport();
         }
 
-        incidentReport = Dashboard.incidentReport;
-        /**change**/
-        db = FirebaseDatabase.getInstance().getReference("Reports");
-        //db = FirebaseDatabase.getInstance().getReference("Reports2");
+        setHasOptionsMenu(true);
 
+        incidentReport = Dashboard.incidentReport;
+        db = FirebaseDatabase.getInstance().getReference("Reports");
 
         resultReceiver = new AddressResultReceiver(null);
-
         xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
     }
 
@@ -189,6 +188,11 @@ public class Review extends Fragment implements IDataReceiveListener {
         }
         getphoneNumber();
         setButtonListener();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 
     public void getphoneNumber(){

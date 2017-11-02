@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -64,6 +65,7 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         getActivity().setTitle("Account Options");
         configureGoogle();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -85,10 +87,6 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
                 }
             });
         }
-
-
-
-
     }
 
     @Override
@@ -96,6 +94,11 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
         super.onViewCreated(view, savedInstanceState);
         setupUI(currentUser);
         setButtonListener();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 
     @Override

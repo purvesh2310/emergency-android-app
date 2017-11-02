@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -53,6 +54,7 @@ public class FireEmergency extends Fragment {
         else incidentReport = new IncidentReport();
         incidentReport = Dashboard.incidentReport;
         fire = incidentReport.getReport(Constant.FIRE);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -168,12 +170,7 @@ public class FireEmergency extends Fragment {
                 ft.commit();
                 break;
         }
-
-
-
     }
-
-
 
     public RadioButton getRadioButton(int id){
         return (RadioButton) this.getView().findViewById(id);
@@ -181,5 +178,10 @@ public class FireEmergency extends Fragment {
 
     public CheckBox getCheckBox(int id){
         return (CheckBox) this.getView().findViewById(id);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 }

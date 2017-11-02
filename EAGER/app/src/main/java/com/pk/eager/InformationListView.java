@@ -94,14 +94,11 @@ public class InformationListView extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        /**change**/
-        //db = FirebaseDatabase.getInstance().getReference().child("Reports2");
 
         db = FirebaseDatabase.getInstance().getReference().child("Reports");
         setHasOptionsMenu(true);
 
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -110,13 +107,6 @@ public class InformationListView extends Fragment {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return inflater.inflate(R.layout.fragment_information_list_view, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -149,32 +139,6 @@ public class InformationListView extends Fragment {
 
         checkPermission();
         getPhonePermission();
-
-        /*Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        bt = new Button(getContext());
-        bt.setText("Search");
-        LinearLayout.LayoutParams params =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
-        params.gravity = Gravity.RIGHT;
-        bt.setLayoutParams(params);
-        toolbar.addView(bt);*/
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     public interface OnFragmentInteractionListener {
@@ -326,7 +290,7 @@ public class InformationListView extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "list view");
+
         int id = item.getItemId();
 
         switch (id) {

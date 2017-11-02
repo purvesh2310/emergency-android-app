@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -57,6 +58,7 @@ public class UtilityEmergency extends Fragment {
         }
         incidentReport = Dashboard.incidentReport;
         utility = incidentReport.getReport(Constant.UTILITY);
+        setHasOptionsMenu(true);
 
     }
 
@@ -256,5 +258,10 @@ public class UtilityEmergency extends Fragment {
     }
     public CheckBox getCheckBoxButton(int id){
         return (CheckBox) this.getView().findViewById(id);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 }

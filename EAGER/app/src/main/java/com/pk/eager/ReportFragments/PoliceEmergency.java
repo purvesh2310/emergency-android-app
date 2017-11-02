@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +48,7 @@ public class PoliceEmergency extends Fragment {
         }else incidentReport = new IncidentReport();
         incidentReport = Dashboard.incidentReport;
         police = incidentReport.getReport(Constant.POLICE);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -116,5 +118,10 @@ public class PoliceEmergency extends Fragment {
 
     public CheckBox getCheckBox(int id){
         return (CheckBox) this.getView().findViewById(id);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 }

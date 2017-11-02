@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -58,6 +59,7 @@ public class MedicalEmergency extends Fragment {
         else incidentReport = new IncidentReport();
         incidentReport = Dashboard.incidentReport;
         medical = incidentReport.getReport(Constant.MEDICAL);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -198,5 +200,10 @@ public class MedicalEmergency extends Fragment {
                 break;
 
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 }
