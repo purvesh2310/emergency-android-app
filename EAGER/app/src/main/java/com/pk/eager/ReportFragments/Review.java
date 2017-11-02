@@ -438,6 +438,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                 path.setValue(pathToServer);
                 String key = path.getKey();
                 FirebaseMessaging.getInstance().subscribeToTopic(key);
+                Log.d(TAG, key);
 
                 DatabaseReference newChild = db.push();
                 newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
@@ -487,7 +488,8 @@ public class Review extends Fragment implements IDataReceiveListener {
                         String DATA_TO_SEND = reportData;
                         byte[] dataToSend = DATA_TO_SEND.getBytes();
                         xbeeManager.broadcastData(dataToSend);
-                        showToastMessage("Message sent: " + System.currentTimeMillis()%10000000);
+                        Log.d(TAG, "Sent " + System.currentTimeMillis()+"");
+                        showToastMessage("Message sent: " + System.currentTimeMillis());
                     }else Log.d(TAG, "xbee not open");
                 } catch (XBeeException e) {
                     Log.d("Xbee exception ", e.toString());
@@ -500,7 +502,8 @@ public class Review extends Fragment implements IDataReceiveListener {
     public void dataReceived(XBeeMessage xbeeMessage){
         Log.d(TAG, "dataReceived(XBeeMessage xbeeMessage)");
         String data = new String(xbeeMessage.getData());
-        showToastMessage("data received "+"time: " + System.currentTimeMillis()%10000000 + " " + data);
+        Log.d(TAG, "Receive " + System.currentTimeMillis()+"");
+        showToastMessage("data received "+"time: " + System.currentTimeMillis() + " " + data);
         receiveDataFromChannel(data);
     }
 

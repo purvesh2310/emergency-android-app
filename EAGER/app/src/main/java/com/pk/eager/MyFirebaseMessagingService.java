@@ -121,8 +121,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
                         pathList.add(snapshot.getValue().toString());
                     }
 
-                    String data = "Message sent "+pathList.toString();
+                    Log.d(TAG, pathList.toString());
 
+                    String data = "Message sent "+pathList.toString();
                     if(pathList.size() >=1) {
                         XBee64BitAddress start = new XBee64BitAddress(pathList.get(0));
                         RemoteXBeeDevice remote = new RemoteXBeeDevice(xbeeManager.getLocalXBeeDevice(), start);
