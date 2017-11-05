@@ -45,6 +45,7 @@ import com.pk.eager.LocationUtils.GeocodeIntentService;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Packet;
 import com.pk.eager.ReportObject.Utils;
 import com.pk.eager.XBeeManager;
 import com.pk.eager.XBeeManagerApplication;
@@ -225,9 +226,11 @@ public class Review extends Fragment implements IDataReceiveListener {
 
                     // Setting XBEE address of the originator device
                     String deviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
+
                     List<String> pathToServer = new ArrayList<String>();
                     pathToServer.add(deviceAddress);
                     compact.setPathToServer(pathToServer);
+
 
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
@@ -432,12 +435,16 @@ public class Review extends Fragment implements IDataReceiveListener {
             String receiverDeviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
             pathToServer.add(receiverDeviceAddress);
 
+            Packet newPacket = new Packet(pathToServer, FirebaseInstanceId.getInstance().getToken());
+
             boolean isConnected = checkInternetConnection();
 
             if (isConnected) {
+
                 // Saving the path to Firebase without report ID. Need to add report id afterwards
                 DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
-                path.setValue(pathToServer);
+                //path.setValue(pathToServer);
+                path.setValue(newPacket);
 
                 DatabaseReference newChild = db.push();
                 newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
@@ -525,30 +532,3 @@ public class Review extends Fragment implements IDataReceiveListener {
 }
 
 
-class Packet{
-    List<String> path;
-    String token;
-
-    public Packet(){}
-
-    public Packet(List path, String token){
-        this.path = path;
-        this.token = token;
-    }
-
-    public List<String> getPath() {
-        return path;
-    }
-
-    public void setPath(List<String> path) {
-        this.path = path;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-}

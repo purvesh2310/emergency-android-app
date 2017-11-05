@@ -95,12 +95,16 @@ function sendmessage(topic, payload, event){
 exports.sendAck = functions.database.ref("path/{pathID}").onWrite(event =>{
 	if(event.data.val()){
 		console.log(event.data.val());
+		var registrationToken = event.data.val().token;
+		var eventKey = event.data.key;
 		const payload = {
 			data: {
-				msg: "Report submited through radio"
+				notificationType: "Ack",
+				msg: "Report submited through radio",
+				key: eventKey
 			}
 		};
-		admin.messaging().sendToTopic(topic, payload)
+		admin.messaging().sendToDevice(registrationToken, payload)
 		.then(function(response){
 			console.log("Successfully sent message:", payload);
 			event.data.ref.remove();
@@ -108,6 +112,8 @@ exports.sendAck = functions.database.ref("path/{pathID}").onWrite(event =>{
 		.catch(function(error){
 			console.log(error);
 		});		
+
+
 	}
 		
 });

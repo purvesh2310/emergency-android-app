@@ -11,24 +11,48 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.digi.xbee.api.RemoteXBeeDevice;
+import com.digi.xbee.api.exceptions.XBeeException;
+import com.digi.xbee.api.listeners.IDataReceiveListener;
+import com.digi.xbee.api.models.XBee64BitAddress;
+import com.digi.xbee.api.models.XBeeMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.pk.eager.ReportObject.Packet;
+
+import java.util.List;
 
 /**
  * Created by kimpham on 7/17/17.
  */
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
+public class MyFirebaseMessagingService extends FirebaseMessagingService implements IDataReceiveListener {
 
     final static String KEY = "key";
     final static String TAG = MyFirebaseMessagingService.class.getSimpleName();
     final static String EAGER = "EAGER";
     DatabaseReference notificationRef = FirebaseDatabase.getInstance().getReference("UserNotification");
+    private XBeeManager xbeeManager;
 
+    public void onCreate(){
+        super.onCreate();
+        xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
+        if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()) {
+            xbeeManager.subscribeDataPacketListener(this);
+        }
+    }
+
+    @Override
+    public void dataReceived(XBeeMessage xbeeMessage){
+        Log.d(TAG, "data received in firebase msg");
+    }
 
     public void onMessageReceived(RemoteMessage remoteMessage){
         Log.d(TAG, "onMessageReceived Called");
@@ -64,6 +88,45 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             notificationManager.notify(0, notificationBuilder.build());
+        } else if(remoteMessage!=null && remoteMessage.getData().get("notificationType").equals("Xbee")){
+            Log.d(TAG, "Xbee confirmation received");
+
+            String key = remoteMessage.getData().get("key");
+            String msg = remoteMessage.getData().get("msg");
+
+            ValueEventListener packetListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Packet packet = dataSnapshot.getValue(Packet.class);
+
+                    List<String> path = packet.getPath();
+
+                    String xbeeToAddress = path.get(path.size()-1);
+                    path.remove(path.size()-1);
+                    
+                    String data = "Message sent " + path;
+
+                    if(path.size()>0){
+                        XBee64BitAddress toAddress = new XBee64BitAddress(xbeeToAddress);
+                        RemoteXBeeDevice remote = new RemoteXBeeDevice(xbeeManager.getLocalXBeeDevice(), toAddress);
+                        try {
+                            Log.d(TAG, "send message back to device");
+                            xbeeManager.sendDataToRemote(data.getBytes(), remote);
+                        } catch (XBeeException ex) {
+                            Log.d(TAG, ex.toString());
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+
+
         }
     }
 
