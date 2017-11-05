@@ -354,8 +354,6 @@ public class Review extends Fragment implements IDataReceiveListener {
                             }
                         });
 
-
-
                         sendNotificationToZipCode(locString, key, Utils.notificationMessage(compact), reportType);
 
 			// This is a way to know that which device create the alert, store the information on Firebase (NB)
@@ -524,4 +522,33 @@ public class Review extends Fragment implements IDataReceiveListener {
     }
 
 
+}
+
+
+class Packet{
+    List<String> path;
+    String token;
+
+    public Packet(){}
+
+    public Packet(List path, String token){
+        this.path = path;
+        this.token = token;
+    }
+
+    public List<String> getPath() {
+        return path;
+    }
+
+    public void setPath(List<String> path) {
+        this.path = path;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

@@ -34,7 +34,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "onMessageReceived Called");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(user!=null){
+        if(remoteMessage!=null && user!=null){
             String type = remoteMessage.getData().get("type");
             if(isTypeSubscribedByUser(type)) {
                 //push the notification to user's list of notifications
@@ -42,9 +42,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 newNode.setValue(remoteMessage.getData());
 
                 //issue a notification to user
+                Log.d(TAG, "Issue a notification");
                 sendReportNotification(remoteMessage);
             }
-        } else if(remoteMessage.getData().get("notificationType").equals("ChatNotification")){
+        } else if(remoteMessage!=null && remoteMessage.getData().get("notificationType").equals("ChatNotification")){
             Intent intent = new Intent(this, HistoryFragment.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
@@ -75,8 +76,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     public void sendReportNotification(RemoteMessage remoteMessage){
-        Log.d(TAG, "Body " + remoteMessage.getData().get("body"));
-        Log.d(TAG, "Key " + remoteMessage.getData().get("key"));
+        Log.d(TAG, "send report notification");
         String body = remoteMessage.getData().get("body");
         String key = remoteMessage.getData().get("key");
 
@@ -85,14 +85,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(KEY, key);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setContentTitle(EAGER);
-        notificationBuilder.setContentText(body);
-        notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setSmallIcon(R.drawable.ic_notification);
+
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle("EAGER")
+                        .setContentText(body);
+
         notificationBuilder.setContentIntent(pendingIntent);
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, notificationBuilder.build());
+        notificationManager.notify(001, notificationBuilder.build());
+        Log.d(TAG, "notified");
     }
 
 

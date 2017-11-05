@@ -44,7 +44,6 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
     private OnFragmentInteractionListener mListener;
     final String TAG = "Account";
 
-    private TextView textView;
     private Button signIn;
     private Button signOut;
     private GoogleApiClient googleApiClient;
@@ -174,7 +173,10 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
                 LoginManager.getInstance().logOut();
                 signOut.setVisibility(View.GONE);
                 signIn.setVisibility(View.VISIBLE);
-                textView.setText("Please sign in or create an account");
+                TextView name = (TextView) getView().findViewById(R.id.account_name_textview);
+                TextView email = (TextView) getView().findViewById(R.id.account_email_textview);
+                name.setText("Please sign in or create an account.");
+                email.setText("");
             }
         });
     }
@@ -187,12 +189,14 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
     public void setupUI(FirebaseUser currentUser){
         signIn = (Button)getView().findViewById(R.id.account_signup_Button);
         signOut = (Button)getView().findViewById(R.id.account_signout_Button);
-        textView = (TextView)getView().findViewById(R.id.account_name_textview);
+        TextView name = (TextView) getView().findViewById(R.id.account_name_textview);
+        TextView email = (TextView) getView().findViewById(R.id.account_email_textview);
         if(currentUser != null){
             signIn.setVisibility(View.GONE);
             signOut.setVisibility(View.VISIBLE);
         }else{
-            textView.setText("Please sign in or create an account.");
+            name.setText("Please sign in or create an account.");
+            email.setText("");
             signIn.setVisibility(View.VISIBLE);
             signOut.setVisibility(View.GONE);
         }
@@ -219,8 +223,9 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
         //right now user's information isnt needed
         Log.d(TAG, "user email " + user.email);
 
-        name.setText(currentUser.getDisplayName().toString());
-        email.setText(currentUser.getEmail().toString());
-
+        if(currentUser.getDisplayName()!=null && currentUser.getEmail()!=null){
+            name.setText(currentUser.getDisplayName().toString());
+            email.setText(currentUser.getEmail().toString());
+        }
     }
 }

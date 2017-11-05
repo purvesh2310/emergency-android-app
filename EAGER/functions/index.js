@@ -56,36 +56,18 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 					console.log("Distance " + dist);
 
 					switch(true){
-						case (dist <= 0.1):
-							sendmessage(topic+"_"+"0.1", payload);
-							console.log("Send to 0.1");
-						case (dist <= 0.2):
-							sendmessage(topic+"_"+"0.2", payload);
-							console.log("Send to 0.2");
-						case (dist <= 0.3):
-							sendmessage(topic+"_"+"0.3", payload);
-							console.log("Send to 0.3");
-						case (dist <= 0.5):
-							sendmessage(topic+"_"+"0.5", payload);
-							console.log("Send to 0.4");
 						case (dist <= 1.0):
-							sendmessage(topic+"_"+"1.0", payload);
-							console.log("Send to 0.5");
-						case (dist <= 1.5):
-							sendmessage(topic+"_"+"1.5", payload);
-							console.log("Send to 0.6");
+							sendmessage(topic+"_"+"1.0", payload, event);
+							console.log("Send to 1.0");
 						case (dist <= 2.0):
-							sendmessage(topic+"_"+"2.0", payload);
-							console.log("Send to 0.7");
-						case (dist <= 2.5): "value", 
-							sendmessage(topic+"_"+"2.5", payload);
-							console.log("Send to 0.8");
+							sendmessage(topic+"_"+"2.0", payload, event);
+							console.log("Send to 2.0");
 						case (dist <= 3.0):
-							sendmessage(topic+"_"+"3.0", payload);
-							console.log("Send to 0.9");
-						case (dist <= 3.5):
-							sendmessage(topic+"_"+"3.5", payload);
-							console.log("Send to 0.10");
+							sendmessage(topic+"_"+"3.0", payload, event);
+							console.log("Send to 3.0");
+						case (dist <= 4.0):
+							sendmessage(topic+"_"+"4.0", payload, event);
+							console.log("Send to 4.0");
 							break;
 					}
 				}
@@ -96,7 +78,7 @@ exports.sendNotificationToZipCode = functions.database.ref("notificationRequests
 
 
 
-function sendmessage(topic, payload){
+function sendmessage(topic, payload, event){
 	admin.messaging().sendToTopic(topic, payload)
 			.then(function(response) {
 				// See the MessagingDeviceGroupResponse reference documentation for
