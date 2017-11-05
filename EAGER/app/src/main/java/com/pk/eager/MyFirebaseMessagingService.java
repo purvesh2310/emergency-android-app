@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.exceptions.XBeeException;
@@ -28,6 +29,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.pk.eager.ReportObject.Packet;
 
 import java.util.List;
+
+import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
 /**
  * Created by kimpham on 7/17/17.
@@ -58,7 +61,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
         Log.d(TAG, "onMessageReceived Called");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(remoteMessage!=null && user!=null){
+        /*
+        debugging
+         */
+
+        Log.d(TAG, "remote message " + remoteMessage.getData().toString());
+        Log.d(TAG, "notification type " + remoteMessage.getData().get("notificationType"));
+
+        /*
+        debugging
+         */
+        if(remoteMessage!=null && user!=null && remoteMessage.getData().get("notificationType")==null){
+            showToastMessage("here1");
+            showToastMessage("notification type " + remoteMessage.getData().get("notificationType"));
+            Log.d(TAG, "notification type " + remoteMessage.getData().get("notificationType"));
             String type = remoteMessage.getData().get("type");
             if(isTypeSubscribedByUser(type)) {
                 //push the notification to user's list of notifications
@@ -88,25 +104,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             notificationManager.notify(0, notificationBuilder.build());
-        } else if(remoteMessage!=null && remoteMessage.getData().get("notificationType").equals("Xbee")){
+        } else if(remoteMessage!=null && remoteMessage.getData().get("notificationType").equals("Ack")){
             Log.d(TAG, "Xbee confirmation received");
 
+            showToastMessage("here2");
             String key = remoteMessage.getData().get("key");
-            String msg = remoteMessage.getData().get("msg");
+            final String msg = remoteMessage.getData().get("msg");
+
 
             ValueEventListener packetListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Packet packet = dataSnapshot.getValue(Packet.class);
+                    Log.d(TAG, dataSnapshot.getValue().toString());
 
                     List<String> path = packet.getPath();
 
-                    String xbeeToAddress = path.get(path.size()-1);
-                    path.remove(path.size()-1);
-                    
-                    String data = "Message sent " + path;
-
                     if(path.size()>0){
+                        String xbeeToAddress = path.get(path.size()-2);
+
+                        path.remove(path.size()-1);
+                        path.remove(path.size()-1);
+
+                        String data = msg + path;
+
+
                         XBee64BitAddress toAddress = new XBee64BitAddress(xbeeToAddress);
                         RemoteXBeeDevice remote = new RemoteXBeeDevice(xbeeManager.getLocalXBeeDevice(), toAddress);
                         try {
@@ -116,8 +138,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
                             Log.d(TAG, ex.toString());
                         }
                     }
-
-
                 }
 
                 @Override
@@ -125,6 +145,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
 
                 }
             };
+
+            DatabaseReference packetRef = FirebaseDatabase.getInstance().getReference("path").child(key);
+            packetRef.addValueEventListener(packetListener);
 
 
         }
@@ -162,6 +185,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
         Log.d(TAG, "notified");
     }
 
-
+    private void showToastMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(getApplicationContext()!=null)
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
 }

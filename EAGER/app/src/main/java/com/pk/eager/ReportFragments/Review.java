@@ -522,8 +522,8 @@ public class Review extends Fragment implements IDataReceiveListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show
-                        ();
+                if(getActivity()!=null)
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -107,7 +107,6 @@ exports.sendAck = functions.database.ref("path/{pathID}").onWrite(event =>{
 		admin.messaging().sendToDevice(registrationToken, payload)
 		.then(function(response){
 			console.log("Successfully sent message:", payload);
-			event.data.ref.remove();
 		})
 		.catch(function(error){
 			console.log(error);
