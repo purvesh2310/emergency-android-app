@@ -106,6 +106,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
             notificationManager.notify(0, notificationBuilder.build());
         } else if(remoteMessage!=null && remoteMessage.getData().get("notificationType").equals("Ack")){
             Log.d(TAG, "Xbee confirmation received");
+            sendNotification("Offline report sent to database");
 
             showToastMessage("here2");
             String key = remoteMessage.getData().get("key");
@@ -159,6 +160,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
         boolean value = sharedPreferences.getBoolean(type, defaultValue);
         Log.d(TAG, "Default value "+value);
         return value;
+    }
+
+    public void sendNotification(String message){
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle("EAGER")
+                        .setContentText(message);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notificationBuilder.build());
     }
 
     public void sendReportNotification(RemoteMessage remoteMessage){

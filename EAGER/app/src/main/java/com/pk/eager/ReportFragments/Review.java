@@ -1,5 +1,6 @@
 package com.pk.eager.ReportFragments;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -422,7 +424,6 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     // Receive data over XBE/BLE and upload to Firebase
     public void receiveDataFromChannel(String data){
-
         if(data.equals("a")){
             Toast.makeText(this.getContext(), "P2P received", Toast.LENGTH_SHORT);
         }else {
@@ -507,10 +508,12 @@ public class Review extends Fragment implements IDataReceiveListener {
     }
     @Override
     public void dataReceived(XBeeMessage xbeeMessage){
+        sendNotification("Offline report submitted to database");
         showToastMessage("inside recieve message toast");
         String data = new String(xbeeMessage.getData());
         showToastMessage("data received from: "+ xbeeMessage.getDevice().get64BitAddress()+ ", message: "+new String(xbeeMessage.getData()));
         receiveDataFromChannel(data);
+
     }
 
     /**
@@ -526,6 +529,18 @@ public class Review extends Fragment implements IDataReceiveListener {
                     Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void sendNotification(String message){
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this.getContext())
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle("EAGER")
+                        .setContentText(message);
+        NotificationManager notificationManager = (NotificationManager) getActivity()
+                                                    .getSystemService(getActivity().NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notificationBuilder.build());
+        Log.d(TAG, "Notify");
     }
 
 
