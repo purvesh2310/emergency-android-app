@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
@@ -17,23 +19,22 @@
         </LinearLayout>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/button_review_submit"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="SUBMIT"/>
-
-        <android.support.v7.widget.AppCompatButton
             android:id="@+id/button_review_additional"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Submit Additional Info"/>
+            android:layout_gravity="center"
+            android:background="@null"
+            android:textColor="#2F4F4F"
+            android:text="+ Include Additional Information" />
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/button_review_send"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Send data xbee" />
-
+            android:id="@+id/button_review_submit"
+            android:layout_width="100dp"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:text="SUBMIT"
+            style="@style/submitButton"
+            />
 
     </LinearLayout>
 </ScrollView>

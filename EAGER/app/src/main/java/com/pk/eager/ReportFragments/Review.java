@@ -1,11 +1,12 @@
 package com.pk.eager.ReportFragments;
 
+
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -19,12 +20,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -155,7 +157,6 @@ public class Review extends Fragment implements IDataReceiveListener {
         formatReviewInformationTextView(utility);
         formatReviewInformationTextView(traffic);
 
-
         trap.setText(incidentReport.getReport(Constant.TRAP).toString());
         medical.setText(incidentReport.getReport(Constant.MEDICAL).toString());
         fire.setText(incidentReport.getReport(Constant.FIRE).toString());
@@ -166,31 +167,44 @@ public class Review extends Fragment implements IDataReceiveListener {
         LinearLayout layout = (LinearLayout) this.getView().findViewById(R.id.view_review);
 
         if(!trap.getText().toString().isEmpty()) {
-            layout.addView(trap);
-            layout.addView(getHorizontalSeparatorView());
+            setReviewInformationOnScreen(layout, Constant.TRAP);
         }
         if(!medical.getText().toString().isEmpty()) {
-            layout.addView(medical);
-            layout.addView(getHorizontalSeparatorView());
+            setReviewInformationOnScreen(layout, Constant.MEDICAL);
         }
         if(!fire.getText().toString().isEmpty()) {
-            layout.addView(fire);
-            layout.addView(getHorizontalSeparatorView());
+            setReviewInformationOnScreen(layout, Constant.FIRE);
         }
         if(!police.getText().toString().isEmpty()) {
-            layout.addView(police);
-            layout.addView(getHorizontalSeparatorView());
+            setReviewInformationOnScreen(layout, Constant.POLICE);
         }
         if(!utility.getText().toString().isEmpty()) {
-            layout.addView(utility);
-            layout.addView(getHorizontalSeparatorView());
+            setReviewInformationOnScreen(layout, Constant.UTILITY);
         }
         if(!traffic.getText().toString().isEmpty()) {
-            layout.addView(traffic);
-            layout.addView(getHorizontalSeparatorView());
+            setReviewInformationOnScreen(layout, Constant.TRAFFIC);
         }
         getphoneNumber();
         setButtonListener();
+    }
+
+    public void setReviewInformationOnScreen(LinearLayout layout, int reportType){
+
+        CardView cardView = (CardView) LayoutInflater.from(getContext())
+                .inflate(R.layout.row_review_list, null, false);
+
+        TextView reportTitle = (TextView) cardView.findViewById(R.id.reviewTitleTextView);
+
+        String reportCategory = incidentReport.getReport(reportType).getType();
+        reportTitle.setText(reportCategory);
+
+        TextView reportInformation = (TextView) cardView.findViewById(R.id.reviewInformationTextView);
+
+        String info = incidentReport.getReport(reportType).toString();
+        info = info.replace(reportCategory.toUpperCase()+"\n","");
+
+        reportInformation.setText(info);
+        layout.addView(cardView);
     }
 
     @Override
@@ -257,14 +271,6 @@ public class Review extends Fragment implements IDataReceiveListener {
                 ft.commit();
             }
         });
-
-        final Button sendXbee = (Button) this.getView().findViewById(R.id.button_review_send);
-        sendXbee.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendP2P();
-            }
-        });
     }
 
     public void sendP2P(){
@@ -287,7 +293,6 @@ public class Review extends Fragment implements IDataReceiveListener {
         sendThread.start();
     }
 
-
     // Formats the TextView to show in Review Screen
     public void formatReviewInformationTextView(TextView textView){
 
@@ -296,17 +301,6 @@ public class Review extends Fragment implements IDataReceiveListener {
         } else {
             textView.setTextAppearance(R.style.question);
         }
-    }
-
-    public View getHorizontalSeparatorView(){
-
-        View view = new View(getContext());
-        view.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,3
-        ));
-        view.setBackgroundColor(Color.parseColor("#c0c0c0"));
-
-        return view;
     }
 
     public void sendNotificationToZipCode(String zipcode, String key, String message, String type){
@@ -388,32 +382,8 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     // Display Dialog box for the confirmation of the report submission
     public void showSubmitConfirmationDialog(){
-
-        AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
-
-        dialog.setTitle("Submit Report");
-        dialog.setMessage("Are you ready submit the report?");
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
-                new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        location = Dashboard.location;
-                        if (location != null) {
-                            getAddress();
-                        } else {
-                            Toast.makeText(getContext(), "Location "+ location, Toast.LENGTH_SHORT);
-                        }
-                    }
-                });
-
-        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-        dialog.show();
+        SubmitDialog dialog = new SubmitDialog();
+        dialog.showDialog(getActivity(),"Are you ready to submit the report?");
     }
 
     // To send the data using XBE/BLE mode of communication
@@ -543,7 +513,45 @@ public class Review extends Fragment implements IDataReceiveListener {
         Log.d(TAG, "Notify");
     }
 
+    class SubmitDialog {
 
+        public void showDialog(Activity activity, String msg) {
+
+            final Dialog dialog = new Dialog(activity);
+
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.dialog_submit_report);
+
+            TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+            text.setText(msg);
+
+            Button dialogNoButton = (Button) dialog.findViewById(R.id.btn_dialog_no);
+            Button dialogYesButton = (Button) dialog.findViewById(R.id.btn_dialog_yes);
+
+            dialogNoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialogYesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    location = Dashboard.location;
+                    if (location != null) {
+                        dialog.dismiss();
+                        getAddress();
+                    } else {
+                        Toast.makeText(getContext(), "Location " + location, Toast.LENGTH_SHORT);
+                    }
+                }
+            });
+
+            dialog.show();
+        }
+    }
 }
 
 

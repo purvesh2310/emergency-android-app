@@ -1,6 +1,5 @@
 package com.pk.eager.ReportFragments;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
 import com.pk.eager.ReportObject.Utils;
+import com.pk.eager.dialog.WarningDialog;
 
 import java.util.ArrayList;
 
@@ -36,8 +36,8 @@ public class IncidentType extends Fragment {
     private static final String REPORT = "report";
     private static final String TAG = "IncidentType";
     private int[] id = new int[]{R.id.radio_incidentType_trapped, R.id.radio_incidentType_medical, R.id.radio_incidentType_fire,
-                                R.id.radio_incidentType_police, R.id.radio_incidentType_traffic, R.id.radio_incidentType_utility,
-                                R.id.radio_incidentType_other, R.id.button_next_incidentType};
+            R.id.radio_incidentType_police, R.id.radio_incidentType_traffic, R.id.radio_incidentType_utility,
+            R.id.radio_incidentType_other, R.id.button_next_incidentType};
     private Fragment[] fragments = new Fragment[6];
 
     public IncidentType() {
@@ -61,11 +61,11 @@ public class IncidentType extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }
-        if(incidentReport==null)
+        if (incidentReport == null)
             incidentReport = Dashboard.incidentReport;
 
-        for(int i = 0; i < fragments.length; i++){
-            switch (i){
+        for (int i = 0; i < fragments.length; i++) {
+            switch (i) {
                 case Constant.MEDICAL:
                     fragments[Constant.MEDICAL] = new MedicalEmergency();
                     break;
@@ -112,15 +112,16 @@ public class IncidentType extends Fragment {
         menu.clear();
     }
 
-    public void setButtonListener(){
+    public void setButtonListener() {
         CheckBox[] b = new CheckBox[7];
-        for(int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             b[i] = getCheckBoxButton(id[i]);
             final int index = b[i].getId();
             b[i].setOnClickListener(new View.OnClickListener() {
 
                 @Override
-                public void onClick(View arg0) {onButtonClick(index);
+                public void onClick(View arg0) {
+                    onButtonClick(index);
                 }
             });
         }
@@ -128,17 +129,18 @@ public class IncidentType extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View arg0) {onButtonClick(nextButton.getId());
+            public void onClick(View arg0) {
+                onButtonClick(nextButton.getId());
             }
         });
     }
 
-    public CheckBox getCheckBoxButton(int id){
+    public CheckBox getCheckBoxButton(int id) {
         return (CheckBox) this.getView().findViewById(id);
     }
 
-    public void startFragment(Fragment fragment, int i){
-        if(fragment == null)
+    public void startFragment(Fragment fragment, int i) {
+        if (fragment == null)
             fragment = makeFragment(i);
         FragmentTransaction ft = getActivity()
                 .getSupportFragmentManager()
@@ -148,8 +150,8 @@ public class IncidentType extends Fragment {
         ft.commit();
     }
 
-    public Fragment makeFragment(int i){
-        switch (i){
+    public Fragment makeFragment(int i) {
+        switch (i) {
             case Constant.MEDICAL:
                 return new MedicalEmergency();
             case Constant.FIRE:
@@ -164,7 +166,7 @@ public class IncidentType extends Fragment {
         return null;
     }
 
-    public void showTrappedDialog(){
+    public void showTrappedDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this.getContext()).create();
         alertDialog.setTitle("Trap Emergency");
         alertDialog.setMessage("Are you trapped?");
@@ -186,64 +188,59 @@ public class IncidentType extends Fragment {
         alertDialog.show();
     }
 
-    public void onButtonClick(int buttonid){
-        switch (buttonid){
+    public void onButtonClick(int buttonid) {
+        switch (buttonid) {
             case R.id.radio_incidentType_trapped:
-                if(getCheckBoxButton(buttonid).isChecked())
+                if (getCheckBoxButton(buttonid).isChecked())
                     showTrappedDialog();
-                else incidentReport.getReport(Constant.TRAP).removeSingleChoice(0, new Choice(getCheckBoxButton(buttonid).getText().toString() ));
+                else
+                    incidentReport.getReport(Constant.TRAP).removeSingleChoice(0, new Choice(getCheckBoxButton(buttonid).getText().toString()));
                 break;
             case R.id.radio_incidentType_medical:
-                if(!getCheckBoxButton(buttonid).isChecked()) {
+                if (!getCheckBoxButton(buttonid).isChecked()) {
                     incidentReport.setReport(Utils.buildMedicalReport(), Constant.MEDICAL);
                     fragments[Constant.MEDICAL] = null;
-                }
-                else
+                } else
                     startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
             case R.id.radio_incidentType_fire:
-                if(!getCheckBoxButton(buttonid).isChecked()){
+                if (!getCheckBoxButton(buttonid).isChecked()) {
                     incidentReport.setReport(Utils.buildFireReport(), Constant.FIRE);
                     fragments[Constant.FIRE] = null;
-                }
-                else
+                } else
                     startFragment(fragments[Constant.FIRE], Constant.FIRE);
                 break;
             case R.id.radio_incidentType_police:
-                if(!getCheckBoxButton(buttonid).isChecked()){
+                if (!getCheckBoxButton(buttonid).isChecked()) {
                     incidentReport.setReport(Utils.buildPoliceReport(), Constant.POLICE);
                     fragments[Constant.POLICE] = null;
-                }
-                else
+                } else
                     startFragment(fragments[Constant.POLICE], Constant.POLICE);
                 break;
             case R.id.radio_incidentType_traffic:
-                if(!getCheckBoxButton(buttonid).isChecked()){
+                if (!getCheckBoxButton(buttonid).isChecked()) {
                     incidentReport.setReport(Utils.buildTrafficReport(), Constant.TRAFFIC);
                     fragments[Constant.TRAFFIC] = null;
-                }
-                else
+                } else
                     startFragment(fragments[Constant.TRAFFIC], Constant.TRAFFIC);
                 break;
             case R.id.radio_incidentType_utility:
-                if(!getCheckBoxButton(buttonid).isChecked()){
+                if (!getCheckBoxButton(buttonid).isChecked()) {
                     incidentReport.setReport(Utils.buildUtilityReport(), Constant.UTILITY);
                     fragments[Constant.UTILITY] = null;
-                }
-                else
+                } else
                     startFragment(fragments[Constant.UTILITY], Constant.UTILITY);
                 break;
             case R.id.radio_incidentType_other:
-                if(!getCheckBoxButton(buttonid).isChecked()){
+                if (!getCheckBoxButton(buttonid).isChecked()) {
                     incidentReport.setReport(Utils.buildMedicalReport(), Constant.MEDICAL);
                     fragments[Constant.MEDICAL] = null;
-                }
-                else
+                } else
                     startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                 break;
             case R.id.button_next_incidentType:
                 CharSequence[] items = getCheckedChoice();
-                if(items.length > 0)
+                if (items.length > 0)
                     showNavigationDialog(items);
                 else
                     startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
@@ -251,23 +248,23 @@ public class IncidentType extends Fragment {
         }
     }
 
-    public CharSequence[] getCheckedChoice(){
+    public CharSequence[] getCheckedChoice() {
         final ArrayList<String> items = new ArrayList<>();
-        for(int i = 1; i < id.length-1; i++){
-            CheckBox box = (CheckBox)getView().findViewById(id[i]);
-            if(box.isChecked()){
+        for (int i = 1; i < id.length - 1; i++) {
+            CheckBox box = (CheckBox) getView().findViewById(id[i]);
+            if (box.isChecked()) {
                 items.add(box.getText().toString());
             }
         }
-        final CharSequence[] itemsList = new CharSequence[items.size()+1];
-        for(int i = 0; i < items.size(); i++){
+        final CharSequence[] itemsList = new CharSequence[items.size() + 1];
+        for (int i = 0; i < items.size(); i++) {
             itemsList[i] = items.get(i);
         }
-        itemsList[itemsList.length-1] = "Review";
+        itemsList[itemsList.length - 1] = "Review";
         return itemsList;
     }
 
-    public void showNavigationDialog(final CharSequence[] itemsList){
+    public void showNavigationDialog(final CharSequence[] itemsList) {
         final AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Go To...")
@@ -275,7 +272,7 @@ public class IncidentType extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = itemsList[which].toString();
-                        switch(text){
+                        switch (text) {
                             case "Medical":
                                 startFragment(fragments[Constant.MEDICAL], Constant.MEDICAL);
                                 break;
@@ -313,20 +310,13 @@ public class IncidentType extends Fragment {
 
     }
 
-    public void showWarningDialog(){
-        if(!falseReportWarning) {
-            AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Warning")
-                    .setMessage("False report will be prosecuted.")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do Nothing
-                        }
-                    })
-                    .show();
-        }
-        falseReportWarning = true;
+    public void showWarningDialog() {
 
+        if (!falseReportWarning) {
+            WarningDialog alert = new WarningDialog();
+            alert.showDialog(getActivity(), "False report will be prosecuted.");
+            falseReportWarning = true;
+        }
     }
+
 }
