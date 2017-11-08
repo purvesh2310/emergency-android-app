@@ -153,7 +153,7 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
                 if (mMessage.getMessage() != null && messenger.equals("dispatcher")) {
                     viewHolder.imgThis.setImageResource(R.drawable.admin_man);
                     viewHolder.tvMessageThis.setText(mMessage.getMessage());
-                    viewHolder.tvMessengerThis.setText(mMessage.getMessenger());
+                    viewHolder.tvMessengerThis.setText("Dispatcher");
                     viewHolder.tvTimestampThis.setText(mMessage.getTimestamp());
                     hideOther(viewHolder.imgThat,
                             viewHolder.tvMessageThat,
@@ -162,7 +162,7 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
                 } else if (mMessage.getMessage() != null && messenger.equals("client")){
                     viewHolder.imgThat.setImageResource(R.drawable.man);
                     viewHolder.tvMessageThat.setText(mMessage.getMessage());
-                    viewHolder.tvMessengerThat.setText(mMessage.getMessenger());
+                    viewHolder.tvMessengerThat.setText("Sender");
                     viewHolder.tvTimestampThat.setText(mMessage.getTimestamp());
                     hideOther(viewHolder.imgThis,
                             viewHolder.tvMessageThis,

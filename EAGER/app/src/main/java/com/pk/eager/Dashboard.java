@@ -74,12 +74,8 @@ public class Dashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        /*
         if(!FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN))
-            navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);*/
-        if(true)
             navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
-
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -191,6 +187,8 @@ public class Dashboard extends AppCompatActivity
         } else if (id == R.id.nav_subscription_setting) {
             Intent intent = new Intent(this, NotificationSetting.class);
             startActivity(intent);
+        } else if( id == R.id.nav_chat){
+            fragment = new ChatViewFragment();
         }
 
         // Add admin mode here

@@ -1,45 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pk.eager.User.Account"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/account_name_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Your profile"
-        android:textSize="18dp"/>
-
-    <TextView
-        android:id="@+id/account_email_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"/>
+    >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:id="@+id/signedInContentView"
+        >
 
-        <Button
-            android:id="@+id/account_signup_Button"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/texture"/>
+
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="Log In"
-            style="@style/submitButton"
-            />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="-150dp"
+            android:id="@+id/summary_user_dp"
+            android:src="@drawable/user_avatar"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/account_username_textview"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:text="Purvesh Kothari"
+            android:textColor="#000"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/account_email_textview"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:layout_marginTop="8dp"/>
 
         <Button
             android:id="@+id/account_signout_Button"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="40dp"
             android:text="Log Out"
             style="@style/submitButton"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/unsignedContentView"
+       >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/texture"/>
+
+        <TextView
+            android:id="@+id/account_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please sign in or create an account."
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/account_signup_Button"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Log In"
+            style="@style/submitButton"
+            android:layout_gravity="center"
+            />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -99,6 +100,8 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
         deviceToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, deviceToken);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         getAllInfo();
         getRecyclerView();
         getUi();
@@ -134,7 +137,7 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
                 if (mMessage.getMessage() != null && messenger.equals("client")) {
                     viewHolder.imgThat.setImageResource(R.drawable.man);
                     viewHolder.tvMessageThis.setText(mMessage.getMessage());
-                    viewHolder.tvMessengerThis.setText(mMessage.getMessenger());
+                    viewHolder.tvMessengerThis.setText("Sender");
                     viewHolder.tvTimestampThis.setText(mMessage.getTimestamp());
                     hideOther(viewHolder.imgThat,
                             viewHolder.tvMessageThat,
@@ -143,7 +146,7 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
                 } else if (mMessage.getMessage() != null && messenger.equals("dispatcher")){
                     viewHolder.imgThis.setImageResource(R.drawable.admin_man);
                     viewHolder.tvMessageThat.setText(mMessage.getMessage());
-                    viewHolder.tvMessengerThat.setText(mMessage.getMessenger());
+                    viewHolder.tvMessengerThat.setText("Dispatcher");
                     viewHolder.tvTimestampThat.setText(mMessage.getTimestamp());
                     hideOther(viewHolder.imgThis,
                             viewHolder.tvMessageThis,
@@ -269,4 +272,15 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
             sendMessage();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

@@ -146,8 +146,9 @@
 
        <android.support.v7.widget.AppCompatButton
            android:id="@+id/button_next_medicalEmergency"
-           android:layout_width="100dp"
+           android:layout_width="200dp"
            android:layout_height="wrap_content"
+           android:layout_gravity="center"
            android:text="NEXT"/>
 
         </LinearLayout> <!-- End of the Parent Linear Layout -->

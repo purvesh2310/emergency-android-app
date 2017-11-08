@@ -14,6 +14,6 @@ public class Constant {
     public final static int UTILITY = 5;
     public final static String PHONE_NUMBER = "PHONE_NUMBER";
 
-    public final static String ADMIN = "cAblwfQQAJ0:APA91bGfxsPBZCojnYb1gHp2HWBlvnwBshoe2wmUBEPcQC0-nmljo3hpG3pWOXFY-ltTC_sFuym0U21rfq3nMEkDDO1yGXWUOuu6rXAaJTTD8rp2a8P23CrJvYxbUEY1pCgkYnu8IT3M";
+    public final static String ADMIN = "c_t2t5LzyJI:APA91bFFhA9J9_6ikGZ0VeD0G7ylE41FfTpMpOgoWbcFEjIj3vjh5d7nLK0y0PDy7XOZFIFRB22YlxY64k6rCQfgr-tMFFnruPCYTZfPaC2WVZqYcQOv1QMq1cLJF0NOXWfFPnuvrm4M";
 
 }

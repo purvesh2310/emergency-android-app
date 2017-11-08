@@ -19,6 +19,10 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="Account" />
         <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_chat_black_24dp"
+            android:title="Chat"/>
+        <item
             android:id="@+id/nav_admin_mode"
             android:icon="@drawable/ic_admin_mode"
             android:title="Admin Mode" />
