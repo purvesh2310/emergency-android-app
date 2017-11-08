@@ -36,7 +36,6 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
     private OnFragmentInteractionListener mListener;
     final String TAG = "Account";
 
-    private TextView textView;
     private Button signIn;
     private Button signOut;
     private GoogleApiClient googleApiClient;
@@ -187,6 +186,5 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
         }
 
         email.setText(currentUser.getEmail().toString());
-
     }
 }

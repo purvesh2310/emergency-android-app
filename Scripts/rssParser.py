@@ -8,9 +8,9 @@ import ParseUtil as util
 
 
 link = {}
-link['spotcrime'] = "http://s3.spotcrime.com/cache/rss/sanjose.xml"
+link['spotcrime'] = "http://s3.spotcrime.com/cache/rss/dc.xml"
 link['weather'] = "https://alerts.weather.gov/cap/ca.php?x=0"
-link['missingKid'] = "http://www.missingkids.org/missingkids/servlet/XmlServlet?act=rss&LanguageCountry=en_US&orgPrefix=NCMC&state=CA"
+link['missingKid'] = "http://www.missingkids.com/missingkids/servlet/XmlServlet?act=rss&LanguageCountry=en_US&orgPrefix=NCMC&state=DC"
 
 """
 parser = feedparser.parse(link['missingKid'])

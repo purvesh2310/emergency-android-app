@@ -29,13 +29,13 @@ import com.pk.eager.ReportObject.Subscription;
 public class NotificationSetting extends AppCompatActivity {
 
 
+    private CheckBox categoryTrapped;
     private CheckBox categoryMedical;
     private CheckBox categoryFire;
     private CheckBox categoryPolice;
     private CheckBox categoryTraffic;
     private CheckBox categoryUtility;
     private EditText addressTextField;
-    private EditText zipcode2;
     private Spinner distanceSpinner;
     private String subscribeAddress;
     private String subscribeDistance;
@@ -51,6 +51,7 @@ public class NotificationSetting extends AppCompatActivity {
 
         setTitle("Notification Setting");
 
+        categoryTrapped = (CheckBox) findViewById(R.id.checkbox_filter_trapped);
         categoryMedical = (CheckBox) findViewById(R.id.checkbox_filter_medical);
         categoryFire = (CheckBox) findViewById(R.id.checkbox_filter_fire);
         categoryPolice = (CheckBox) findViewById(R.id.checkbox_filter_police);
@@ -124,6 +125,7 @@ public class NotificationSetting extends AppCompatActivity {
     public void readSharedPreference() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        setCheckBoxBaseOnPreference(categoryTrapped, "Trapped", sharedPreferences);
         setCheckBoxBaseOnPreference(categoryMedical, "Medical", sharedPreferences);
         setCheckBoxBaseOnPreference(categoryFire, "Fire", sharedPreferences);
         setCheckBoxBaseOnPreference(categoryPolice, "Police", sharedPreferences);
@@ -142,6 +144,10 @@ public class NotificationSetting extends AppCompatActivity {
     public void onApplyClick(View v) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (categoryTrapped.isChecked()) {
+            editor.putBoolean("Trapped", true);
+        } else editor.putBoolean("Trapped", false);
 
         if (categoryMedical.isChecked()) {
             editor.putBoolean("Medical", true);
@@ -189,6 +195,7 @@ public class NotificationSetting extends AppCompatActivity {
                         DatabaseReference newChild = FirebaseDatabase.getInstance().getReference("AllSubscriptions").push();
                         newChild.setValue(newSub);
                         FirebaseMessaging.getInstance().subscribeToTopic(topic+"_"+distanceSpinner.getSelectedItem());
+                        Log.d(TAG, topic+distanceSpinner.getSelectedItem());
                         subscribeAddress = "";
                     }
                 });

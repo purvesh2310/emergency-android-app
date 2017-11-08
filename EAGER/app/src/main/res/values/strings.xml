@@ -21,5 +21,10 @@
         <item>4.0</item>
     </string-array>
 
+    <string name="label_sos">SEND S.O.S. SIGNAL</string>
+    <string name="label_alert_sent">ALERT SENT</string>
+    <string name="label_alert_instruction">Press the button for 3 seconds to send an alert message</string>
+    <string name="label_alert_notification">Keep Calm! Getting in touch with you</string>
+
 
 </resources>

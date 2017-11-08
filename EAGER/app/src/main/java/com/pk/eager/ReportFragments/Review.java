@@ -1,7 +1,9 @@
 package com.pk.eager.ReportFragments;
 
+
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +49,7 @@ import com.pk.eager.LocationUtils.GeocodeIntentService;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Packet;
 import com.pk.eager.ReportObject.Utils;
 import com.pk.eager.XBeeManager;
 import com.pk.eager.XBeeManagerApplication;
@@ -238,9 +242,11 @@ public class Review extends Fragment implements IDataReceiveListener {
 
                     // Setting XBEE address of the originator device
                     String deviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
+
                     List<String> pathToServer = new ArrayList<String>();
                     pathToServer.add(deviceAddress);
                     compact.setPathToServer(pathToServer);
+
 
                     Gson gson = new Gson();
                     String data = gson.toJson(compact);
@@ -347,11 +353,9 @@ public class Review extends Fragment implements IDataReceiveListener {
                             }
                         });
 
-
-
                         sendNotificationToZipCode(locString, key, Utils.notificationMessage(compact), reportType);
 
-			// This is a way to know that which device create the alert, store the information on Firebase (NB)
+			            // This is a way to know that which device create the alert, store the information on Firebase (NB)
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                         ref.child("ReportOwner").child(key).child("owner").setValue(FirebaseInstanceId.getInstance().getToken());
 
@@ -390,7 +394,6 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     // Receive data over XBE/BLE and upload to Firebase
     public void receiveDataFromChannel(String data){
-
         if(data.equals("a")){
             Toast.makeText(this.getContext(), "P2P received", Toast.LENGTH_SHORT);
         }else {
@@ -403,12 +406,16 @@ public class Review extends Fragment implements IDataReceiveListener {
             String receiverDeviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
             pathToServer.add(receiverDeviceAddress);
 
+            Packet newPacket = new Packet(pathToServer, FirebaseInstanceId.getInstance().getToken());
+
             boolean isConnected = checkInternetConnection();
 
             if (isConnected) {
+
                 // Saving the path to Firebase without report ID. Need to add report id afterwards
                 DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
-                path.setValue(pathToServer);
+                //path.setValue(pathToServer);
+                path.setValue(newPacket);
 
                 DatabaseReference newChild = db.push();
                 newChild.setValue(cmpReport, new DatabaseReference.CompletionListener() {
@@ -471,10 +478,12 @@ public class Review extends Fragment implements IDataReceiveListener {
     }
     @Override
     public void dataReceived(XBeeMessage xbeeMessage){
+        sendNotification("Offline report submitted to database");
         showToastMessage("inside recieve message toast");
         String data = new String(xbeeMessage.getData());
         showToastMessage("data received from: "+ xbeeMessage.getDevice().get64BitAddress()+ ", message: "+new String(xbeeMessage.getData()));
         receiveDataFromChannel(data);
+
     }
 
     /**
@@ -486,10 +495,22 @@ public class Review extends Fragment implements IDataReceiveListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show
-                        ();
+                if(getActivity()!=null)
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void sendNotification(String message){
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this.getContext())
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle("EAGER")
+                        .setContentText(message);
+        NotificationManager notificationManager = (NotificationManager) getActivity()
+                                                    .getSystemService(getActivity().NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notificationBuilder.build());
+        Log.d(TAG, "Notify");
     }
 
     class SubmitDialog {
@@ -504,6 +525,7 @@ public class Review extends Fragment implements IDataReceiveListener {
 
             TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
             text.setText(msg);
+
 
             Button dialogNoButton = (Button) dialog.findViewById(R.id.btn_dialog_no);
             Button dialogYesButton = (Button) dialog.findViewById(R.id.btn_dialog_yes);
@@ -532,3 +554,5 @@ public class Review extends Fragment implements IDataReceiveListener {
         }
     }
 }
+
+

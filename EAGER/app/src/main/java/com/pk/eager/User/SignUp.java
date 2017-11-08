@@ -206,6 +206,7 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
                 firebaseAuthWithGoogle(account);
                 Toast toast = Toast.makeText(this.getApplicationContext(), "Signed In", Toast.LENGTH_SHORT);
             } else {
+                Log.d(TAG, result.toString());
                 Toast toast = Toast.makeText(this.getApplicationContext(), "Google Sign-In Failed", Toast.LENGTH_SHORT);
                 toast.show();
             }

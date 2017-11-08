@@ -1,0 +1,518 @@
+[
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 07 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Update: MPD reports the incident has cleared and the 5400 block of Georgia Ave NW has reopened to traffic."
+         ],
+         "address":[
+            
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.027540,
+      "phoneNumber":"0",
+      "latitude":38.955362, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 07 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Alert: Shooting at 0117 hrs in the 200 block of I St, SW. No Lookout. DO NOT TAKE ACTION CALL 911 W/ EVENT #I20170671623 Sent to 1st District (PSA 101-108) Alert DC Sent by MPD Cad #10989"
+         ],
+         "address":[
+            
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.012888,
+      "phoneNumber":"0",
+      "latitude":38.879177, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Alert: Shooting at 2017 hrs in the 5400 block of Georgia Avenue NW. No Lookout DO NOT TAKE ACTION CALL 911 W/ EVENT #I20170671267 Sent to 4th District (PSA 401-409) Alert DC Sent by MPD Cad # 5356"
+         ],
+         "address":[
+            
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.027540,
+      "phoneNumber":"0",
+      "latitude":38.955362, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "MPD reports the 5400 block of Georgia Ave NW between Jefferson and Kennedy St&#39;s NW are blocked in both directions due to police activity. Please use alternate route."
+         ],
+         "address":[
+            
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.027540,
+      "phoneNumber":"0",
+      "latitude":38.955362, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "MPD reports eastbound lanes at 400 Michigan Ave NE has cleared and normal traffic resumes in all directions."
+         ],
+         "address":[
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.000343,
+      "phoneNumber":"0",
+      "latitude":38.933514, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "MPD reports all eastbound lanes at 400 Michigan Ave NE are blocked due to police activity. Please use alternate route."
+         ],
+         "address":[
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.000343,
+      "phoneNumber":"0",
+      "latitude":38.933514, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Alert: Robbery [Gun] at 1644 hrs in the 2700 block of 30th Street, SE. Lookout is for (S1) B/M, medium build, 5&#39;8&quot;, 180 lbs.,, 29 yrs. and wearing red &amp; blue strip polo shirt with blue jeans. (S2) B/M, 27 yrs., 5&#39;9&quot;, 190 lbs., dark brown complexion and wearing grey shirt and blue jeans. DO NOT TAKE ACTION CALL 911 W/ EVENT # I20170670747 Sent to 6th District (PSA 601-608) Alert DC Sent by MPD Cad # 10525"
+         ],
+         "address":[
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.963918,
+      "phoneNumber":"0",
+      "latitude":38.857059, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Alert: 7D robbery at 1930 hrs in the 4000 block of 2nd St SW. No lookout at this time. DO NOT TAKE ACTION CALL 911 W/ EVENT #I20170669100 Sent to 7th District (PSA 701-708) Alert DC Sent by MPD Cad #10519"
+         ],
+         "address":[
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.011600,
+      "phoneNumber":"0",
+      "latitude":38.831716, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Alert: MPD is on the scene of a confirmed shooting in the 2400 block of Alabama Avenue SE No lookout at this time. DO NOT TAKE ACTION CALL 911 W/ EVENT #I I20170669095 Sent to 7th District (PSA 701-708) Alert DC Sent by MPD Cad #6587"
+         ],
+         "address":[
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.971851,
+      "phoneNumber":"0",
+      "latitude":38.851804, 
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 06 Nov 2017"
+         ],
+         "author":[
+            "DC Alerts"
+         ],
+         "description":[
+            "Alert: MPD is on the scene of a confirmed stabbing in the 900 Block of Shepherd St NW No look out DO NOT TAKE ACTION CALL 911 W/ EVENT # - I20170668986 Sent to 4th District (PSA 401-409) Alert DC Sent by MPD Cad # 6587"
+         ],
+         "address":[
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.025269,
+      "phoneNumber":"0",
+      "latitude":38.939708, 
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "ASSAULT W/DANGEROUS WEAPON. METHOD: OTHERS. SHIFT: DAY"
+         ],
+         "address":[  
+            "1327-1331 G St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.987356,
+      "phoneNumber":"0",
+      "latitude":38.8989143,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "BURGLARY. METHOD: OTHERS. SHIFT: EVENING"
+         ],
+         "address":[  
+            "5318 Clay Terrace NE, Washington, DC 20019, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.924187,
+      "phoneNumber":"0",
+      "latitude":38.8938097,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "BURGLARY. METHOD: OTHERS. SHIFT: DAY"
+         ],
+         "address":[  
+            "1435-1443 Sheridan St NW, Washington, DC 20011, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.034907,
+      "phoneNumber":"0",
+      "latitude":38.9661388,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "THEFT F/AUTO. METHOD: OTHERS. SHIFT: EVENING"
+         ],
+         "address":[  
+            "301 G St SW, Washington, DC 20024, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.016379,
+      "phoneNumber":"0",
+      "latitude":38.8812935,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "THEFT F/AUTO. METHOD: OTHERS. SHIFT: EVENING"
+         ],
+         "address":[  
+            "3101-3199 13th St NW, Washington, DC 20010, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.029711,
+      "phoneNumber":"0",
+      "latitude":38.9291522,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "THEFT F/AUTO. METHOD: OTHERS. SHIFT: EVENING"
+         ],
+         "address":[  
+            "744 Lamont St NW, Washington, DC 20010, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.025029,
+      "phoneNumber":"0",
+      "latitude":38.9309189,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "MOTOR VEHICLE THEFT. METHOD: OTHERS. SHIFT: EVENING"
+         ],
+         "address":[  
+            "1219 Alabama Ave SE, Washington, DC 20032, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.989554,
+      "phoneNumber":"0",
+      "latitude":38.8444948,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "THEFT/OTHER. METHOD: OTHERS. SHIFT: EVENING"
+         ],
+         "address":[  
+            "5076 G St SE, Washington, DC 20019, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.930805,
+      "phoneNumber":"0",
+      "latitude":38.8806255,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "THEFT/OTHER. METHOD: OTHERS. SHIFT: DAY"
+         ],
+         "address":[  
+            "1350 E St NE, Washington, DC 20002, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-76.986918,
+      "phoneNumber":"0",
+      "latitude":38.8961217,
+      "type":"feed-crime"
+   },
+   {  
+      "compactReports":{  
+         "date":[  
+            "Fri, 03 Nov 2017"
+         ],
+         "author":[  
+            "SpotCrime.com"
+         ],
+         "description":[  
+            "THEFT/OTHER. METHOD: OTHERS. SHIFT: DAY"
+         ],
+         "address":[  
+            "6509-6511 Piney Branch Rd NW, Washington, DC 20012, USA"
+         ]
+      },
+      "timestamp":"",
+      "longitude":-77.025746,
+      "phoneNumber":"0",
+      "latitude":38.969285,
+      "type":"feed-crime"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 17 Oct 2017 12:00:00 EDT"
+         ],
+         "post_link":[
+            "http://www.missingkids.com/poster/NCMC/1310600/1"
+         ],
+         "img_link":[
+            "/photographs/NCMC1310600c1t.jpg"
+         ],
+         "summary":[
+            "SHANIAH BOYD, Age Now: 15, Missing: 09/22/2017. Missing From WASHINGTON, DC. ANYONE HAVING INFORMATION SHOULD CONTACT: Metropolitan Police Department of Washington DC 1-202-737-4404."
+         ],
+         "title":[
+            "Missing: SHANIAH BOYD (DC)"
+         ]
+      },
+      "timestamp":"",
+      "longitude":0,
+      "phoneNumber":"0",
+      "latitude":0,
+      "type":"feed-missing"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Tue, 29 Aug 2017 12:00:00 EDT"
+         ],
+         "post_link":[
+            "http://www.missingkids.com/poster/NCMC/1304905/1"
+         ],
+         "img_link":[
+            "/photographs/NCMC1304905c1t.jpg"
+         ],
+         "summary":[
+            "CHANTESE ZIMMERMAN, Age Now: 16, Missing: 06/03/2017. Missing From WASHINGTON, DC. ANYONE HAVING INFORMATION SHOULD CONTACT: Metropolitan Police Department  (District of Columbia)  1-202-727-9099."
+         ],
+         "title":[
+            "Missing: CHANTESE ZIMMERMAN (DC)"
+         ]
+      },
+      "timestamp":"",
+      "longitude":0,
+      "phoneNumber":"0",
+      "latitude":0,
+      "type":"feed-missing"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Thu, 22 Jun 2017 12:00:00 EDT"
+         ],
+         "post_link":[
+            "http://www.missingkids.com/poster/NCMC/1229904/1"
+         ],
+         "img_link":[
+            "/photographs/NCMC1229904c1t.jpg"
+         ],
+         "summary":[
+            "RELISHA RUDD, Age Now: 12, Missing: 03/19/2014. Missing From WASHINGTON, DC. ANYONE HAVING INFORMATION SHOULD CONTACT: Washington Metropolitan Police Department (District of Columbia) 1-202-265-9100."
+         ],
+         "title":[
+            "Missing: RELISHA RUDD (DC)"
+         ]
+      },
+      "timestamp":"",
+      "longitude":0,
+      "phoneNumber":"0",
+      "latitude":0,
+      "type":"feed-missing"
+   },
+   {
+      "compactReports":{
+         "date":[
+            "Thu, 19 Jan 2017 12:00:00 EST"
+         ],
+         "post_link":[
+            "http://www.missingkids.com/poster/NCMC/708557/1"
+         ],
+         "img_link":[
+            "/photographs/NCMC708557c1t.jpg"
+         ],
+         "summary":[
+            "APRIL WILLIAMS, Age Now: 34, Missing: 12/03/1983. Missing From WASHINGTON, DC. ANYONE HAVING INFORMATION SHOULD CONTACT: Metropolitan Police Department  (Washington, D.C.)  1-202-727-9099."
+         ],
+         "title":[
+            "Missing: APRIL WILLIAMS (DC)"
+         ]
+      },
+      "timestamp":"",
+      "longitude":0,
+      "phoneNumber":"0",
+      "latitude":0,
+      "type":"feed-missing"
+   }
+]

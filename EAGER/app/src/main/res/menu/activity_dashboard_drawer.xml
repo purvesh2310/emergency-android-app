@@ -26,6 +26,19 @@
             android:id="@+id/nav_admin_mode"
             android:icon="@drawable/ic_admin_mode"
             android:title="Admin Mode" />
+        <item
+            android:id="@+id/nav_sos_mode"
+            android:icon="@drawable/ic_error_black_24dp"
+            android:title="SOS" />
+        <item
+            android:id="@+id/nav_create_report"
+            android:icon="@drawable/ic_add_circle_outline_black_24dp"
+            android:title="Create Report" />
+        <item
+            android:id="@+id/nav_subscription_setting"
+            android:icon="@drawable/ic_settings_applications_black_24dp"
+            android:title="Notification Setting" />
+
     </group>
 
 </menu>

@@ -40,6 +40,12 @@
                         android:layout_marginBottom="5dp"/>
 
                     <CheckBox
+                        android:id="@+id/checkbox_filter_trapped"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Trapped" />
+
+                    <CheckBox
                         android:id="@+id/checkbox_filter_medical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -139,6 +145,15 @@
                             android:layout_margin="5dp"/>
                     </LinearLayout>
                 </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                card_view:cardCornerRadius="2dp"
+                card_view:contentPadding="5dp">
             </android.support.v7.widget.CardView>
 
             <Button
