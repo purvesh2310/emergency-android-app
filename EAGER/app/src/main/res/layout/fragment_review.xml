@@ -29,11 +29,12 @@
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button_review_submit"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_marginTop="20dp"
             android:layout_height="wrap_content"
             android:text="SUBMIT"
             style="@style/submitButton"
+            android:layout_gravity="center"
             />
 
     </LinearLayout>

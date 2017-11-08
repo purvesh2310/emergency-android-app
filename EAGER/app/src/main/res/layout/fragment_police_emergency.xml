@@ -71,9 +71,11 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/button_next_policeEmergency"
-                android:layout_width="100dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="NEXT"/>
+                android:text="NEXT"
+                android:layout_gravity="center"
+                />
 
         </LinearLayout> <!-- End of the Parent Linear Layout -->
     </ScrollView>

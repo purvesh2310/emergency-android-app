@@ -80,9 +80,11 @@
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button_next_incidentType"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Go To..."/>
+            android:text="Go To..."
+            android:layout_gravity="center"
+            />
 
     </LinearLayout>
 
