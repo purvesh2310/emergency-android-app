@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -69,6 +70,8 @@ public class AdminMode extends Fragment {
 
         db = FirebaseDatabase.getInstance().getReference().child("Reports");
         adminList = new HashMap<CompactReport, String>();
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -77,37 +80,14 @@ public class AdminMode extends Fragment {
         return inflater.inflate(R.layout.fragment_information_list_view, container, false);
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getActivity().setTitle("Nearby Incidents");
+        getActivity().setTitle("Chat With Report Senders");
         reportRecyclerView = (RecyclerView) view.findViewById(R.id.informationListView);
         fetchDataFromFirebase();
 
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof InformationListView.OnFragmentInteractionListener) {
-            mListener = (InformationListView.OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     public interface OnFragmentInteractionListener {
@@ -157,6 +137,11 @@ public class AdminMode extends Fragment {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 
 }
