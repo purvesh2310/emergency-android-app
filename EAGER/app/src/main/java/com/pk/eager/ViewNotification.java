@@ -32,7 +32,6 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
 
     private TextView titleTextView;
     private TextView informationTextView;
-    private TextView locationTextView;
 
     private double longitude;
     private double latitude;
@@ -51,7 +50,6 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
 
         titleTextView = (TextView) findViewById(R.id.viewNotificationReportTitle);
         informationTextView = (TextView) findViewById(R.id.viewNotificationReportInformation);
-        locationTextView = (TextView) findViewById(R.id.viewNotificationReportLocation);
 
         if (getIntent().hasExtra(REPORT)) {   //case when ViewNotification was triggered by an intent from another activity
             report = getIntent().getParcelableExtra(REPORT);
@@ -74,18 +72,11 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
                         latitude = Double.parseDouble(location.split(",")[0]);
                         longitude = Double.parseDouble(location.split(",")[1]);
 
-                        Log.d(TAG, "Title " + map.get("title"));
-                        Log.d(TAG, "Information " + map.get("information"));
-                        Log.d(TAG, "Location " + map.get("location"));
-
                         if(title!=null){
                             titleTextView.setText(title);
                         }
                         if(information!=null){
                             informationTextView.append(information);
-                        }
-                        if(location!=null){
-                            locationTextView.append(location);
                         }
 
                         setLocation(latitude,longitude);
@@ -145,12 +136,7 @@ public class ViewNotification extends AppCompatActivity implements OnMapReadyCal
             if(information!=null){
                 informationTextView.append(information);
             }
-            if(location!=null){
-                locationTextView.append(location);
-            }
         }
-
-
 
         setTitle("Incident Information");
     }

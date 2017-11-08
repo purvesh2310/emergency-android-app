@@ -6,29 +6,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.pk.eager.ViewNotification"
-    android:padding="10dp">
+    >
 
-    <TextView
-        android:id="@+id/viewNotificationReportTitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        style="@style/reportList"
-        />
+        android:orientation="vertical"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
 
-    <TextView
-        android:id="@+id/viewNotificationReportInformation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/reportList"
-        />
+        <TextView
+            android:id="@+id/viewNotificationReportTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginBottom="5dp"
+            style="@style/reportList"
+            />
 
-    <TextView
-        android:id="@+id/viewNotificationReportLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#2F4F4F"
-        />
+        <TextView
+            android:id="@+id/viewNotificationReportInformation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:textColor="#2F4F4F"
+            />
+
+    </LinearLayout>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -36,7 +42,6 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="224sp"
-        android:layout_margin="8dp"
-        tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
+        android:layout_margin="15dp"/>
 
 </LinearLayout>
