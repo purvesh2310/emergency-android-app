@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class SOSFragment extends Fragment {
         super.onCreate(savedInstanceState);
         location = Dashboard.location;
         getphoneNumber();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -127,4 +129,8 @@ public class SOSFragment extends Fragment {
             phoneNumber = "";
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+    }
 }

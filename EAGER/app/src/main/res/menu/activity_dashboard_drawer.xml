@@ -7,9 +7,21 @@
             android:icon="@drawable/ic_assignment_black_24dp"
             android:title="Nearby Incidents" />
         <item
+            android:id="@+id/nav_create_report"
+            android:icon="@drawable/ic_add_circle_outline_black_24dp"
+            android:title="Create Report" />
+        <item
+            android:id="@+id/nav_sos_mode"
+            android:icon="@drawable/ic_error_black_24dp"
+            android:title="SOS" />
+        <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_chat_black_24dp"
+            android:title="Chat"/>
+        <item
             android:id="@+id/nav_subscription"
             android:icon="@drawable/ic_notifications_active_black_24dp"
-            android:title="Notification" />
+            android:title="Notifications" />
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_event_available_black_24dp"
@@ -19,25 +31,13 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="Account" />
         <item
-            android:id="@+id/nav_chat"
-            android:icon="@drawable/ic_chat_black_24dp"
-            android:title="Chat"/>
+            android:id="@+id/nav_subscription_setting"
+            android:icon="@drawable/ic_settings_applications_black_24dp"
+            android:title="Notification Settings" />
         <item
             android:id="@+id/nav_admin_mode"
             android:icon="@drawable/ic_admin_mode"
             android:title="Admin Mode" />
-        <item
-            android:id="@+id/nav_sos_mode"
-            android:icon="@drawable/ic_error_black_24dp"
-            android:title="SOS" />
-        <item
-            android:id="@+id/nav_create_report"
-            android:icon="@drawable/ic_add_circle_outline_black_24dp"
-            android:title="Create Report" />
-        <item
-            android:id="@+id/nav_subscription_setting"
-            android:icon="@drawable/ic_settings_applications_black_24dp"
-            android:title="Notification Setting" />
 
     </group>
 

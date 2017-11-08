@@ -88,6 +88,9 @@ public class Account extends Fragment implements GoogleApiClient.OnConnectionFai
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        signIn = (Button) view.findViewById(R.id.account_signup_Button);
+        signOut = (Button) view.findViewById(R.id.account_signout_Button);
+
         signedInView = (LinearLayout) view.findViewById(R.id.signedInContentView);
         unsignedView = (LinearLayout) view.findViewById(R.id.unsignedContentView);
 
