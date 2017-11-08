@@ -355,7 +355,7 @@ public class Review extends Fragment implements IDataReceiveListener {
 
                         sendNotificationToZipCode(locString, key, Utils.notificationMessage(compact), reportType);
 
-			// This is a way to know that which device create the alert, store the information on Firebase (NB)
+			            // This is a way to know that which device create the alert, store the information on Firebase (NB)
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                         ref.child("ReportOwner").child(key).child("owner").setValue(FirebaseInstanceId.getInstance().getToken());
 
@@ -525,6 +525,7 @@ public class Review extends Fragment implements IDataReceiveListener {
 
             TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
             text.setText(msg);
+
 
             Button dialogNoButton = (Button) dialog.findViewById(R.id.btn_dialog_no);
             Button dialogYesButton = (Button) dialog.findViewById(R.id.btn_dialog_yes);

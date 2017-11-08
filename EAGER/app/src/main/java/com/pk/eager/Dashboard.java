@@ -1,6 +1,7 @@
 package com.pk.eager;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -179,6 +180,17 @@ public class Dashboard extends AppCompatActivity
             fragment = new HistoryFragment();
         } else if (id == R.id.nav_account) {
             fragment = new Account();
+        } else if (id == R.id.nav_sos_mode){  //sos mode
+            fragment = new SOSFragment();
+        } else if (id == R.id.nav_create_report){
+            fragment = Dashboard.incidentType;
+            if (fragment == null) {
+                Dashboard.incidentType = new IncidentType();
+                fragment = Dashboard.incidentType;
+            }
+        } else if (id == R.id.nav_subscription_setting) {
+            Intent intent = new Intent(this, NotificationSetting.class);
+            startActivity(intent);
         }
 
         // Add admin mode here
