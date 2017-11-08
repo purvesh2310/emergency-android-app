@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -62,6 +63,10 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
 
         configureGoogleAuth();
         configureFacebookAuth();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        setTitle("Create Account or Login");
     }
 
 
@@ -241,9 +246,6 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
         });
     }
 
-
-
-
     //----intents to other activity-----//
 
     public void gotoDashBoard(){
@@ -252,10 +254,41 @@ public class SignUp extends AppCompatActivity implements GoogleApiClient.OnConne
     }
 
     public void onSwitchToLoginButton(View view){
-        Intent intent = new Intent(this, SignIn.class);
+        auth = FirebaseAuth.getInstance();
+
+        String email = ((EditText)findViewById(R.id.signUp_email_editText)).getText().toString();
+        String password = ((EditText)findViewById(R.id.signUp_password_editText)).getText().toString();
+
+        auth.signInWithEmailAndPassword(email, password).
+                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                Log.d(TAG, "sign in complete");
+
+                if(task.isSuccessful()){
+                    loggedIn();
+                }else{
+                    Toast.makeText(SignUp.this, "Sign In Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public void loggedIn(){
+        Intent intent = new Intent(this, Dashboard.class);
         startActivity(intent);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
 
+        return super.onOptionsItemSelected(item);
+    }
 }
