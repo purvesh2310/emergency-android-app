@@ -2,6 +2,7 @@
 package com.pk.eager.util;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.pk.eager.ReportObject.CompactReport;
@@ -21,7 +22,7 @@ public class CompactReportUtil {
 
      if(report.type.equals("Report")) {
             String reportTitle = "";
-            ArrayList<String> reportInfoList = new ArrayList<String>();
+            ArrayList<ArrayList<String>> reportInfoList = new ArrayList<ArrayList<String>>();
             String individualInformation = "";
             String fullInformation = "";
             String location = "";
@@ -33,13 +34,13 @@ public class CompactReportUtil {
 
             while (iterator.hasNext()) {
                 Map.Entry reportEntry = (Map.Entry) iterator.next();
-                reportTitle = reportEntry.getKey().toString();
-                reportInfoList = (ArrayList<String>) reportEntry.getValue();
+                reportTitle+=reportEntry.getKey().toString()+"-";
+                reportInfoList.add((ArrayList<String>) reportEntry.getValue());
             }
 
             for (int j = 0; j < reportInfoList.size(); j++) {
 
-                individualInformation = reportInfoList.get(j);
+                individualInformation = reportInfoList.get(j).toString();
                 individualInformation = individualInformation.replace("/", "\n");
                 fullInformation = fullInformation + individualInformation;
 
@@ -52,6 +53,8 @@ public class CompactReportUtil {
             reportData.put("title", reportTitle);
             reportData.put("information", fullInformation);
             reportData.put("location", location);
+
+            Log.d("CompactReportUtil", reportData.toString());
 
             return reportData;
         }else if(report.type.equals("feed-crime")){
