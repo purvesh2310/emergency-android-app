@@ -74,8 +74,14 @@ public class Dashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        if(!FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN))
-            navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
+        // Code for enabling the admin mode in the Navigation Drawer
+        navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
+        String fireBaseToken = FirebaseInstanceId.getInstance().getToken();
+
+        if(fireBaseToken != null) {
+            if (fireBaseToken.equals(Constant.ADMIN))
+                navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(true);
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
 

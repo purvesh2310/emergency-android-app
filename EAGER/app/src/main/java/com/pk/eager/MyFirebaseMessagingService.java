@@ -72,11 +72,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
         debugging
          */
         if(remoteMessage!=null && user!=null && remoteMessage.getData().get("notificationType")==null){
-            showToastMessage("here1");
-            showToastMessage("notification type " + remoteMessage.getData().get("notificationType"));
+
             Log.d(TAG, "notification type " + remoteMessage.getData().get("notificationType"));
             String type = remoteMessage.getData().get("type");
             if(isTypeSubscribedByUser(type)) {
+
                 //push the notification to user's list of notifications
                 DatabaseReference newNode = notificationRef.child(user.getUid()).push();
                 newNode.setValue(remoteMessage.getData());
@@ -108,10 +108,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
             Log.d(TAG, "Xbee confirmation received");
             sendNotification("Offline report sent to database");
 
-            showToastMessage("here2");
             String key = remoteMessage.getData().get("key");
             final String msg = remoteMessage.getData().get("msg");
-
 
             ValueEventListener packetListener = new ValueEventListener() {
                 @Override
@@ -128,7 +126,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
                         path.remove(path.size()-1);
 
                         String data = msg + path;
-
 
                         XBee64BitAddress toAddress = new XBee64BitAddress(xbeeToAddress);
                         RemoteXBeeDevice remote = new RemoteXBeeDevice(xbeeManager.getLocalXBeeDevice(), toAddress);
