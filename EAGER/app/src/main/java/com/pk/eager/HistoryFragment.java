@@ -18,6 +18,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.adapter.HistoryRecyclerViewAdapter;
 import com.pk.eager.db.handler.DatabaseHandler;
 import com.pk.eager.db.model.Report;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends BaseXBeeFragment {
 
     RecyclerView historyRecyclerView;
     LatLng currentLocation;

@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 
-import com.pk.eager.BaseXBeeFragment;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;

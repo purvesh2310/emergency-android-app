@@ -1,23 +1,33 @@
-package com.pk.eager;
+package com.pk.eager.BaseClass;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.listeners.IDataReceiveListener;
 import com.digi.xbee.api.models.XBeeMessage;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.Packet;
+import com.pk.eager.XBeeManager;
+import com.pk.eager.XBeeManagerApplication;
 
 import java.util.List;
+
+import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
 
 /**
@@ -33,6 +43,8 @@ public class BaseXBeeFragment extends Fragment implements IDataReceiveListener{
     private XBeeManager xbeeManager;
 
     private OnFragmentInteractionListener mListener;
+
+    public final String TAG = BaseXBeeFragment.class.getSimpleName();
 
     public BaseXBeeFragment() {
 
@@ -96,6 +108,7 @@ public class BaseXBeeFragment extends Fragment implements IDataReceiveListener{
 
     @Override
     public void dataReceived(XBeeMessage xbeeMessage){
+        showToastMessage("Receive data from xbee channel");
         String data = new String(xbeeMessage.getData());
         receiveDataFromChannel(data);
     }
@@ -116,9 +129,9 @@ public class BaseXBeeFragment extends Fragment implements IDataReceiveListener{
 
             Packet newPacket = new Packet(pathToServer, FirebaseInstanceId.getInstance().getToken());
 
-            // boolean isConnected = checkInternetConnection();
+            boolean isConnected = checkInternetConnection();
 
-            if (true) {
+            if (isConnected) {
 
                 // Saving the path to Firebase without report ID. Need to add report id afterwards
                 DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
@@ -130,8 +143,54 @@ public class BaseXBeeFragment extends Fragment implements IDataReceiveListener{
 
             } else {
                 data = gson.toJson(cmpReport);
-                //sendDataOverChannel(data);
+                xbeeBroadcast(data);
             }
         }
+    }
+
+    public void xbeeBroadcast(String data){
+        final String reportData = data;
+        Log.d(TAG, "broadcast");
+        Thread sendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if(xbeeManager.getLocalXBeeDevice().isOpen()) {
+                        String DATA_TO_SEND = reportData;
+                        byte[] dataToSend = DATA_TO_SEND.getBytes();
+                        xbeeManager.broadcastData(dataToSend);
+                        Log.d(TAG, "Broadcasting ");
+                        showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
+                    }else Log.d(TAG, "xbee not open");
+                } catch (XBeeException e) {
+                    //showToastMessage("error: " + e.getMessage());
+                    Log.d("Xbee exception ", e.toString());
+                }
+            }
+        });
+        sendThread.start();
+    }
+
+    // To check whether device has an active Internet connection
+    public boolean checkInternetConnection(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
+    private void showToastMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(getActivity()!=null)
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

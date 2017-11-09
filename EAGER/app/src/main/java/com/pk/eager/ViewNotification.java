@@ -1,7 +1,6 @@
 package com.pk.eager;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -16,13 +15,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.pk.eager.BaseClass.BaseXbeeActivity;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
 import java.util.Map;
 
 
-public class ViewNotification extends AppCompatActivity implements OnMapReadyCallback{
+public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCallback{
     public final String TAG = "ViewNotification";
     public final String REPORT = "report";
     public String reportKey;
