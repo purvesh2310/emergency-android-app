@@ -36,6 +36,8 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         TextView reportInformationAdditional;
         ImageView incidentTypeLogo;
         ImageView locationMarkerIcon;
+        TextView reportDate;
+        TextView reportSource;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -43,9 +45,10 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportTitle = (TextView) itemView.findViewById(R.id.reportTitleTextView);
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
-            reportInformationAdditional = (TextView) itemView.findViewById(R.id.reportInformationAdditionalTextView);
             incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
             locationMarkerIcon = (ImageView) itemView.findViewById(R.id.locationMarkerIcon);
+            reportDate = (TextView) itemView.findViewById(R.id.reportDateTextView);
+            reportSource = (TextView) itemView.findViewById(R.id.reportSourceTextView);
         }
     }
 
@@ -79,37 +82,63 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         CompactReport report = reportList.get(i);
         LatLng reportLocation = new LatLng(report.latitude,report.longitude);
         String roundDistance = "";
+        String reportTitle = "";
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
         Map<String, String> reportData = cmpUtil.parseReportData(report,"list");
 
+        //get distance if it is report type
         if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather")){
             double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
             roundDistance = String.format("%.2f", distanceInMile);
-            roundDistance = roundDistance + " miles far";
-            informationViewHolder.locationMarkerIcon.setVisibility(View.VISIBLE);
+            roundDistance = roundDistance + " mi";
+           // informationViewHolder.locationMarkerIcon.setVisibility(View.VISIBLE);
         } else {
             // Hiding the location icon as it is not available for feed-missing & feed-weather
-            informationViewHolder.locationMarkerIcon.setVisibility(View.INVISIBLE);
+          //  informationViewHolder.locationMarkerIcon.setVisibility(View.INVISIBLE);
         }
-        String reportTitle = "";
+
+        //binding for different type of report
         if(!report.type.equals("Report")){
+            //get title
             reportTitle = reportData.get("title");
             informationViewHolder.reportTitle.setText(reportTitle);
-            informationViewHolder.reportInformation.setText(reportData.get("information"));
+
+            //get description
+            informationViewHolder.reportInformation.setText(takeSubContent(reportData.get("information")));
+
+            //get distance
             if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather"))
                 informationViewHolder.reportLocation.setText(roundDistance);
+
+            //get date
+            informationViewHolder.reportDate.setText(reportData.get("date"));
+
+            //get source
+            informationViewHolder.reportSource.setText(reportData.get("author"));
         }else {
+            //binding for report type
+            //get strings of reports
             String[] reportTitles = reportData.get("title").split(SPLIT);
             reportTitle = reportTitles[0];
+
+            //get full information
             String[] fullInfo = reportData.get("information").split(SPLIT);
 
+            //set title
             informationViewHolder.reportTitle.setText(reportTitle);
-            informationViewHolder.reportInformation.setText(fullInfo[0]);
+
+            //set description
+            informationViewHolder.reportInformation.setText(fullInfo[0].trim());
+
+            //set distance
             informationViewHolder.reportLocation.setText(roundDistance);
 
-            Log.d("InformationRecyAdapter", reportTitles.length + " " + fullInfo.length);
-            Log.d("InformationRecyAdapter", printArr(reportTitles) + " ///" + printArr(fullInfo));
+            //set date
+            informationViewHolder.reportDate.setText(reportData.get("date"));
+
+            //set source
+            informationViewHolder.reportSource.setText("User's report");
         }
         switch(reportTitle){
             case "Medical":
@@ -239,6 +268,18 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         }
         return re;
     }
+
+    public String takeSubContent(String s){
+        int max = 122;
+        int fromIndex = s.length();
+        Log.d("InformationAdapter", s.length()+"");
+        if(fromIndex > max){
+            fromIndex = s.indexOf(" ", max - 10);
+            return s.substring(0, fromIndex)+"...more";
+        }
+        return s;
+    }
+
 
 }
 
