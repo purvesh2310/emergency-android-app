@@ -46,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportObject.CompactReport;
@@ -62,9 +63,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
-public class InformationListView extends Fragment {
+public class InformationListView extends BaseXBeeFragment {
 
     private static final String REPORT = "report";
 

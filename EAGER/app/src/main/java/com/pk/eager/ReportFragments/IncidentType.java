@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;
@@ -24,7 +25,7 @@ import com.pk.eager.dialog.WarningDialog;
 
 import java.util.ArrayList;
 
-public class IncidentType extends Fragment {
+public class IncidentType extends BaseXBeeFragment {
 
     private static final String ARG_PARAM1 = "param1";
     private String mParam1;

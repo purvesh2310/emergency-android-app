@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.ReportObject.Notification;
 import com.pk.eager.adapter.ClickListener;
 import com.pk.eager.adapter.NotificationRecyclerViewAdapter;
@@ -34,7 +35,7 @@ import java.util.Collections;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SubscriptionFragment extends Fragment {
+public class SubscriptionFragment extends BaseXBeeFragment {
 
     private static final String USER_NOTIFICATION_REF = "UserNotification";
     private static final String TAG = SubscriptionFragment.class.getSimpleName();

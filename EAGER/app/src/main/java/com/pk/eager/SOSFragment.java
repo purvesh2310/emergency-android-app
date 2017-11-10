@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -18,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.ReportObject.SOS;
 
@@ -25,7 +25,7 @@ import com.pk.eager.ReportObject.SOS;
  * Created by Purvesh on 4/7/2017.
  */
 
-public class SOSFragment extends Fragment {
+public class SOSFragment extends BaseXBeeFragment {
 
     private static Location location;
     private String phoneNumber;

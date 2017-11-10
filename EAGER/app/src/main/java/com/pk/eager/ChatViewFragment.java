@@ -4,7 +4,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,13 +16,14 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.adapter.ChatRecyclerViewAdapter;
 import com.pk.eager.db.handler.DatabaseHandler;
 import com.pk.eager.db.model.Report;
 
 import java.util.List;
 
-public class ChatViewFragment extends Fragment {
+public class ChatViewFragment extends BaseXBeeFragment {
 
     RecyclerView chatRecyclerView;
     LatLng currentLocation;
