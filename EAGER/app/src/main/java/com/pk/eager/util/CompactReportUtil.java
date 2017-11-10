@@ -50,34 +50,16 @@ public class CompactReportUtil {
 
             for (int j = 0; j < reportInfoList.size(); j++) {
                 ArrayList<String> individualReportInfo = reportInfoList.get(j);
+                String toString = "";
                 for(int z = 0; z < individualReportInfo.size(); z++){
-                    individualInformation += individualReportInfo.get(z)+"/";
+                    toString += individualReportInfo.get(z)+"/";
                 }
-                individualInformation = individualInformation.replace("/", "\n");
-                fullInformation += individualInformation+SPLIT;
+                toString = toString.replace("/", "\n");
+                individualInformation = toString+SPLIT;
+                fullInformation += individualInformation;
                 if (j != reportInfoList.size() - 1)
                     fullInformation = fullInformation + "\n";
             }
-
-
-            /*
-            Iterator iterator = compactReports.entrySet().iterator();
-
-            while (iterator.hasNext()) {
-                Map.Entry reportEntry = (Map.Entry) iterator.next();
-                reportTitle+=reportEntry.getKey().toString()+SPLIT;
-                reportInfoList.add((ArrayList<String>) reportEntry.getValue());
-            }
-
-            for (int j = 0; j < reportInfoList.size(); j++) {
-
-                individualInformation += reportInfoList.get(j).toString()+SPLIT;
-                individualInformation = individualInformation.replace("/", "\n");
-                fullInformation = fullInformation + individualInformation;
-
-                if (j != reportInfoList.size() - 1)
-                    fullInformation = fullInformation + "\n";
-            }*/
 
             location = String.valueOf(report.latitude) + "," + String.valueOf(report.longitude);
 
@@ -177,6 +159,20 @@ public class CompactReportUtil {
         return distanceInMile;
 
     }
+
+    public double distanceBetweenPoints(Location startPoint, Location endPoint){
+
+        float[] results = new float[1];
+
+        Location.distanceBetween(startPoint.getLatitude(),startPoint.getLongitude(),
+                endPoint.getLatitude(),endPoint.getLongitude(),results);
+
+        double distanceInMile = results[0] * 0.000621371192;
+
+        return distanceInMile;
+
+    }
+
 
     public String parseWeatherInformationForListView(Map<String, ArrayList<String>> compactReports){
 

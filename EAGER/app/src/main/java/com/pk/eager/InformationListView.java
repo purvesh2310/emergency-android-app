@@ -52,9 +52,15 @@ import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.adapter.ClickListener;
 import com.pk.eager.adapter.InformationRecyclerViewAdapter;
 import com.pk.eager.adapter.RecyclerTouchListener;
+import com.pk.eager.util.CompactReportUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -73,6 +79,9 @@ public class InformationListView extends Fragment {
     private boolean isFilterApplied = false;
     private EditText searchBar;
     InformationRecyclerViewAdapter adapter;
+    CompactReportUtil cmpUtil = new CompactReportUtil();
+    final private SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy");
+
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -174,11 +183,59 @@ public class InformationListView extends Fragment {
 
         db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                     CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
                     reportList.add(cmp);
                 }
+
+                Collections.sort(reportList, new Comparator<CompactReport>() {
+                    @Override
+                    public int compare(CompactReport o1, CompactReport o2) {
+                        Map<String,String> map1 = cmpUtil.parseReportData(o1, "info");
+                        Map<String,String> map2 = cmpUtil.parseReportData(o2, "info");
+
+                        String[] coors1 = map1.get("location").split(",");
+                        String[] coors2 = map2.get("location").split(",");
+
+                        Location location1 = new Location("");
+                        Location location2 = new Location("");
+
+                        double distanceInMile1 = 0;
+                        double distanceInMile2 = 0;
+
+                        if(coors1.length == 2 && coors2.length == 2) {
+
+                            location1.setLongitude(Double.parseDouble(coors1[1]));
+                            location1.setLatitude(Double.parseDouble(coors1[0]));
+
+
+                            location2.setLongitude(Double.parseDouble(coors2[1]));
+                            location2.setLatitude(Double.parseDouble(coors2[0]));
+
+                            distanceInMile1 = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
+                            distanceInMile2 = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
+                        }
+
+                        Date date1 = null;
+                        Date date2 = null;
+
+                        try {
+                            date1 = dateFormat.parse(map1.get("date"));
+                            date2 = dateFormat.parse(map2.get("date"));
+                        }catch (Exception ex){
+
+                        }
+
+                        if(date1!=null && date2!=null) {
+                            if (date1.equals(date2)) {
+                                if (distanceInMile1 == distanceInMile2)
+                                    return -1;
+                                return Double.compare(distanceInMile1, distanceInMile2);
+                            } else return date1.compareTo(date2);
+                        }else return -1;
+                    }
+                });
 
                 adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
                 reportRecyclerView.setAdapter(adapter);

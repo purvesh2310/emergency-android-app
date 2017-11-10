@@ -15,14 +15,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="1dp"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -31,7 +30,7 @@
                     <ImageView
                         android:id="@+id/viewNotificationTypeLogo"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="top"
                         android:layout_marginRight="8dp"
                         android:layout_marginTop="5dp"
@@ -54,32 +53,35 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/viewNotificationLocationTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.1 mi"
+                            android:textColor="#2F4F4F"
+                            android:textSize="14dp"
+                            android:layout_weight="0.13"
+                            android:paddingTop="2dp"/>
+
+                        <TextView
                             android:id="@+id/viewNotificationDateTextView"
                             style="@style/reportList"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="0dp"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="2dp"
                             android:paddingTop="2dp"
                             android:text="Mon, 11/9"
                             android:textColor="#777b82"
                             android:textSize="14dp"
                             android:textStyle="bold" />
                     </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/viewNotificationLocationTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
-                        android:text="0.1 mi"
-                        android:textAlignment="center"
-                        android:textColor="#2F4F4F"
-                        android:textSize="13dp"
-                        android:layout_weight="0.13"
-                        android:paddingLeft="2dp"/>
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/viewNotificationAllInfo"
+                    android:orientation="vertical">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,6 +90,7 @@
                     android:textSize="16dp"
                     android:layout_marginTop="16dp"
                     android:paddingLeft="8dp"/>
+                </LinearLayout>
 
                 <View
                     android:layout_marginTop="4dp"
