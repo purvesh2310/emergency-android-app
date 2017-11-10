@@ -150,7 +150,8 @@ def parseMissingKid(v):
 			'summary': [summary],
 			'date': [date],
 			'post_link': [post_link],
-			'img_link': [img_link]	
+			'img_link': [img_link],
+			'author': 'missingkids.com'	
 		};
 
 		dic = {'type': 'feed-missing', 'compactReports': compactReport, 'latitude':0, 'longitude':0, 'phoneNumber':'0', 'timestamp':''}
