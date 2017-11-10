@@ -108,9 +108,9 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             informationViewHolder.reportInformation.setText(takeSubContent(reportData.get("information")));
 
             //get distance
-            if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather"))
+          //  if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather"))
                 informationViewHolder.reportLocation.setText(roundDistance);
-
+          //  else informationViewHolder.reportLocation.setText("");
             //get date
             informationViewHolder.reportDate.setText(reportData.get("date"));
 
@@ -178,7 +178,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         for(CompactReport cmpReport: reportList){
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title").split("-")[0];
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             if(reportTitle.toLowerCase().equals(query.toLowerCase())){
                 temp.add(cmpReport);
@@ -196,7 +196,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         for(CompactReport cmpReport: reportList){
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title").split("-")[0];
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             for (String category : categoryList) {
 
@@ -241,7 +241,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         for (CompactReport cmpReport : reportList) {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title").split("-")[0];
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
 

@@ -23,6 +23,7 @@ import com.pk.eager.adapter.HistoryRecyclerViewAdapter;
 import com.pk.eager.db.handler.DatabaseHandler;
 import com.pk.eager.db.model.Report;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -72,6 +73,7 @@ public class HistoryFragment extends BaseXBeeFragment {
 
                         DatabaseHandler db = new DatabaseHandler(getContext());
                         List<Report> reports = db.getAllReports();
+                        Collections.reverse(reports);
 
                         HistoryRecyclerViewAdapter adapter = new HistoryRecyclerViewAdapter(getContext(), reports, currentLocation);
                         historyRecyclerView.setAdapter(adapter);

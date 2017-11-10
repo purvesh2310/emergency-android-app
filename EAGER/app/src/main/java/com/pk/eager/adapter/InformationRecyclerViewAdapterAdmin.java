@@ -13,7 +13,6 @@ import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +91,7 @@ public class InformationRecyclerViewAdapterAdmin extends RecyclerView.Adapter<In
             }
         }
 
-        String reportTitle = reportData.get("title");
+        String reportTitle = reportData.get("title").split("~")[0];
         String fullInfo = reportData.get("information");
 
         informationViewHolder.reportTitle.setText(reportTitle);

@@ -54,6 +54,7 @@ public class Information extends BaseXBeeFragment {
     private DatabaseReference db;
     LatLng currentLocation;
     List<CompactReport> reportList;
+    private final String SPLIT = "~";
 
     private MenuItem mSearchAction;
     private MenuItem mFilterAction;
@@ -147,9 +148,6 @@ public class Information extends BaseXBeeFragment {
                                             Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                                         }
                                     });
-
-
-
 
                                     // For zooming automatically to the location of the marker
                                     CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -272,7 +270,7 @@ public class Information extends BaseXBeeFragment {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"info");
 
-            String title = reportData.get("title");
+            String title = reportData.get("title").split(SPLIT)[0];
             String info = reportData.get("information");
 
             if (cmpReport.type.equals("Report")){
@@ -296,7 +294,7 @@ public class Information extends BaseXBeeFragment {
         for(CompactReport cmpReport: reportList){
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             for (String category : categoryList) {
 
@@ -344,7 +342,7 @@ public class Information extends BaseXBeeFragment {
         for (CompactReport cmpReport : reportList) {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
 

@@ -69,6 +69,7 @@ public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCall
         if (getIntent().hasExtra(REPORT)) {
             //case when ViewNotification was triggered by an intent from another activity
             report = getIntent().getParcelableExtra(REPORT);
+            setUpReportDetail(report);
         } else {
             //case ViewNotification was triggered by clickAction when user taps on notification
             if (getIntent() != null && getIntent().getExtras() != null)
@@ -80,7 +81,8 @@ public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCall
                 notifiedReportQuery.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        setUpReportDetail();
+                        report = dataSnapshot.getValue(CompactReport.class);
+                        setUpReportDetail(report);
                     }
 
                     @Override
@@ -105,13 +107,9 @@ public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCall
                 });
             }
         }
-
-        if(report!=null) {
-            setUpReportDetail();
-        }
     }
 
-    public void setUpReportDetail(){
+    public void setUpReportDetail(CompactReport report){
         CompactReportUtil cmpUtil = new CompactReportUtil();
         Map<String, String> map = cmpUtil.parseReportData(report,"info");
 

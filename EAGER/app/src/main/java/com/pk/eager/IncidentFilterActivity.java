@@ -151,7 +151,6 @@ public class IncidentFilterActivity extends AppCompatActivity {
 
         setResult(Activity.RESULT_OK,returnIntent);
         finish();
-
     }
 
     public ArrayList<String> getCategorySelected(){

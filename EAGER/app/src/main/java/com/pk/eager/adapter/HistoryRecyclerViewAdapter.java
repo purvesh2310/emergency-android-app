@@ -27,6 +27,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     List<Report> reportList;
     LatLng currentLocation;
     String roundDistance;
+    String SPLIT="~";
 
     private Intent clientChatThread;
 
@@ -110,7 +111,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
         Report report = reportList.get(position);
 
-        String title = report.getTitle();
+        String title = report.getTitle().split(SPLIT)[0];
         String information = report.getInformation();
         LatLng incidentLocation = new LatLng(report.getLatitude(),report.getLongitude());
 

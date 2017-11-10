@@ -86,12 +86,6 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
                     holder.incidentTypeLogo.setImageResource(R.drawable.rss);
                     break;
             }
-
-
-
-
-
-
         }else Log.d(TAG, "null view");
 
     }

@@ -191,50 +191,74 @@ public class InformationListView extends BaseXBeeFragment {
                 Collections.sort(reportList, new Comparator<CompactReport>() {
                     @Override
                     public int compare(CompactReport o1, CompactReport o2) {
-                        Map<String,String> map1 = cmpUtil.parseReportData(o1, "info");
-                        Map<String,String> map2 = cmpUtil.parseReportData(o2, "info");
+                        Map<String, String> map1 = cmpUtil.parseReportData(o1, "info");
+                        Map<String, String> map2 = cmpUtil.parseReportData(o2, "info");
+                    /*
+                    String[] coors1 = map1.get("location").split(",");
+                    String[] coors2 = map2.get("location").split(",");
 
-                        String[] coors1 = map1.get("location").split(",");
-                        String[] coors2 = map2.get("location").split(",");
+                    Location location1 = new Location("");
+                    Location location2 = new Location("");
 
-                        Location location1 = new Location("");
-                        Location location2 = new Location("");
+                    double distanceInMile1 = 0;
+                    double distanceInMile2 = 0;
 
-                        double distanceInMile1 = 0;
-                        double distanceInMile2 = 0;
+                    if(coors1.length == 2 && coors2.length == 2) {
 
-                        if(coors1.length == 2 && coors2.length == 2) {
-
-                            location1.setLongitude(Double.parseDouble(coors1[1]));
-                            location1.setLatitude(Double.parseDouble(coors1[0]));
+                        location1.setLongitude(Double.parseDouble(coors1[1]));
+                        location1.setLatitude(Double.parseDouble(coors1[0]));
 
 
-                            location2.setLongitude(Double.parseDouble(coors2[1]));
-                            location2.setLatitude(Double.parseDouble(coors2[0]));
+                        location2.setLongitude(Double.parseDouble(coors2[1]));
+                        location2.setLatitude(Double.parseDouble(coors2[0]));
 
+                        if(Dashboard.location!=null) {
                             distanceInMile1 = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
                             distanceInMile2 = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
                         }
-
+                    }
+                       */
                         Date date1 = null;
                         Date date2 = null;
-
                         try {
                             date1 = dateFormat.parse(map1.get("date"));
                             date2 = dateFormat.parse(map2.get("date"));
-                        }catch (Exception ex){
-
+                        } catch (Exception ex) {
+                            Log.d(TAG, "Date format exception");
                         }
+                        if(date1==null && date2!=null) return 1;
+                        else if(date2==null && date1!=null) return -1;
+                        else if(date1==null && date2==null) return 0;
 
-                        if(date1!=null && date2!=null) {
-                            if (date1.equals(date2)) {
-                                if (distanceInMile1 == distanceInMile2)
-                                    return -1;
-                                return Double.compare(distanceInMile1, distanceInMile2);
-                            } else return date1.compareTo(date2);
-                        }else return -1;
+                        if(date2.compareTo(date1) == 0){
+                            Location location1 = setUpLocation(map1.get("location"));
+                            Location location2 = setUpLocation(map2.get("location"));
+                            Double d1 = Double.POSITIVE_INFINITY;
+                            Double d2 = Double.POSITIVE_INFINITY;
+                            /*
+                            if(location1 == null && location2!=null) return 1;
+                            else if(location1 !=null && location2 == null) return -1;
+                            else if(location1==null && location2==null) return 0;*/
+                            if(location1!=null)
+                                d1 = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
+                            if(location2!=null)
+                                d2 = cmpUtil.distanceBetweenPoints(location2, Dashboard.location);
+
+                            return -Double.compare(d2, d1);
+                        }
+                        return date2.compareTo(date1);
+
+                    /*
+                    if(date1!=null && date2!=null) {
+                        if (date1.equals(date2)) {
+                            if (distanceInMile1 == distanceInMile2)
+                                return -1;
+                            return Double.compare(distanceInMile1, distanceInMile2);
+                        } else return date1.compareTo(date2);
+                    }else return -1;*/
                     }
                 });
+
 
                 adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
                 reportRecyclerView.setAdapter(adapter);
@@ -455,5 +479,13 @@ public class InformationListView extends BaseXBeeFragment {
             }
         }
 
+    }
+
+    public Location setUpLocation(String locationCoor){
+        Location location = new Location("");
+        String[] coor = locationCoor.split(",");
+        location.setLatitude(Double.parseDouble(coor[0]));
+        location.setLongitude(Double.parseDouble(coor[1]));
+        return location;
     }
 }

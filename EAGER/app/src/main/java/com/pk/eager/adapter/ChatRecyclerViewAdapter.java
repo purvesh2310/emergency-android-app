@@ -27,7 +27,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     List<Report> reportList;
     LatLng currentLocation;
     String roundDistance;
-
+    String SPLIT="~";
     private Intent clientChatThread;
 
     public static class InformationViewHolder extends RecyclerView.ViewHolder {
@@ -110,7 +110,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
 
         Report report = reportList.get(position);
 
-        String title = report.getTitle();
+        String title = report.getTitle().split(SPLIT)[0];
         String information = report.getInformation();
         LatLng incidentLocation = new LatLng(report.getLatitude(),report.getLongitude());
 

@@ -88,7 +88,6 @@ public class CompactReportUtil {
             reportData.put("location", location);
             reportData.put("date", date);
             reportData.put("author", author);
-
             return reportData;
         }else if(report.type.equals("feed-weather")){
 
@@ -140,7 +139,7 @@ public class CompactReportUtil {
 
             reportData.put("title", reportTitle);
             reportData.put("information", info);
-            reportData.put("location", location);
+            reportData.put("location", "");
             reportData.put("author", "missingkids.com");
             reportData.put("date", date);
             return reportData;
