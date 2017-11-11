@@ -37,6 +37,8 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         TextView reportInformation;
         TextView reportLocation;
         ImageView incidentTypeLogo;
+        TextView reportDate;
+        TextView reportSource;
 
         private ClickListener mClickListener;
 
@@ -47,6 +49,10 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             reportInformation = (TextView) itemView.findViewById(R.id.reportInformationTextView);
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
             incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
+            reportDate = (TextView) itemView.findViewById(R.id.reportDateTextView);
+            reportSource = (TextView) itemView.findViewById(R.id.reportDateTextView);
+            reportSource.setVisibility(View.GONE);
+            reportDate.setVisibility(View.GONE);
 
             // Set ClickListener for the entire row, can set on individual components within a row
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +118,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         Report report = reportList.get(position);
 
         String title = report.getTitle().split(SPLIT)[0];
-        String information = report.getInformation();
+        String information = report.getInformation().split(SPLIT)[0];
         LatLng incidentLocation = new LatLng(report.getLatitude(),report.getLongitude());
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
@@ -141,7 +147,6 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
                 holder.incidentTypeLogo.setImageResource(R.drawable.repairing);
                 break;
         }
-
     }
 
     private void switchActivity(View v, int pos){

@@ -110,8 +110,8 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
     private void getAllInfo() {
         mReport = getIntent().getParcelableExtra("reportObj");
         uid = mReport.getUid();
-        title = mReport.getTitle();
-        information = mReport.getInformation();
+        title = mReport.getTitle().split("~")[0];
+        information = mReport.getInformation().split("~")[0];
         roundDistance = getIntent().getStringExtra("roundDistance");
     }
 

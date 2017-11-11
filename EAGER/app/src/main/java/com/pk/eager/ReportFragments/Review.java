@@ -75,6 +75,7 @@ public class Review extends Fragment implements IDataReceiveListener {
     private AddressResultReceiver resultReceiver;
     private Location location;
     private String phoneNumber;
+    Button submit;
 
     private XBeeManager xbeeManager;
     private boolean connecting = false;
@@ -142,6 +143,8 @@ public class Review extends Fragment implements IDataReceiveListener {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Review");
+
+        submit = (Button) this.getView().findViewById(R.id.button_review_submit);
 
         TextView trap = new TextView(getContext());
         TextView medical = new TextView(getContext());
@@ -223,7 +226,7 @@ public class Review extends Fragment implements IDataReceiveListener {
 
     public void setButtonListener(){
 
-        Button submit = (Button) this.getView().findViewById(R.id.button_review_submit);
+        //Button submit = (Button) this.getView().findViewById(R.id.button_review_submit);
         submit.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -349,7 +352,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                                 Dashboard.incidentReport = new IncidentReport("Bla");
                                 saveReportForHistory(compact, key);
                                 getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+                                submit.setText("SUBMITTED");
                             }
                         });
 
@@ -424,6 +427,7 @@ public class Review extends Fragment implements IDataReceiveListener {
                         Dashboard.incidentType = null;
                         getActivity().getSupportFragmentManager()
                                 .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        submit.setText("SUBMITTED");
                     }
                 });
 

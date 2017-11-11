@@ -111,7 +111,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
         Report report = reportList.get(position);
 
         String title = report.getTitle().split(SPLIT)[0];
-        String information = report.getInformation();
+        String information = report.getInformation().split(SPLIT)[0];
         LatLng incidentLocation = new LatLng(report.getLatitude(),report.getLongitude());
 
         CompactReportUtil cmpUtil = new CompactReportUtil();

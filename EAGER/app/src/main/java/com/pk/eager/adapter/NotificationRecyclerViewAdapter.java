@@ -1,5 +1,6 @@
 package com.pk.eager.adapter;
 
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.Notification;
+import com.pk.eager.util.CompactReportUtil;
 
 import java.util.ArrayList;
 
@@ -58,7 +61,18 @@ public class NotificationRecyclerViewAdapter extends RecyclerView.Adapter<Notifi
             Log.d(TAG, notificationList.get(position).getBody());
 
             holder.textview.setText(notificationList.get(position).getBody());
-            holder.textView2.setText("From " + notificationList.get(position).getZipcode());
+
+            CompactReportUtil cmpUtil = new CompactReportUtil();
+            String reportLocation = notificationList.get(position).getZipcode();
+            String[] coor = reportLocation.split("_");
+            Location loc = new Location("");
+            loc.setLatitude(Double.parseDouble(coor[1]));
+            loc.setLongitude(Double.parseDouble(coor[0]));
+
+            double distanceInMile = cmpUtil.distanceBetweenPoints(loc, Dashboard.location);
+            String roundDistance = String.format("%.2f", distanceInMile);
+            roundDistance = roundDistance + " mi";
+            holder.textView2.setText("From " + roundDistance + " away");
             String reportTitle = notificationList.get(position).getType();
 
             switch(reportTitle){
