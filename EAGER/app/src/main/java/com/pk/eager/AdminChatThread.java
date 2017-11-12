@@ -127,6 +127,13 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         uid = getIntent().getExtras().getString("key");
         title = map.get("title");
         information = map.get("information");
+
+        String[] reportTitles = title.split("~");
+        title = reportTitles[0];
+
+        String[] fullInfoArray = information.split("~");
+        information = fullInfoArray[0].trim();
+
         incidentLocation = map.get("location");
     }
 
@@ -205,6 +212,8 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
 
         chatInput = (EditText) findViewById(R.id.etChatInput);
         sendButton = (ImageButton) findViewById(R.id.bSend);
+
+
 
         reportTitle.setText(title);
         reportInformation.setText(information);

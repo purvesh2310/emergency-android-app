@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -24,6 +25,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +72,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
@@ -409,12 +412,15 @@ public class Review extends Fragment implements IDataReceiveListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {  //this part is where you put whatever you want to do
-                        Log.d(TAG, "In thead");
+
                         final String locString = address.getLongitude()+"_"+address.getLatitude();
+
                         DatabaseReference newChild = db.push();
                         final String key = newChild.getKey();
                         String reportType = incidentReport.getFirstType();
-                        Log.d(TAG, "type "+reportType);
+
+                        Log.d(TAG, "type "+ reportType);
+
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
                         String timestamp = simpleDateFormat.format(new Date());
@@ -427,7 +433,8 @@ public class Review extends Fragment implements IDataReceiveListener {
                                 Dashboard.incidentType = null;
                                 Dashboard.incidentReport = new IncidentReport("Bla");
                                 saveReportForHistory(compact, key);
-                                getActivity().getSupportFragmentManager().popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                getActivity().getSupportFragmentManager().
+                                        popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 submit.setText("SUBMITTED");
                             }
                         });
@@ -436,7 +443,8 @@ public class Review extends Fragment implements IDataReceiveListener {
 
 			            // This is a way to know that which device create the alert, store the information on Firebase (NB)
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                        ref.child("ReportOwner").child(key).child("owner").setValue(FirebaseInstanceId.getInstance().getToken());
+                        ref.child("ReportOwner").child(key).child("owner").
+                                setValue(FirebaseInstanceId.getInstance().getToken());
 
                     }
                 });
@@ -568,10 +576,11 @@ public class Review extends Fragment implements IDataReceiveListener {
                         xbeeManager.broadcastData(dataToSend);
                         Log.d(TAG, "Broadcasting ");
                         showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
+                        showResultDialog("Success","Data successfully sent over XBee.");
                     }else Log.d(TAG, "xbee not open");
                 } catch (XBeeException e) {
-                    //showToastMessage("error: " + e.getMessage());
                     Log.d("Xbee exception ", e.toString());
+                    showResultDialog("Error","Something went wrong. Please try again.");
                 }
             }
         });
@@ -683,6 +692,8 @@ public class Review extends Fragment implements IDataReceiveListener {
 
             // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0);
+
+            showResultDialog("Success","Report successfully sent over Bluetooth.");
         }
 
     }
@@ -693,7 +704,8 @@ public class Review extends Fragment implements IDataReceiveListener {
 
         location = Dashboard.location;
 
-        CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, "Report", null);
+        CompactReport compact = new CompactReport(smallerSize, location.getLongitude(),
+                location.getLatitude(), phoneNumber, "Report", null);
 
         // Setting XBEE address of the originator device
         String deviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
@@ -702,6 +714,10 @@ public class Review extends Fragment implements IDataReceiveListener {
         pathToServer.add(deviceAddress);
         compact.setPathToServer(pathToServer);
 
+        UUID keyUUID = UUID.randomUUID();
+        String key = keyUUID.toString();
+
+        saveReportForHistory(compact, key);
 
         Gson gson = new Gson();
         String data = gson.toJson(compact);
@@ -731,6 +747,11 @@ public class Review extends Fragment implements IDataReceiveListener {
 
         CompactReport compact = new CompactReport(smallerSize, location.getLongitude(),
                 location.getLatitude(), phoneNumber, "Report", null);
+
+        UUID keyUUID = UUID.randomUUID();
+        String key = keyUUID.toString();
+
+        saveReportForHistory(compact, key);
 
         Gson gson = new Gson();
         String data = gson.toJson(compact);
@@ -835,6 +856,23 @@ public class Review extends Fragment implements IDataReceiveListener {
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(macAddressOfReceiver);
             mChatService.connect(device, true);
         }
+    }
+
+    public void showResultDialog(String title, String message){
+
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(getContext());
+
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        getActivity().getSupportFragmentManager()
+                                .popBackStackImmediate("chooseAction", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                })
+                .show();
     }
 }
 

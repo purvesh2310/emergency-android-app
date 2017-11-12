@@ -235,14 +235,19 @@ public class InformationListView extends BaseXBeeFragment {
                             Location location2 = setUpLocation(map2.get("location"));
                             Double d1 = Double.POSITIVE_INFINITY;
                             Double d2 = Double.POSITIVE_INFINITY;
+
+                            Location curLocation = new Location("");
+                            curLocation.setLatitude(currentLocation.latitude);
+                            curLocation.setLongitude(currentLocation.longitude);
+
                             /*
                             if(location1 == null && location2!=null) return 1;
                             else if(location1 !=null && location2 == null) return -1;
                             else if(location1==null && location2==null) return 0;*/
                             if(location1!=null)
-                                d1 = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
+                                d1 = cmpUtil.distanceBetweenPoints(location1, curLocation);
                             if(location2!=null)
-                                d2 = cmpUtil.distanceBetweenPoints(location2, Dashboard.location);
+                                d2 = cmpUtil.distanceBetweenPoints(location2, curLocation);
 
                             return -Double.compare(d2, d1);
                         }
@@ -482,10 +487,13 @@ public class InformationListView extends BaseXBeeFragment {
     }
 
     public Location setUpLocation(String locationCoor){
+
         Location location = new Location("");
         String[] coor = locationCoor.split(",");
+
         location.setLatitude(Double.parseDouble(coor[0]));
         location.setLongitude(Double.parseDouble(coor[1]));
+
         return location;
     }
 }
