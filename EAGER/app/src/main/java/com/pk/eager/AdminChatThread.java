@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -108,10 +109,13 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_chat_thread);
-        setTitle("History");
+
+        setTitle("Admin Chat");
 
         deviceToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, deviceToken);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getAllInfo();
         getRecyclerView();
@@ -325,6 +329,18 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         int i = v.getId();
         if(i == R.id.bSend)
             sendMessage();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
