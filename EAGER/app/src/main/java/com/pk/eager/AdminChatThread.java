@@ -250,8 +250,6 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         change the device replace the token below and change the header's token too.
          */
 
-        if(deviceToken.equals(Constant.ADMIN)) {
-
             messenger = "dispatcher";
             chatString = chatInput.getText().toString();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
@@ -312,7 +310,6 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
 
                 }
             });
-        }
     }
 
     // This method is used to hide the ui so that both "This" and "That" doesn't show up the same time.
