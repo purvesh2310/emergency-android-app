@@ -7,8 +7,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.hardware.usb.host" />
-
     <uses-permission android:name="android.hardware.usb.host" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:name=".XBeeManagerApplication"
@@ -101,6 +103,7 @@
         <activity android:name=".AdminChatThread" />
         <activity android:name=".ClientChatThread" />
         <activity android:name=".BaseClass.BaseXbeeActivity"></activity>
+        <activity android:name=".BluetoothDeviceListActivity"></activity>
     </application>
 
 </manifest>

@@ -31,13 +31,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.pk.eager.BaseClass.BaseXbeeActivity;
 import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.User.Account;
 
 
-public class Dashboard extends AppCompatActivity
+public class Dashboard extends BaseXbeeActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         IncidentType.OnFragmentInteractionListener,
         Information.OnFragmentInteractionListener,
