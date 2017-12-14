@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.adapter.ClickListener;
@@ -86,6 +88,10 @@ public class AdminMode extends Fragment {
 
         getActivity().setTitle("Chat With Report Senders");
         reportRecyclerView = (RecyclerView) view.findViewById(R.id.informationListView);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.reportIncidentFAB);
+        fab.setVisibility(View.GONE);
+
         fetchDataFromFirebase();
 
     }
@@ -103,10 +109,12 @@ public class AdminMode extends Fragment {
         db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                     CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
                     adminList.put(cmp, noteDataSnapshot.getKey().toString());
-                    reportList.add(cmp);
+                    if(cmp.getType().equals("Report"))
+                        reportList.add(cmp);
                 }
 
                 adapter = new InformationRecyclerViewAdapterAdmin(getContext(), reportList);

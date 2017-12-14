@@ -7,7 +7,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
@@ -42,20 +42,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
 
 /**
  * Created by Purvesh on 4/7/2017.
  */
 
-public class Information extends Fragment {
+public class Information extends BaseXBeeFragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
     private DatabaseReference db;
     LatLng currentLocation;
     List<CompactReport> reportList;
+    private final String SPLIT = "~";
 
     private MenuItem mSearchAction;
     private MenuItem mFilterAction;
@@ -149,9 +148,6 @@ public class Information extends Fragment {
                                             Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                                         }
                                     });
-
-
-
 
                                     // For zooming automatically to the location of the marker
                                     CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -274,7 +270,7 @@ public class Information extends Fragment {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"info");
 
-            String title = reportData.get("title");
+            String title = reportData.get("title").split(SPLIT)[0];
             String info = reportData.get("information");
 
             if (cmpReport.type.equals("Report")){
@@ -298,7 +294,7 @@ public class Information extends Fragment {
         for(CompactReport cmpReport: reportList){
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             for (String category : categoryList) {
 
@@ -346,7 +342,7 @@ public class Information extends Fragment {
         for (CompactReport cmpReport : reportList) {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
 

@@ -31,13 +31,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.pk.eager.BaseClass.BaseXbeeActivity;
 import com.pk.eager.ReportFragments.Constant;
 import com.pk.eager.ReportFragments.IncidentType;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.User.Account;
 
 
-public class Dashboard extends AppCompatActivity
+public class Dashboard extends BaseXbeeActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         IncidentType.OnFragmentInteractionListener,
         Information.OnFragmentInteractionListener,
@@ -72,15 +73,23 @@ public class Dashboard extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        setupUserInfoInNavigationDrawer();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         // Code for enabling the admin mode in the Navigation Drawer
         navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(false);
-        String fireBaseToken = FirebaseInstanceId.getInstance().getToken();
+        /*String fireBaseToken = FirebaseInstanceId.getInstance().getToken();
 
         if(fireBaseToken != null) {
             if (fireBaseToken.equals(Constant.ADMIN))
                 navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(true);
+        }*/
+
+        if(currentUser != null){
+            if(currentUser.getEmail().equals("admin@eager.com")){
+                navigationView.getMenu().findItem(R.id.nav_admin_mode).setVisible(true);
+            }
         }
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -100,8 +109,6 @@ public class Dashboard extends AppCompatActivity
                     .addApi(LocationServices.API)
                     .build();
         }
-
-        setupUserInfoInNavigationDrawer();
 
         //Open XBee connection
         xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
@@ -198,8 +205,7 @@ public class Dashboard extends AppCompatActivity
         }
 
         // Add admin mode here
-        else if (id == R.id.nav_admin_mode
-                && FirebaseInstanceId.getInstance().getToken().equals(Constant.ADMIN)){
+        else if (id == R.id.nav_admin_mode){
                 fragment = new AdminMode();
         }
 

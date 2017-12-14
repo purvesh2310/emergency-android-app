@@ -5,18 +5,23 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.hardware.usb.host" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
+        android:name=".XBeeManagerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" android:name=".XBeeManagerApplication">
-
-        <uses-library android:name="com.digi.android" android:required="false"/>
+        android:theme="@style/AppTheme">
+        <uses-library
+            android:name="com.digi.android"
+            android:required="false" />
 
         <!-- Facebook Configuration -->
         <meta-data
@@ -94,10 +99,11 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
             android:name=".NotificationSetting"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
-            />
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity android:name=".AdminChatThread" />
-        <activity android:name=".ClientChatThread"></activity>
+        <activity android:name=".ClientChatThread" />
+        <activity android:name=".BaseClass.BaseXbeeActivity"></activity>
+        <activity android:name=".BluetoothDeviceListActivity"></activity>
     </application>
 
 </manifest>

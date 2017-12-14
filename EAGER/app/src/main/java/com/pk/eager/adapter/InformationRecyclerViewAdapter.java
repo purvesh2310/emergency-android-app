@@ -2,6 +2,7 @@ package com.pk.eager.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +26,18 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
     Context context;
     List<CompactReport> reportList;
     LatLng currentLocation;
+    private final String SPLIT = "~";
 
     public static class InformationViewHolder extends RecyclerView.ViewHolder {
 
         TextView reportTitle;
         TextView reportInformation;
         TextView reportLocation;
+        TextView reportInformationAdditional;
         ImageView incidentTypeLogo;
         ImageView locationMarkerIcon;
+        TextView reportDate;
+        TextView reportSource;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -42,7 +47,8 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             reportLocation = (TextView) itemView.findViewById(R.id.reportLocationTextView);
             incidentTypeLogo = (ImageView) itemView.findViewById(R.id.incidentTypeLogo);
             locationMarkerIcon = (ImageView) itemView.findViewById(R.id.locationMarkerIcon);
-
+            reportDate = (TextView) itemView.findViewById(R.id.reportDateTextView);
+            reportSource = (TextView) itemView.findViewById(R.id.reportSourceTextView);
         }
     }
 
@@ -76,27 +82,64 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         CompactReport report = reportList.get(i);
         LatLng reportLocation = new LatLng(report.latitude,report.longitude);
         String roundDistance = "";
+        String reportTitle = "";
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
         Map<String, String> reportData = cmpUtil.parseReportData(report,"list");
 
+        //get distance if it is report type
         if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather")){
             double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation,reportLocation);
             roundDistance = String.format("%.2f", distanceInMile);
-            roundDistance = roundDistance + " miles far";
-            informationViewHolder.locationMarkerIcon.setVisibility(View.VISIBLE);
+            roundDistance = roundDistance + " mi";
+           // informationViewHolder.locationMarkerIcon.setVisibility(View.VISIBLE);
         } else {
             // Hiding the location icon as it is not available for feed-missing & feed-weather
-            informationViewHolder.locationMarkerIcon.setVisibility(View.INVISIBLE);
+          //  informationViewHolder.locationMarkerIcon.setVisibility(View.INVISIBLE);
         }
 
-        String reportTitle = reportData.get("title");
-        String fullInfo = reportData.get("information");
+        //binding for different type of report
+        if(!report.type.equals("Report")){
+            //get title
+            reportTitle = reportData.get("title");
+            informationViewHolder.reportTitle.setText(reportTitle);
 
-        informationViewHolder.reportTitle.setText(reportTitle);
-        informationViewHolder.reportInformation.setText(fullInfo);
-        informationViewHolder.reportLocation.setText(roundDistance);
+            //get description
+            informationViewHolder.reportInformation.setText(takeSubContent(reportData.get("information")));
 
+            //get distance
+          //  if(!report.type.equals("feed-missing") && !report.type.equals("feed-weather"))
+                informationViewHolder.reportLocation.setText(roundDistance);
+          //  else informationViewHolder.reportLocation.setText("");
+            //get date
+            informationViewHolder.reportDate.setText(reportData.get("date"));
+
+            //get source
+            informationViewHolder.reportSource.setText(reportData.get("author"));
+        }else {
+            //binding for report type
+            //get strings of reports
+            String[] reportTitles = reportData.get("title").split(SPLIT);
+            reportTitle = reportTitles[0];
+
+            //get full information
+            String[] fullInfo = reportData.get("information").split(SPLIT);
+
+            //set title
+            informationViewHolder.reportTitle.setText(reportTitle);
+
+            //set description
+            informationViewHolder.reportInformation.setText(fullInfo[0].trim());
+
+            //set distance
+            informationViewHolder.reportLocation.setText(roundDistance);
+
+            //set date
+            informationViewHolder.reportDate.setText(reportData.get("date"));
+
+            //set source
+            informationViewHolder.reportSource.setText("User's report");
+        }
         switch(reportTitle){
             case "Medical":
                 informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.hospital);
@@ -135,7 +178,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         for(CompactReport cmpReport: reportList){
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             if(reportTitle.toLowerCase().equals(query.toLowerCase())){
                 temp.add(cmpReport);
@@ -153,7 +196,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         for(CompactReport cmpReport: reportList){
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             for (String category : categoryList) {
 
@@ -198,7 +241,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         for (CompactReport cmpReport : reportList) {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"list");
-            String reportTitle = reportData.get("title");
+            String reportTitle = reportData.get("title").split(SPLIT)[0];
 
             LatLng reportLocation = new LatLng(cmpReport.latitude,cmpReport.longitude);
 
@@ -217,4 +260,26 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
         updateList(temp);
     }
+
+    public String printArr(String[] arr){
+        String re = "";
+        for(String s : arr){
+            re += s +"//";
+        }
+        return re;
+    }
+
+    public String takeSubContent(String s){
+        int max = 122;
+        int fromIndex = s.length();
+        Log.d("InformationAdapter", s.length()+"");
+        if(fromIndex > max){
+            fromIndex = s.indexOf(" ", max - 10);
+            return s.substring(0, fromIndex)+"...more";
+        }
+        return s;
+    }
+
+
 }
+

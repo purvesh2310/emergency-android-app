@@ -2,6 +2,7 @@ package com.pk.eager.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,11 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.util.CompactReportUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,7 @@ public class InformationRecyclerViewAdapterAdmin extends RecyclerView.Adapter<In
     public InformationRecyclerViewAdapterAdmin(Context context, List<CompactReport> reportList){
         this.context = context;
         this.reportList = reportList;
+        this.currentLocation = new LatLng(Dashboard.location.getLatitude(),Dashboard.location.getLongitude());
     }
 
 
@@ -78,48 +80,50 @@ public class InformationRecyclerViewAdapterAdmin extends RecyclerView.Adapter<In
     public void onBindViewHolder(InformationViewHolder informationViewHolder, final int i) {
 
         CompactReport report = reportList.get(i);
-        LatLng reportLocation = new LatLng(report.latitude,report.longitude);
+        LatLng reportLocation = new LatLng(report.latitude, report.longitude);
         String roundDistance = "";
 
         CompactReportUtil cmpUtil = new CompactReportUtil();
         Map<String, String> reportData = cmpUtil.parseReportData(report, "info");
 
-        if(currentLocation != null) {
-            if (!report.type.equals("feed-missing") && !report.type.equals("feed-weather")) {
-                double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation, reportLocation);
-                roundDistance = String.format("%.2f", distanceInMile);
-                roundDistance = roundDistance + " miles far";
+        if (report.getType().equals("Report")) {
+
+            double distanceInMile = cmpUtil.distanceBetweenPoints(currentLocation, reportLocation);
+            roundDistance = String.format("%.2f", distanceInMile);
+            roundDistance = roundDistance + " miles";
+
+            String[] reportTitles = reportData.get("title").split("~");
+            String reportTitle = reportTitles[0];
+
+            String[] fullInfoArray = reportData.get("information").split("~");
+            String fullInfo = fullInfoArray[0].trim();
+
+            informationViewHolder.reportTitle.setText(reportTitle);
+            informationViewHolder.reportInformation.setText(fullInfo);
+            if (currentLocation != null) {
+                informationViewHolder.reportLocation.setText(roundDistance);
             }
-        }
 
-        String reportTitle = reportData.get("title");
-        String fullInfo = reportData.get("information");
-
-        informationViewHolder.reportTitle.setText(reportTitle);
-        informationViewHolder.reportInformation.setText(fullInfo);
-        if(currentLocation != null) {
-            informationViewHolder.reportLocation.setText(roundDistance);
-        }
-
-        switch(reportTitle){
-            case "Medical":
-                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.hospital);
-                break;
-            case "Fire":
-                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.flame);
-                break;
-            case "Police":
-                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.siren);
-                break;
-            case "Traffic":
-                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.cone);
-                break;
-            case "Utility":
-                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.repairing);
-                break;
-            default:
-                informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.rss);
-                break;
+            switch (reportTitle) {
+                case "Medical":
+                    informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.hospital);
+                    break;
+                case "Fire":
+                    informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.flame);
+                    break;
+                case "Police":
+                    informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.siren);
+                    break;
+                case "Traffic":
+                    informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.cone);
+                    break;
+                case "Utility":
+                    informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.repairing);
+                    break;
+                default:
+                    informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.rss);
+                    break;
+            }
         }
     }
 }

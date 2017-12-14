@@ -8,6 +8,9 @@ package com.pk.eager;
  */
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -110,8 +113,8 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
     private void getAllInfo() {
         mReport = getIntent().getParcelableExtra("reportObj");
         uid = mReport.getUid();
-        title = mReport.getTitle();
-        information = mReport.getInformation();
+        title = mReport.getTitle().split("~")[0];
+        information = mReport.getInformation().split("~")[0];
         roundDistance = getIntent().getStringExtra("roundDistance");
     }
 
@@ -188,6 +191,11 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
 
         chatInput = (EditText) findViewById(R.id.etChatInput);
         sendButton = (ImageButton) findViewById(R.id.bSend);
+
+        if(!checkInternetConnection()){
+            chatInput.setHint("Chat Unavailable. Internet Disconnected.");
+            sendButton.setEnabled(false);
+        }
 
         reportTitle.setText(title);
         reportInformation.setText(information);
@@ -282,5 +290,18 @@ public class ClientChatThread extends AppCompatActivity implements View.OnClickL
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean checkInternetConnection(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
     }
 }

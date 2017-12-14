@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,10 +27,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.R;
 
 
-public class Account extends Fragment implements GoogleApiClient.OnConnectionFailedListener{
+public class Account extends BaseXBeeFragment implements GoogleApiClient.OnConnectionFailedListener{
 
     private OnFragmentInteractionListener mListener;
     final String TAG = "Account";

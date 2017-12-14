@@ -11,21 +11,34 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
+import com.digi.xbee.api.listeners.IDataReceiveListener;
+import com.digi.xbee.api.models.XBeeMessage;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;
+import com.pk.eager.ReportObject.CompactReport;
 import com.pk.eager.ReportObject.IncidentReport;
+import com.pk.eager.ReportObject.Packet;
 import com.pk.eager.ReportObject.Report;
+import com.pk.eager.XBeeManager;
+import com.pk.eager.XBeeManagerApplication;
 
-public class PoliceEmergency extends Fragment {
+import java.util.List;
+
+public class PoliceEmergency extends Fragment implements IDataReceiveListener{
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
     private static final String TAG = "PoliceEmergency";
     private Report police;
     private int[] checkId = new int[]{R.id.checkbox_policeq1_a, R.id.checkbox_policeq1_b, R.id.checkbox_policeq1_c,
                                     R.id.checkbox_policeq1_d, R.id.checkbox_policeq1_e};
-
+    private XBeeManager xbeeManager;
     public Button nextButton;
 
     public PoliceEmergency() {
@@ -49,6 +62,55 @@ public class PoliceEmergency extends Fragment {
         incidentReport = Dashboard.incidentReport;
         police = incidentReport.getReport(Constant.POLICE);
         setHasOptionsMenu(true);
+        xbeeManager = XBeeManagerApplication.getInstance().getXBeeManager();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (xbeeManager.getLocalXBeeDevice() != null && xbeeManager.getLocalXBeeDevice().isOpen()) {
+            xbeeManager.subscribeDataPacketListener(this);
+        }
+    }
+
+    // Receive data over XBE/BLE and upload to Firebase
+    public void receiveDataFromChannel(String data){
+        if(data.equals("a")){
+            Toast.makeText(this.getContext(), "P2P received", Toast.LENGTH_SHORT);
+        }else {
+
+            // On Receiving the data, convert it to object and add the XBEE device id in path to server
+            Gson gson = new Gson();
+            CompactReport cmpReport = gson.fromJson(data, CompactReport.class);
+
+            List<String> pathToServer = cmpReport.getPathToServer();
+            String receiverDeviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
+            pathToServer.add(receiverDeviceAddress);
+
+            Packet newPacket = new Packet(pathToServer, FirebaseInstanceId.getInstance().getToken());
+
+           // boolean isConnected = checkInternetConnection();
+
+            if (true) {
+
+                // Saving the path to Firebase without report ID. Need to add report id afterwards
+                DatabaseReference path = FirebaseDatabase.getInstance().getReference("path").push();
+                //path.setValue(pathToServer);
+                path.setValue(newPacket);
+
+                DatabaseReference newChild = FirebaseDatabase.getInstance().getReference("Reports").push();
+                newChild.setValue(cmpReport);
+
+            } else {
+                data = gson.toJson(cmpReport);
+                //sendDataOverChannel(data);
+            }
+        }
+    }
+
+    @Override
+    public void dataReceived(XBeeMessage xbeeMessage){
+        String data = new String(xbeeMessage.getData());
+        receiveDataFromChannel(data);
     }
 
     @Override

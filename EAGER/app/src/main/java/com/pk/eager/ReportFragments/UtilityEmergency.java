@@ -14,13 +14,14 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.Dashboard;
 import com.pk.eager.R;
 import com.pk.eager.ReportObject.Choice;
 import com.pk.eager.ReportObject.IncidentReport;
 import com.pk.eager.ReportObject.Report;
 
-public class UtilityEmergency extends Fragment {
+public class UtilityEmergency extends BaseXBeeFragment {
     private static final String REPORT = "report";
     private IncidentReport incidentReport;
     private static final String TAG = "UtilityEmergency";

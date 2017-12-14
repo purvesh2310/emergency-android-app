@@ -50,7 +50,8 @@ public class Report implements Parcelable {
     }
 
     public void removeSingleChoice(int questionNum, Choice choice){
-        questions.get(questionNum).choice.remove(0);
+        if(questions.get(questionNum).choice.size()>0)
+            questions.get(questionNum).choice.remove(0);
     }
 
 

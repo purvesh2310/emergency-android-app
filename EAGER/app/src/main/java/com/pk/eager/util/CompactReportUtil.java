@@ -2,14 +2,14 @@
 package com.pk.eager.util;
 
 import android.location.Location;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.pk.eager.ReportObject.CompactReport;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -18,32 +18,45 @@ import java.util.Map;
 
 public class CompactReportUtil {
 
-    public Map<String,String> parseReportData(CompactReport report, String source){
+    private final String SPLIT = "~";
 
-     if(report.type.equals("Report")) {
+    public Map<String,String> parseReportData(CompactReport report, String source){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+        SimpleDateFormat displayDate = new SimpleDateFormat("E, dd MMM yyyy");
+        SimpleDateFormat missingKidDate = new SimpleDateFormat("E, dd MMM yyyy hh:mm:ss 'EDT'");
+
+        if(report.type.equals("Report")) {
             String reportTitle = "";
             ArrayList<ArrayList<String>> reportInfoList = new ArrayList<ArrayList<String>>();
             String individualInformation = "";
             String fullInformation = "";
             String location = "";
+            Date date = null;
+
+            try{
+                date = dateFormat.parse(report.timestamp);
+            }catch (Exception e){
+
+            }
 
             Map<String, String> reportData = new HashMap<String, String>();
 
             Map<String, ArrayList<String>> compactReports = report.compactReports;
-            Iterator iterator = compactReports.entrySet().iterator();
 
-            while (iterator.hasNext()) {
-                Map.Entry reportEntry = (Map.Entry) iterator.next();
-                reportTitle+=reportEntry.getKey().toString()+"-";
-                reportInfoList.add((ArrayList<String>) reportEntry.getValue());
+            for(String key : compactReports.keySet()){
+                reportTitle +=key+"~";
+                reportInfoList.add((ArrayList<String>) compactReports.get(key));
             }
 
             for (int j = 0; j < reportInfoList.size(); j++) {
-
-                individualInformation = reportInfoList.get(j).toString();
-                individualInformation = individualInformation.replace("/", "\n");
-                fullInformation = fullInformation + individualInformation;
-
+                ArrayList<String> individualReportInfo = reportInfoList.get(j);
+                String toString = "";
+                for(int z = 0; z < individualReportInfo.size(); z++){
+                    toString += individualReportInfo.get(z)+"/";
+                }
+                toString = toString.replace("/", "\n");
+                individualInformation = toString+SPLIT;
+                fullInformation += individualInformation;
                 if (j != reportInfoList.size() - 1)
                     fullInformation = fullInformation + "\n";
             }
@@ -53,29 +66,32 @@ public class CompactReportUtil {
             reportData.put("title", reportTitle);
             reportData.put("information", fullInformation);
             reportData.put("location", location);
-
-            Log.d("CompactReportUtil", reportData.toString());
-
+            reportData.put("date", displayDate.format(date));
             return reportData;
         }else if(report.type.equals("feed-crime")){
             String reportTitle = "Crime";
             String info = "";
             String location = "";
+            String date="";
+            String author="";
 
             Map<String, ArrayList<String>> compactReports = report.compactReports;
             Map<String, String> reportData = new HashMap<String, String>();
 
-            info = compactReports.get("description").get(0)+"\n"+compactReports.get("date").get(0);
+            info = compactReports.get("description").get(0);
             location = String.valueOf(report.latitude) + "," + String.valueOf(report.longitude);
+            date = compactReports.get("date").get(0);
+            author = compactReports.get("author").get(0);
 
             reportData.put("title", reportTitle);
             reportData.put("information", info);
             reportData.put("location", location);
-
+            reportData.put("date", date);
+            reportData.put("author", author);
             return reportData;
         }else if(report.type.equals("feed-weather")){
 
-         String reportTitle = "Weather";
+            String reportTitle = "Weather";
             String info = "";
             String location = "";
 
@@ -94,14 +110,23 @@ public class CompactReportUtil {
             reportData.put("title", reportTitle);
             reportData.put("information", info);
             reportData.put("location", location);
+            reportData.put("author", compactReports.get("author").get(0));
             return reportData;
         }else{
             String reportTitle = "Missing";
             String info = "";
             String location = "";
+            String date = "";
 
             Map<String, ArrayList<String>> compactReports = report.compactReports;
             Map<String, String> reportData = new HashMap<String, String>();
+
+            try{
+                Date reportDate = missingKidDate.parse(compactReports.get("date").get(0));
+                date = displayDate.format(reportDate);
+            }catch (Exception ex){
+
+            }
 
             switch (source){
                 case "list":
@@ -114,7 +139,9 @@ public class CompactReportUtil {
 
             reportData.put("title", reportTitle);
             reportData.put("information", info);
-            reportData.put("location", location);
+            reportData.put("location", "");
+            reportData.put("author", "missingkids.com");
+            reportData.put("date", date);
             return reportData;
         }
     }
@@ -131,6 +158,20 @@ public class CompactReportUtil {
         return distanceInMile;
 
     }
+
+    public double distanceBetweenPoints(Location startPoint, Location endPoint){
+
+        float[] results = new float[1];
+
+        Location.distanceBetween(startPoint.getLatitude(),startPoint.getLongitude(),
+                endPoint.getLatitude(),endPoint.getLongitude(),results);
+
+        double distanceInMile = results[0] * 0.000621371192;
+
+        return distanceInMile;
+
+    }
+
 
     public String parseWeatherInformationForListView(Map<String, ArrayList<String>> compactReports){
 

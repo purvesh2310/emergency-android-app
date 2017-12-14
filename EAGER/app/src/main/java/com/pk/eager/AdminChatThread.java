@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -108,10 +109,13 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_chat_thread);
-        setTitle("History");
+
+        setTitle("Admin Chat");
 
         deviceToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, deviceToken);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getAllInfo();
         getRecyclerView();
@@ -127,6 +131,13 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         uid = getIntent().getExtras().getString("key");
         title = map.get("title");
         information = map.get("information");
+
+        String[] reportTitles = title.split("~");
+        title = reportTitles[0];
+
+        String[] fullInfoArray = information.split("~");
+        information = fullInfoArray[0].trim();
+
         incidentLocation = map.get("location");
     }
 
@@ -206,6 +217,8 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         chatInput = (EditText) findViewById(R.id.etChatInput);
         sendButton = (ImageButton) findViewById(R.id.bSend);
 
+
+
         reportTitle.setText(title);
         reportInformation.setText(information);
         reportLocation.setText(incidentLocation);
@@ -236,8 +249,6 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         Like said above, only the device with the token will be able to send the msg, if you want to
         change the device replace the token below and change the header's token too.
          */
-
-        if(deviceToken.equals(Constant.ADMIN)) {
 
             messenger = "dispatcher";
             chatString = chatInput.getText().toString();
@@ -299,7 +310,6 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
 
                 }
             });
-        }
     }
 
     // This method is used to hide the ui so that both "This" and "That" doesn't show up the same time.
@@ -316,6 +326,18 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         int i = v.getId();
         if(i == R.id.bSend)
             sendMessage();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
