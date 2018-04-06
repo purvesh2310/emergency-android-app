@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
     defaultConfig {
         applicationId "com.pk.eager"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 27
         multiDexEnabled true
         versionCode 1
         versionName "1.0"
@@ -23,6 +23,7 @@ android {
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -35,9 +36,10 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.0.4'
     compile 'com.google.android.gms:play-services-auth:11.0.4'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:mediarouter-v7:27.0.2'
     compile 'com.google.firebase:firebase-database:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.2.1'
     compile 'com.google.firebase:firebase-auth:11.0.2'
