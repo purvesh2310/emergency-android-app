@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.digi.xbee.api.RemoteXBeeDevice;
+import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.listeners.IDataReceiveListener;
 import com.digi.xbee.api.models.XBee64BitAddress;
@@ -423,7 +424,9 @@ public class Review extends Fragment implements IDataReceiveListener {
                         IncidentReport smallerSize = Utils.compacitize(incidentReport);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
                         String timestamp = simpleDateFormat.format(new Date());
-                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(), location.getLatitude(), phoneNumber, "Report", timestamp);
+
+                        final CompactReport compact = new CompactReport(smallerSize, location.getLongitude(),
+                                location.getLatitude(), phoneNumber, "Report", timestamp, false);
 
 
                         newChild.setValue(compact, new DatabaseReference.CompletionListener() {
@@ -574,12 +577,28 @@ public class Review extends Fragment implements IDataReceiveListener {
                         byte[] dataToSend = DATA_TO_SEND.getBytes();
                         xbeeManager.broadcastData(dataToSend);
                         Log.d(TAG, "Broadcasting ");
+
                         showToastMessage("Device open and data sent: " + xbeeManager.getLocalXBeeDevice().toString());
-                        showResultDialog("Success","Data successfully sent over XBee.");
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(getActivity()!=null)
+                                    showResultDialog("Success","Data successfully sent over XBee.");
+                            }
+                        });
+
                     }else Log.d(TAG, "xbee not open");
-                } catch (XBeeException e) {
+                } catch (Exception e) {
                     Log.d("Xbee exception ", e.toString());
-                    showResultDialog("Error","Something went wrong. Please try again.");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(getActivity()!=null)
+                                showResultDialog("Error","Something went wrong. Please try again.");
+                        }
+                    });
                 }
             }
         });
@@ -704,7 +723,7 @@ public class Review extends Fragment implements IDataReceiveListener {
         location = Dashboard.location;
 
         CompactReport compact = new CompactReport(smallerSize, location.getLongitude(),
-                location.getLatitude(), phoneNumber, "Report", null);
+                location.getLatitude(), phoneNumber, "Report", null, false);
 
         // Setting XBEE address of the originator device
         String deviceAddress = xbeeManager.getLocalXBee64BitAddress().toString();
@@ -745,7 +764,7 @@ public class Review extends Fragment implements IDataReceiveListener {
         IncidentReport smallerSize = Utils.compacitize(incidentReport);
 
         CompactReport compact = new CompactReport(smallerSize, location.getLongitude(),
-                location.getLatitude(), phoneNumber, "Report", null);
+                location.getLatitude(), phoneNumber, "Report", null, false);
 
         UUID keyUUID = UUID.randomUUID();
         String key = keyUUID.toString();

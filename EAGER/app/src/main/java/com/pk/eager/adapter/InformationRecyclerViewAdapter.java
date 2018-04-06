@@ -38,6 +38,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         ImageView locationMarkerIcon;
         TextView reportDate;
         TextView reportSource;
+        ImageView verifiedLogo;
 
         InformationViewHolder(View itemView) {
             super(itemView);
@@ -49,7 +50,16 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             locationMarkerIcon = (ImageView) itemView.findViewById(R.id.locationMarkerIcon);
             reportDate = (TextView) itemView.findViewById(R.id.reportDateTextView);
             reportSource = (TextView) itemView.findViewById(R.id.reportSourceTextView);
+            verifiedLogo = (ImageView) itemView.findViewById(R.id.isVerifiedSign);
         }
+    }
+
+    public LatLng getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(LatLng currentLocation) {
+        this.currentLocation = currentLocation;
     }
 
     public InformationRecyclerViewAdapter(){
@@ -98,6 +108,18 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
           //  informationViewHolder.locationMarkerIcon.setVisibility(View.INVISIBLE);
         }
 
+        if(report.type.equals("Report")){
+
+            boolean verified = Boolean.parseBoolean(reportData.get("isVerified"));
+            informationViewHolder.verifiedLogo.setVisibility(View.VISIBLE);
+
+            if (verified == true) {
+                informationViewHolder.verifiedLogo.setImageResource(R.drawable.verification_icon);
+            } else {
+                informationViewHolder.verifiedLogo.setImageResource(R.drawable.not_verfied);
+            }
+        }
+
         //binding for different type of report
         if(!report.type.equals("Report")){
             //get title
@@ -116,6 +138,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
 
             //get source
             informationViewHolder.reportSource.setText(reportData.get("author"));
+
         }else {
             //binding for report type
             //get strings of reports
@@ -140,6 +163,7 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             //set source
             informationViewHolder.reportSource.setText("User's report");
         }
+
         switch(reportTitle){
             case "Medical":
                 informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.hospital);
@@ -160,8 +184,11 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
             case "Missing":
             case "Crime":
                 informationViewHolder.incidentTypeLogo.setImageResource(R.drawable.rss);
+                informationViewHolder.verifiedLogo.setVisibility(View.GONE);
                 break;
         }
+
+
     }
 
     public void updateList(List<CompactReport> list){
@@ -280,6 +307,10 @@ public class InformationRecyclerViewAdapter extends RecyclerView.Adapter<Informa
         return s;
     }
 
-
+    public void  addCurrentLoadedData(List<CompactReport> list){
+        int initialReportSize = reportList.size();
+        reportList.addAll(list);
+        notifyItemRangeInserted(initialReportSize,list.size());
+    }
 }
 

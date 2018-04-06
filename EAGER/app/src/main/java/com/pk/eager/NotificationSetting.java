@@ -49,7 +49,8 @@ public class NotificationSetting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_setting);
 
-        setTitle("Notification Setting");
+
+        setTitle("Notification Settings");
 
         categoryTrapped = (CheckBox) findViewById(R.id.checkbox_filter_trapped);
         categoryMedical = (CheckBox) findViewById(R.id.checkbox_filter_medical);

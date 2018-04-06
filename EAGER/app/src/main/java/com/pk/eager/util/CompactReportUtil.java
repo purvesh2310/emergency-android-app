@@ -2,7 +2,9 @@
 package com.pk.eager.util;
 
 import android.location.Location;
+import android.util.Log;
 
+import com.google.android.gms.internal.ti;
 import com.google.android.gms.maps.model.LatLng;
 import com.pk.eager.ReportObject.CompactReport;
 
@@ -21,9 +23,22 @@ public class CompactReportUtil {
     private final String SPLIT = "~";
 
     public Map<String,String> parseReportData(CompactReport report, String source){
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
         SimpleDateFormat displayDate = new SimpleDateFormat("E, dd MMM yyyy");
         SimpleDateFormat missingKidDate = new SimpleDateFormat("E, dd MMM yyyy hh:mm:ss 'EDT'");
+
+        Date date = null;
+        String formattedDate = "";
+
+        try{
+            String timestamp = report.getTimestamp();
+            if(timestamp != null)
+                date = dateFormat.parse(timestamp);
+                formattedDate = displayDate.format(date);
+        }catch (Exception e){
+
+        }
 
         if(report.type.equals("Report")) {
             String reportTitle = "";
@@ -31,13 +46,6 @@ public class CompactReportUtil {
             String individualInformation = "";
             String fullInformation = "";
             String location = "";
-            Date date = null;
-
-            try{
-                date = dateFormat.parse(report.timestamp);
-            }catch (Exception e){
-
-            }
 
             Map<String, String> reportData = new HashMap<String, String>();
 
@@ -66,28 +74,32 @@ public class CompactReportUtil {
             reportData.put("title", reportTitle);
             reportData.put("information", fullInformation);
             reportData.put("location", location);
-            reportData.put("date", displayDate.format(date));
+            reportData.put("isVerified",String.valueOf(report.isVerified()));
+            reportData.put("date", formattedDate);
+
             return reportData;
         }else if(report.type.equals("feed-crime")){
+
             String reportTitle = "Crime";
             String info = "";
             String location = "";
-            String date="";
             String author="";
 
-            Map<String, ArrayList<String>> compactReports = report.compactReports;
-            Map<String, String> reportData = new HashMap<String, String>();
+            Map<String, String> compactReports = report.getRssFeedReport();
+            Map<String, String> reportData = new HashMap<>();
 
-            info = compactReports.get("description").get(0);
+            info = compactReports.get("summary") + "\n" + report.getTitle();
+
             location = String.valueOf(report.latitude) + "," + String.valueOf(report.longitude);
-            date = compactReports.get("date").get(0);
-            author = compactReports.get("author").get(0);
+            author = report.getAuthor();
 
             reportData.put("title", reportTitle);
             reportData.put("information", info);
             reportData.put("location", location);
-            reportData.put("date", date);
+            reportData.put("isVerified","false");
+            reportData.put("date",formattedDate);
             reportData.put("author", author);
+
             return reportData;
         }else if(report.type.equals("feed-weather")){
 
@@ -110,20 +122,20 @@ public class CompactReportUtil {
             reportData.put("title", reportTitle);
             reportData.put("information", info);
             reportData.put("location", location);
+            reportData.put("isVerified","false");
             reportData.put("author", compactReports.get("author").get(0));
             return reportData;
         }else{
             String reportTitle = "Missing";
             String info = "";
             String location = "";
-            String date = "";
 
-            Map<String, ArrayList<String>> compactReports = report.compactReports;
+            Map<String, String> compactReports = report.getRssFeedReport();
             Map<String, String> reportData = new HashMap<String, String>();
 
             try{
-                Date reportDate = missingKidDate.parse(compactReports.get("date").get(0));
-                date = displayDate.format(reportDate);
+                //Date reportDate = missingKidDate.parse(compactReports.get("date").get(0));
+                //date = displayDate.format(reportDate);
             }catch (Exception ex){
 
             }
@@ -140,8 +152,9 @@ public class CompactReportUtil {
             reportData.put("title", reportTitle);
             reportData.put("information", info);
             reportData.put("location", "");
+            reportData.put("isVerified","false");
             reportData.put("author", "missingkids.com");
-            reportData.put("date", date);
+            reportData.put("date", formattedDate);
             return reportData;
         }
     }
@@ -217,12 +230,12 @@ public class CompactReportUtil {
         return info.toString();
     }
 
-    public String parseMissingPersonInfoForListView(Map<String, ArrayList<String>> compactReports){
+    public String parseMissingPersonInfoForListView(Map<String, String> compactReports){
 
         StringBuffer info = new StringBuffer();
 
-        String summary = compactReports.get("summary").get(0);
-        String date = compactReports.get("date").get(0);
+        String summary = compactReports.get("summary");
+        String date = compactReports.get("date");
 
         info.append(summary);
         info.append("\n");
@@ -232,13 +245,13 @@ public class CompactReportUtil {
 
     }
 
-    public String parseMissingPersonInfoForInforamtionView(Map<String, ArrayList<String>> compactReports){
+    public String parseMissingPersonInfoForInforamtionView(Map<String, String> compactReports){
 
         StringBuffer info = new StringBuffer();
 
-        String title = compactReports.get("title").get(0);
-        String summary = compactReports.get("summary").get(0);
-        String date = compactReports.get("date").get(0);
+        String title = compactReports.get("title");
+        String summary = compactReports.get("summary");
+        String date = compactReports.get("date");
 
         info.append(title);
         info.append("\n");

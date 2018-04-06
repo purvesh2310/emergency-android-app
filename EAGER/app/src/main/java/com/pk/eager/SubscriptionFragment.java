@@ -39,7 +39,7 @@ public class SubscriptionFragment extends BaseXBeeFragment {
 
     private static final String USER_NOTIFICATION_REF = "UserNotification";
     private static final String TAG = SubscriptionFragment.class.getSimpleName();
-    private FloatingActionButton settingButton;
+
     private ArrayList<Notification> notificationList = new ArrayList<Notification>();
     private RecyclerView notificationRecyclerView;
     private NotificationRecyclerViewAdapter notificationAdapter;
@@ -64,7 +64,6 @@ public class SubscriptionFragment extends BaseXBeeFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setButtonListener();
 
         //recycler view stuff
         notificationRecyclerView = (RecyclerView) getView().findViewById(R.id.subscriptionRecyclerView);
@@ -123,20 +122,6 @@ public class SubscriptionFragment extends BaseXBeeFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
-
-    public void setButtonListener(){
-
-        settingButton = (FloatingActionButton) getView().findViewById(R.id.subscription_settingFAB);
-
-        settingButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View arg0) {
-                Intent intent = new Intent(getContext(), NotificationSetting.class);
-                startActivity(intent);
-
-            }
-        });
     }
 
     @Override

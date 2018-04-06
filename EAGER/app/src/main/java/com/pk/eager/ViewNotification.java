@@ -111,8 +111,8 @@ public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCall
 
     public void setUpReportDetail(CompactReport report){
         CompactReportUtil cmpUtil = new CompactReportUtil();
-        Map<String, String> map = cmpUtil.parseReportData(report,"info");
 
+        Map<String, String> map = cmpUtil.parseReportData(report,"info");
 
         String location = map.get("location");
         String title = "";
@@ -126,12 +126,17 @@ public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCall
             //get distance
             latitude = Double.parseDouble(location.split(",")[0]);
             longitude = Double.parseDouble(location.split(",")[1]);
+
             Location location1 = new Location("");
+
             location1.setLongitude(longitude);
             location1.setLatitude(latitude);
+
             double distanceInMile = cmpUtil.distanceBetweenPoints(location1, Dashboard.location);
+
             String roundDistance = String.format("%.2f", distanceInMile);
             roundDistance = roundDistance + " mi";
+
             distanceTextView.setText(roundDistance);
 
             //set up map
@@ -141,9 +146,13 @@ public class ViewNotification extends BaseXbeeActivity implements OnMapReadyCall
         }
 
         if(!report.type.equals("Report")){
+
             //case report is type crime/missing/weather
             title = map.get("title");
             String information = map.get("information");
+
+            Log.i("CRIME", information);
+
             String source = map.get("author");
 
             titleTextView.setText(title);

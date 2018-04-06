@@ -270,7 +270,16 @@ public class Information extends BaseXBeeFragment {
 
             Map<String, String> reportData = cmpUtil.parseReportData(cmpReport,"info");
 
-            String title = reportData.get("title").split(SPLIT)[0];
+            String[] titles = reportData.get("title").split(SPLIT);
+
+            String title = "";
+
+            for(String aTitle: titles){
+                title = title + aTitle + ", ";
+            }
+
+            title = title.substring(0,title.length()-2);
+
             String info = reportData.get("information");
 
             if (cmpReport.type.equals("Report")){

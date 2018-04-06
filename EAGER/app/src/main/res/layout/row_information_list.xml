@@ -38,14 +38,30 @@
                     android:orientation="vertical"
                     android:layout_weight=".5">
 
-                    <TextView
-                        android:id="@+id/reportTitleTextView"
-                        style="@style/reportList"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="2dp"
-                        android:text="Report title"
-                        android:textStyle="bold" />
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/reportTitleTextView"
+                            style="@style/reportList"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="2dp"
+                            android:text="Report title"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/isVerifiedSign"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="5dp"
+                            android:src="@drawable/verification_icon"
+                            android:visibility="gone"
+                            />
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/reportDateTextView"
@@ -59,6 +75,7 @@
                         android:textColor="#777b82"
                         android:textSize="14dp"
                         android:textStyle="bold" />
+
                 </LinearLayout>
 
                 <TextView

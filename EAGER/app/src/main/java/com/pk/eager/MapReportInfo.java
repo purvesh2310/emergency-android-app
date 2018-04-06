@@ -1,6 +1,7 @@
 package com.pk.eager;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MapReportInfo extends DialogFragment {
@@ -15,6 +17,7 @@ public class MapReportInfo extends DialogFragment {
     private static final String ARG_TITLE = "title";
     private static final String ARG_INFO = "info";
     private static final String ARG_LOCATION = "location";
+    private final String SPLIT = "~";
 
     private OnFragmentInteractionListener mListener;
 
@@ -44,7 +47,9 @@ public class MapReportInfo extends DialogFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             title = getArguments().getString(ARG_TITLE);
             info = getArguments().getString(ARG_INFO);
@@ -55,7 +60,7 @@ public class MapReportInfo extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_map_report_info, container, false);
     }
 
@@ -67,9 +72,37 @@ public class MapReportInfo extends DialogFragment {
         mapReportInformation = (TextView) view.findViewById(R.id.mapReportInformation);
         mapReportLocation = (TextView) view.findViewById(R.id.mapReportLocation);
 
+        LinearLayout additionalReportLayout = (LinearLayout) view.findViewById(R.id.additionalReports);
 
-        mapReportTitle.setText(title);
-        mapReportInformation.setText(info);
+        String[] titles = title.split(",");
+        String information[] = info.split(SPLIT);
+
+        if(titles.length > 1){
+            mapReportTitle.setText(titles[0]);
+            mapReportInformation.setText(information[0]);
+
+           Typeface boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD);
+
+            for(int i=1; i<titles.length; i++) {
+                TextView titleTextView = new TextView(getContext());
+                titleTextView.setTextAppearance(getContext(), R.style.reportList);
+                titleTextView.setTypeface(boldTypeface);
+                titleTextView.setText(titles[i]);
+
+                additionalReportLayout.addView(titleTextView);
+
+                TextView informationTextView = new TextView(getContext());
+                informationTextView.setTextAppearance(getContext(),R.style.reportList);
+                informationTextView.setText(information[i]);
+
+                additionalReportLayout.addView(informationTextView);
+
+            }
+        }else{
+            mapReportTitle.setText(title);
+            mapReportInformation.setText(information[0]);
+        }
+
         mapReportLocation.setText(location);
     }
 
@@ -97,18 +130,7 @@ public class MapReportInfo extends DialogFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

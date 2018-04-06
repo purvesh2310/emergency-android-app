@@ -98,8 +98,7 @@
             android:parentActivityName=".Dashboard"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".NotificationSetting"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+            android:name=".NotificationSetting" />
         <activity android:name=".AdminChatThread" />
         <activity android:name=".ClientChatThread" />
         <activity android:name=".BaseClass.BaseXbeeActivity"></activity>

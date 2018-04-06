@@ -36,6 +36,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,6 +46,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.pk.eager.BaseClass.BaseXBeeFragment;
 import com.pk.eager.ReportFragments.Constant;
@@ -81,6 +83,9 @@ public class InformationListView extends BaseXBeeFragment {
     CompactReportUtil cmpUtil = new CompactReportUtil();
     final private SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy");
 
+    boolean isDataLoading = false;
+
+    long msTime;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -122,7 +127,25 @@ public class InformationListView extends BaseXBeeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Nearby Incidents");
+
         reportRecyclerView = (RecyclerView) view.findViewById(R.id.informationListView);
+        reportRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new InformationRecyclerViewAdapter(getContext(), new ArrayList<CompactReport>(), currentLocation);
+        reportRecyclerView.setAdapter(adapter);
+
+        checkPermission();
+
+        reportRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+               /* if (!recyclerView.canScrollVertically(1)) {
+                    Query loadNewDataQuery = db.orderByChild("utc_timestamp").endAt(msTime).limitToFirst(10);
+                    fetchDataFromFirebase(loadNewDataQuery);
+                }*/
+            }
+        });
 
         FloatingActionButton newReportFab = (FloatingActionButton) view.findViewById(R.id.reportIncidentFAB);
         newReportFab.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +168,6 @@ public class InformationListView extends BaseXBeeFragment {
             }
         });
 
-        checkPermission();
         getPhonePermission();
     }
 
@@ -163,7 +185,11 @@ public class InformationListView extends BaseXBeeFragment {
                 public void onSuccess(Location location) {
                     if (location != null) {
                         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        fetchDataFromFirebase();
+                        adapter.setCurrentLocation(currentLocation);
+
+                        // Query to get reports
+                        Query latestReportQuery = db.orderByChild("utc_timestamp").limitToLast(10);
+                        fetchDataFromFirebase(latestReportQuery);
                     }
                 }
             });
@@ -174,25 +200,30 @@ public class InformationListView extends BaseXBeeFragment {
         }
     }
 
-    public void fetchDataFromFirebase() {
+    public void fetchDataFromFirebase(Query query) {
+
+        isDataLoading = true;
 
         reportList = new ArrayList<>();
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        reportRecyclerView.setLayoutManager(llm);
 
         db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                     CompactReport cmp = noteDataSnapshot.getValue(CompactReport.class);
                     reportList.add(cmp);
                 }
 
-                Collections.sort(reportList, new Comparator<CompactReport>() {
+               // msTime = reportList.get(reportList.size()-1).getUtc_timestamp();
+               // reportList.remove(reportList.size()-1);
+
+               /* Collections.sort(reportList, new Comparator<CompactReport>() {
                     @Override
                     public int compare(CompactReport o1, CompactReport o2) {
                         Map<String, String> map1 = cmpUtil.parseReportData(o1, "info");
-                        Map<String, String> map2 = cmpUtil.parseReportData(o2, "info");
+                        Map<String, String> map2 = cmpUtil.parseReportData(o2, "info");*/
+
                     /*
                     String[] coors1 = map1.get("location").split(",");
                     String[] coors2 = map2.get("location").split(",");
@@ -218,7 +249,8 @@ public class InformationListView extends BaseXBeeFragment {
                         }
                     }
                        */
-                        Date date1 = null;
+
+                       /* Date date1 = null;
                         Date date2 = null;
                         try {
                             date1 = dateFormat.parse(map1.get("date"));
@@ -240,10 +272,6 @@ public class InformationListView extends BaseXBeeFragment {
                             curLocation.setLatitude(currentLocation.latitude);
                             curLocation.setLongitude(currentLocation.longitude);
 
-                            /*
-                            if(location1 == null && location2!=null) return 1;
-                            else if(location1 !=null && location2 == null) return -1;
-                            else if(location1==null && location2==null) return 0;*/
                             if(location1!=null)
                                 d1 = cmpUtil.distanceBetweenPoints(location1, curLocation);
                             if(location2!=null)
@@ -251,7 +279,8 @@ public class InformationListView extends BaseXBeeFragment {
 
                             return -Double.compare(d2, d1);
                         }
-                        return date2.compareTo(date1);
+
+                        return date2.compareTo(date1);*/
 
                     /*
                     if(date1!=null && date2!=null) {
@@ -261,12 +290,10 @@ public class InformationListView extends BaseXBeeFragment {
                             return Double.compare(distanceInMile1, distanceInMile2);
                         } else return date1.compareTo(date2);
                     }else return -1;*/
-                    }
-                });
+                   // }
+                //});
 
-
-                adapter = new InformationRecyclerViewAdapter(getContext(), reportList, currentLocation);
-                reportRecyclerView.setAdapter(adapter);
+                adapter.addCurrentLoadedData(reportList);
 
                 reportRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), reportRecyclerView, new ClickListener() {
                     @Override
@@ -291,6 +318,8 @@ public class InformationListView extends BaseXBeeFragment {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+
+        isDataLoading = false;
     }
 
     @Override
@@ -403,7 +432,8 @@ public class InformationListView extends BaseXBeeFragment {
 
             mSearchAction.setIcon(getResources().getDrawable(R.drawable.magnifying_glass));
 
-            fetchDataFromFirebase();
+            Query latestReportQuery = db.orderByChild("utc_timestamp").limitToLast(10);
+            fetchDataFromFirebase(latestReportQuery);
 
             isSearchOpened = false;
         } else { //open the search entry
@@ -452,7 +482,9 @@ public class InformationListView extends BaseXBeeFragment {
             mSearchAction.setVisible(true);
             mFilterAction.setIcon(getResources().getDrawable(R.drawable.filter));
             isFilterApplied = false;
-            fetchDataFromFirebase();
+
+            Query latestReportQuery = db.orderByChild("utc_timestamp").limitToLast(10);
+            fetchDataFromFirebase(latestReportQuery);
         }else {
             Intent intent = new Intent(getContext(), IncidentFilterActivity.class);
             startActivityForResult(intent, 1);

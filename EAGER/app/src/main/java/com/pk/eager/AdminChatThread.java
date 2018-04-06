@@ -63,7 +63,7 @@ public class AdminChatThread extends AppCompatActivity implements View.OnClickLi
         TextView tvMessengerThat;
         TextView tvTimestampThat;
 
-        ChatViewHolder(View v) {
+        public ChatViewHolder(View v) {
             super(v);
             imgThis = (ImageView) itemView.findViewById(R.id.image_message_profile_this);
             tvMessageThis = (TextView) itemView.findViewById(R.id.messageTextView_this);
